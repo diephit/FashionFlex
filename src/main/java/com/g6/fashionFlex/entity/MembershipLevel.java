@@ -1,4 +1,4 @@
-package com.g6.ff.entity;
+package com.g6.fashionFlex.entity;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;

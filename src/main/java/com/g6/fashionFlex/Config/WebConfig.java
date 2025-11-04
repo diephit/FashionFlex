@@ -1,4 +1,4 @@
-package com.g6.ff.Config;
+package com.g6.fashionFlex.Config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;

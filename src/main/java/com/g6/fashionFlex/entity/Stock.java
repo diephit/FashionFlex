@@ -1,4 +1,4 @@
-package com.g6.ff.entity;
+package com.g6.fashionFlex.entity;
 
 import java.time.LocalDateTime;
 
