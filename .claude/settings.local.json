@@ -1,9 +1,14 @@
 {
   "permissions": {
     "allow": [
-      "Bash(tree:*)",
-      "Bash(mvn clean compile:*)",
-      "Bash(mvn compile:*)"
+      "Bash(for file in product-detail.html shoping-cart.html blog.html blog-detail.html about.html contact.html)",
+      "Bash(do sed -i 's|href=\"\"#\"\" class=\"\"flex-c-m trans-04 p-lr-25\"\">|href=\"\"login.html\"\" class=\"\"flex-c-m trans-04 p-lr-25\"\">|g' \"$file\")",
+      "Bash(done)",
+      "Bash(for file in home-02.html home-03.html product-detail.html shoping-cart.html blog.html blog-detail.html about.html contact.html)",
+      "Bash(do echo \"File: $file\")",
+      "Bash(do echo \"Updating $file...\")",
+      "Bash(echo:*)",
+      "Bash(do sed -i 's|href=\"\"#\"\" class=\"\"flex-c-m p-lr-10 trans-04\"\">|href=\"\"login.html\"\" class=\"\"flex-c-m p-lr-10 trans-04\"\">|g' \"$file\")"
     ],
     "deny": [],
     "ask": []
