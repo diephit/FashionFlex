@@ -1,0 +1,43 @@
+spring.application.name=UserManager
+
+# h2 database 
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2-console
+
+#Redis
+spring.data.redis.host=localhost
+spring.data.redis.port=6379
+spring.data.redis.password=
+
+# JWT
+
+jwt.secret=3vJzXy+gkZ9rQw5uT1eLh8mBv2cYxA7sN6pKd4fWqRtGjUcXoEiPlMzQvHsBnYtZr
+jwt.expiration.access=900000
+jwt.expiration.refresh=7
+
+# #GOOGLE OAUTH CONFIGURATION
+spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+# # Client ID ứng dụng Google (lấy trong Google Cloud Console)
+
+spring.security.oauth2.client.registration.google.client-id=785468592391-a6ersgj7q8g13im0pududtmi8hj5fv4r.apps.googleusercontent.com
+
+spring.security.oauth2.client.registration.google.client-secret=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
+spring.security.oauth2.client.registration.google.scope=email,profile
+spring.security.oauth2.client.registration.google.redirect-uri={baseUrl}/login/oauth2/code/google
+
+# FaceBook 
+spring.security.oauth2.client.registration.facebook.client-id=1259091295984199
+spring.security.oauth2.client.registration.facebook.client-secret=aafd95d351efc7c2960404e20012e340
+spring.security.oauth2.client.registration.facebook.scope=email,public_profile
+spring.security.oauth2.client.registration.facebook.redirect-uri={baseUrl}/login/oauth2/code/{registrationId}
+spring.security.oauth2.client.registration.facebook.client-name=Facebook
+spring.security.oauth2.client.provider.facebook.authorization-uri=https://www.facebook.com/v12.0/dialog/oauth
+spring.security.oauth2.client.provider.facebook.token-uri=https://graph.facebook.com/v12.0/oauth/access_token
+spring.security.oauth2.client.provider.facebook.user-info-uri=https://graph.facebook.com/me?fields=id,name,email
+spring.security.oauth2.client.provider.facebook.user-name-attribute=id
+
