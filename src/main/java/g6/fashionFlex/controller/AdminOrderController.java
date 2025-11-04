@@ -57,14 +57,14 @@ public class AdminOrderController {
         return "admin/orders/list";
     }
 
-    @GetMapping("/view/{id}")
-    public String viewOrder(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+    @GetMapping("/form/{id}")
+    public String orderForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
             OrderDTO order = orderService.getOrderById(id);
             model.addAttribute("order", order);
             model.addAttribute("orderStatuses", Order.OrderStatus.values());
             model.addAttribute("paymentStatuses", Order.PaymentStatus.values());
-            return "admin/orders/view";
+            return "admin/orders/form";
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", "Order not found: " + e.getMessage());
             return "redirect:/admin/orders";
@@ -85,7 +85,7 @@ public class AdminOrderController {
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", "Error updating order status: " + e.getMessage());
         }
-        return "redirect:/admin/orders/view/" + id;
+        return "redirect:/admin/orders/form/" + id;
     }
 
     @PostMapping("/update-payment/{id}")
@@ -102,7 +102,7 @@ public class AdminOrderController {
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", "Error updating payment status: " + e.getMessage());
         }
-        return "redirect:/admin/orders/view/" + id;
+        return "redirect:/admin/orders/form/" + id;
     }
 
     @PostMapping("/update-tracking/{id}")
@@ -116,6 +116,6 @@ public class AdminOrderController {
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", "Error updating tracking number: " + e.getMessage());
         }
-        return "redirect:/admin/orders/view/" + id;
+        return "redirect:/admin/orders/form/" + id;
     }
 }

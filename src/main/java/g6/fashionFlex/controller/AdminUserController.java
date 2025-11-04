@@ -44,12 +44,12 @@ public class AdminUserController {
         return "admin/users/list";
     }
 
-    @GetMapping("/view/{id}")
-    public String viewUser(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+    @GetMapping("/form/{id}")
+    public String userForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
             UserDTO user = userService.getUserById(id);
             model.addAttribute("user", user);
-            return "admin/users/view";
+            return "admin/users/form";
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", "User not found: " + e.getMessage());
             return "redirect:/admin/users";
@@ -78,7 +78,7 @@ public class AdminUserController {
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", "Error assigning role: " + e.getMessage());
         }
-        return "redirect:/admin/users/view/" + id;
+        return "redirect:/admin/users/form/" + id;
     }
 
     @GetMapping("/remove-role/{userId}/{roleName}")
@@ -92,7 +92,7 @@ public class AdminUserController {
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", "Error removing role: " + e.getMessage());
         }
-        return "redirect:/admin/users/view/" + userId;
+        return "redirect:/admin/users/form/" + userId;
     }
 
     @GetMapping("/delete/{id}")

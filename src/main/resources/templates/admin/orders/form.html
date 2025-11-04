@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Details - FashionFlex Admin</title>
+    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <style>
+        body { background-color: #f8f9fa; font-family: Arial, sans-serif; }
+        .sidebar { min-height: 100vh; background: #343a40; color: white; padding: 20px 0; }
+        .sidebar a { color: #fff; padding: 10px 20px; display: block; text-decoration: none; }
+        .sidebar a:hover, .sidebar a.active { background: #495057; }
+        .main-content { padding: 30px; }
+        .form-card { background: white; border-radius: 8px; padding: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2 sidebar">
+            <h4 class="text-center mb-4">FashionFlex Admin</h4>
+            <a href="/admin"><i class="fa fa-dashboard"></i> Dashboard</a>
+            <a href="/admin/products"><i class="fa fa-shopping-bag"></i> Products</a>
+            <a href="/admin/categories"><i class="fa fa-list"></i> Categories</a>
+            <a href="/admin/orders" class="active"><i class="fa fa-shopping-cart"></i> Orders</a>
+            <a href="/admin/users"><i class="fa fa-users"></i> Users</a>
+            <hr style="border-color: #495057;">
+            <a href="/"><i class="fa fa-home"></i> Back to Site</a>
+            <a href="/logout"><i class="fa fa-sign-out"></i> Logout</a>
+        </div>
+
+        <div class="col-md-10 main-content">
+            <h1>Order Details</h1>
+
+            <div class="form-card">
+                <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+                <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+                <div th:if="${order}">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Order Information</h4>
+                            <table class="table table-bordered">
+                                <tr><th>Order #</th><td th:text="${order.orderNumber}"></td></tr>
+                                <tr><th>Status</th><td th:text="${order.status}"></td></tr>
+                                <tr><th>Payment Status</th><td th:text="${order.paymentStatus}"></td></tr>
+                                <tr><th>Total Amount</th><td th:text="'$' + ${#numbers.formatDecimal(order.totalAmount, 1, 2)}"></td></tr>
+                                <tr><th>Tracking #</th><td th:text="${order.trackingNumber}"></td></tr>
+                                <tr><th>Created At</th><td th:text="${#temporals.format(order.createdAt, 'yyyy-MM-dd HH:mm')}"></td></tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Customer Information</h4>
+                            <table class="table table-bordered">
+                                <tr><th>Name</th><td th:text="${order.userName}"></td></tr>
+                                <tr><th>Email</th><td th:text="${order.userEmail}"></td></tr>
+                                <tr><th>Shipping Address</th><td th:text="${order.shippingAddress}"></td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <h4 class="mt-4">Order Items</h4>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Subtotal</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="item : ${order.orderItems}">
+                            <td th:text="${item.productName}"></td>
+                            <td th:text="${item.quantity}"></td>
+                            <td th:text="'$' + ${#numbers.formatDecimal(item.price, 1, 2)}"></td>
+                            <td th:text="'$' + ${#numbers.formatDecimal(item.subtotal, 1, 2)}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h5>Update Order Status</h5>
+                            <form th:action="@{/admin/orders/update-status/{id}(id=${order.id})}" method="post">
+                                <div class="input-group">
+                                    <select name="status" class="form-control">
+                                        <option th:each="s : ${orderStatuses}" th:value="${s}" th:text="${s}" th:selected="${order.status == s.name()}"></option>
+                                    </select>
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-4">
+                            <h5>Update Payment Status</h5>
+                            <form th:action="@{/admin/orders/update-payment/{id}(id=${order.id})}" method="post">
+                                <div class="input-group">
+                                    <select name="paymentStatus" class="form-control">
+                                        <option th:each="ps : ${paymentStatuses}" th:value="${ps}" th:text="${ps}" th:selected="${order.paymentStatus == ps.name()}"></option>
+                                    </select>
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-4">
+                            <h5>Update Tracking Number</h5>
+                            <form th:action="@{/admin/orders/update-tracking/{id}(id=${order.id})}" method="post">
+                                <div class="input-group">
+                                    <input type="text" name="trackingNumber" class="form-control" placeholder="Enter tracking number" th:value="${order.trackingNumber}">
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <hr>
+                    <a href="/admin/orders" class="btn btn-secondary"><i class="fa fa-arrow-left"></i> Back to List</a>
+                </div>
+
+                <div th:if="${order == null}">
+                    <p class="text-danger">Order not found.</p>
+                    <a href="/admin/orders" class="btn btn-secondary">Back to List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
