@@ -1,4 +1,4 @@
-package Entity;
+package com.g6.ff.entity;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
@@ -27,4 +27,3 @@ public class ChangeTypeConverter implements AttributeConverter<Stock.ChangeType,
         throw new IllegalArgumentException("Unknown ChangeType: " + dbData);
     }
 }
-

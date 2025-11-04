@@ -1,4 +1,4 @@
-package Entity;
+package com.g6.ff.entity;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
@@ -160,4 +160,3 @@ public class Payment {
         pending, success, failed, refunded
     }
 }
-

@@ -1,4 +1,4 @@
-package Entity;
+package com.g6.ff.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -85,4 +85,3 @@ public class MembershipHistory {
         this.note = note;
     }
 }
-

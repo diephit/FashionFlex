@@ -1,11 +1,11 @@
-package Entity;
+package com.g6.ff.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "admins")
+@Table(name = "admins") 
 public class Admin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -106,4 +106,3 @@ public class Admin {
         this.updatedProducts = updatedProducts;
     }
 }
-

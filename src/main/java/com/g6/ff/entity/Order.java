@@ -1,4 +1,4 @@
-package Entity;
+package com.g6.ff.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -130,4 +130,3 @@ public class Order {
         pending, paid, shipped, completed, canceled
     }
 }
-

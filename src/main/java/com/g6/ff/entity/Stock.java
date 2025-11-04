@@ -1,4 +1,4 @@
-package Entity;
+package com.g6.ff.entity;
 
 import java.time.LocalDateTime;
 
@@ -141,4 +141,3 @@ public class Stock {
         }
     }
 }
-

@@ -1,4 +1,4 @@
-package Entity;
+package com.g6.ff.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -125,4 +125,3 @@ public class Product {
         this.updatedByAdmin = updatedByAdmin;
     }
 }
-

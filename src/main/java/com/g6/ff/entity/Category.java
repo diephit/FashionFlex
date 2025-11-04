@@ -1,4 +1,4 @@
-package Entity;
+package com.g6.ff.entity;
 
 import jakarta.persistence.*;
 import java.util.List;
@@ -67,4 +67,3 @@ public class Category {
         this.products = products;
     }
 }
-
