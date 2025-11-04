@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-	<title>Home</title>
+	<title>Home - FashionFlex</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->	
@@ -53,9 +53,20 @@
 							Help & FAQs
 						</a>
 
-						<a href="login.html" class="flex-c-m trans-04 p-lr-25">
+						<!-- Show user email if logged in, otherwise "My Account" -->
+						<a th:if="${isAuthenticated}" th:href="@{/user/home}" class="flex-c-m trans-04 p-lr-25">
+							<i class="fa fa-user"></i> <span th:text="${user.fullName}"></span>
+						</a>
+						<a th:unless="${isAuthenticated}" th:href="@{/login}" class="flex-c-m trans-04 p-lr-25">
 							My Account
 						</a>
+
+						<!-- Logout button if logged in -->
+						<form th:if="${isAuthenticated}" th:action="@{/logout}" method="post" style="display: inline; margin: 0;">
+							<button type="submit" class="flex-c-m trans-04 p-lr-25" style="background: none; border: none; cursor: pointer; font-family: inherit; font-size: inherit; color: inherit;">
+								Logout
+							</button>
+						</form>
 
 						<a href="#" class="flex-c-m trans-04 p-lr-25">
 							EN
