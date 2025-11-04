@@ -8,7 +8,8 @@
       "Bash(do echo \"File: $file\")",
       "Bash(do echo \"Updating $file...\")",
       "Bash(echo:*)",
-      "Bash(do sed -i 's|href=\"\"#\"\" class=\"\"flex-c-m p-lr-10 trans-04\"\">|href=\"\"login.html\"\" class=\"\"flex-c-m p-lr-10 trans-04\"\">|g' \"$file\")"
+      "Bash(do sed -i 's|href=\"\"#\"\" class=\"\"flex-c-m p-lr-10 trans-04\"\">|href=\"\"login.html\"\" class=\"\"flex-c-m p-lr-10 trans-04\"\">|g' \"$file\")",
+      "Bash(mkdir:*)"
     ],
     "deny": [],
     "ask": []

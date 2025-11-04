@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Reviews Management - FashionFlex Admin</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" href="../../images/icons/favicon.png"/>
+	<link rel="stylesheet" type="text/css" href="../../vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="../../fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="../../fonts/iconic/css/material-design-iconic-font.min.css">
+	<link rel="stylesheet" type="text/css" href="../../css/util.css">
+	<link rel="stylesheet" type="text/css" href="../../css/main.css">
+	<link rel="stylesheet" type="text/css" href="../../assets/css/pages/admin-styles.css">
+</head>
+<body>
+
+	<div class="admin-wrapper">
+		<!-- Sidebar -->
+		<aside class="admin-sidebar">
+			<div class="admin-sidebar-header">
+				<h3><i class="zmdi zmdi-shield-security"></i> Admin Panel</h3>
+			</div>
+
+			<ul class="admin-sidebar-menu">
+				<li><a href="dashboard.html"><i class="fa fa-tachometer"></i> Dashboard</a></li>
+				<li><a href="products.html"><i class="fa fa-shopping-bag"></i> Products</a></li>
+				<li><a href="orders.html"><i class="fa fa-shopping-cart"></i> Orders</a></li>
+				<li><a href="customers.html"><i class="fa fa-users"></i> Customers</a></li>
+				<li><a href="categories.html"><i class="fa fa-folder"></i> Categories</a></li>
+				<li><a href="coupons.html"><i class="fa fa-tag"></i> Coupons</a></li>
+				<li><a href="reviews.html" class="active"><i class="fa fa-star"></i> Reviews</a></li>
+				<li><a href="settings.html"><i class="fa fa-cog"></i> Settings</a></li>
+				<li><a href="../../index.html"><i class="fa fa-sign-out"></i> Back to Store</a></li>
+			</ul>
+		</aside>
+
+		<!-- Main Content -->
+		<main class="admin-main">
+			<!-- Topbar -->
+			<div class="admin-topbar">
+				<h2>Reviews Management</h2>
+				<div class="admin-user-info">
+					<img src="../../images/avatar-01.jpg" alt="Admin">
+					<span>Admin User</span>
+				</div>
+			</div>
+
+			<!-- Content -->
+			<div class="admin-content">
+				<!-- Stats Cards -->
+				<div class="dashboard-cards">
+					<div class="dashboard-card">
+						<div class="dashboard-card-icon primary">
+							<i class="fa fa-star"></i>
+						</div>
+						<h4>Total Reviews</h4>
+						<div class="value">487</div>
+					</div>
+					<div class="dashboard-card">
+						<div class="dashboard-card-icon warning">
+							<i class="fa fa-clock-o"></i>
+						</div>
+						<h4>Pending</h4>
+						<div class="value">23</div>
+					</div>
+					<div class="dashboard-card">
+						<div class="dashboard-card-icon success">
+							<i class="fa fa-check-circle"></i>
+						</div>
+						<h4>Approved</h4>
+						<div class="value">456</div>
+					</div>
+					<div class="dashboard-card">
+						<div class="dashboard-card-icon info">
+							<i class="fa fa-line-chart"></i>
+						</div>
+						<h4>Avg Rating</h4>
+						<div class="value">4.6</div>
+					</div>
+				</div>
+
+				<!-- Reviews Table -->
+				<div class="admin-table-wrapper">
+					<div class="admin-table-header">
+						<h3>All Reviews</h3>
+						<div style="display: flex; gap: 10px;">
+							<select class="status-select">
+								<option>All Status</option>
+								<option>Pending</option>
+								<option>Approved</option>
+								<option>Rejected</option>
+							</select>
+							<select class="status-select">
+								<option>All Ratings</option>
+								<option>5 Stars</option>
+								<option>4 Stars</option>
+								<option>3 Stars</option>
+								<option>2 Stars</option>
+								<option>1 Star</option>
+							</select>
+						</div>
+					</div>
+
+					<table class="admin-table">
+						<thead>
+							<tr>
+								<th><input type="checkbox"></th>
+								<th>ID</th>
+								<th>Product</th>
+								<th>Customer</th>
+								<th>Rating</th>
+								<th>Review</th>
+								<th>Date</th>
+								<th>Status</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td>#R487</td>
+								<td>Black T-Shirt</td>
+								<td>Sarah Johnson</td>
+								<td>
+									<span style="color: #f39c12;">
+										<i class="fa fa-star"></i>
+										<i class="fa fa-star"></i>
+										<i class="fa fa-star"></i>
+										<i class="fa fa-star"></i>
+										<i class="fa fa-star"></i>
+									</span>
+								</td>
+								<td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+									Amazing quality! The fabric is so soft and comfortable...
+								</td>
+								<td>Nov 3, 2024</td>
+								<td><span class="status-badge pending">Pending</span></td>
+								<td>
+									<button class="action-btn view" title="View Full"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit" title="Approve"><i class="fa fa-check"></i></button>
+									<button class="action-btn delete" title="Reject"><i class="fa fa-times"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td>#R486</td>
+								<td>Denim Jacket</td>
+								<td>Mike Chen</td>
+								<td>
+									<span style="color: #f39c12;">
+										<i class="fa fa-star"></i>
+										<i class="fa fa-star"></i>
+										<i class="fa fa-star"></i>
+										<i class="fa fa-star"></i>
+										<i class="fa fa-star-o"></i>
+									</span>
+								</td>
+								<td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+									Great jacket, fits perfectly. Shipping was fast!
+								</td>
+								<td>Nov 2, 2024</td>
+								<td><span class="status-badge completed">Approved</span></td>
+								<td>
+									<button class="action-btn view" title="View Full"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit" title="Edit"><i class="fa fa-edit"></i></button>
+									<button class="action-btn delete" title="Delete"><i class="fa fa-trash"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td>#R485</td>
+								<td>Summer Dress</td>
+								<td>Emily White</td>
+								<td>
+									<span style="color: #f39c12;">
+										<i class="fa fa-star"></i>
+										<i class="fa fa-star"></i>
+										<i class="fa fa-star"></i>
+										<i class="fa fa-star"></i>
+										<i class="fa fa-star"></i>
+									</span>
+								</td>
+								<td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+									Absolutely love this dress! Perfect for summer events.
+								</td>
+								<td>Nov 1, 2024</td>
+								<td><span class="status-badge completed">Approved</span></td>
+								<td>
+									<button class="action-btn view" title="View Full"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit" title="Edit"><i class="fa fa-edit"></i></button>
+									<button class="action-btn delete" title="Delete"><i class="fa fa-trash"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td>#R484</td>
+								<td>Sneakers White</td>
+								<td>John Davis</td>
+								<td>
+									<span style="color: #f39c12;">
+										<i class="fa fa-star"></i>
+										<i class="fa fa-star"></i>
+										<i class="fa fa-star"></i>
+										<i class="fa fa-star-o"></i>
+										<i class="fa fa-star-o"></i>
+									</span>
+								</td>
+								<td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+									Good shoes but sizing runs a bit small.
+								</td>
+								<td>Oct 31, 2024</td>
+								<td><span class="status-badge pending">Pending</span></td>
+								<td>
+									<button class="action-btn view" title="View Full"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit" title="Approve"><i class="fa fa-check"></i></button>
+									<button class="action-btn delete" title="Reject"><i class="fa fa-times"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td>#R483</td>
+								<td>Leather Bag</td>
+								<td>Lisa Brown</td>
+								<td>
+									<span style="color: #f39c12;">
+										<i class="fa fa-star"></i>
+										<i class="fa fa-star"></i>
+										<i class="fa fa-star"></i>
+										<i class="fa fa-star"></i>
+										<i class="fa fa-star"></i>
+									</span>
+								</td>
+								<td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+									Excellent quality leather. Very spacious and stylish!
+								</td>
+								<td>Oct 30, 2024</td>
+								<td><span class="status-badge completed">Approved</span></td>
+								<td>
+									<button class="action-btn view" title="View Full"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit" title="Edit"><i class="fa fa-edit"></i></button>
+									<button class="action-btn delete" title="Delete"><i class="fa fa-trash"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td>#R482</td>
+								<td>Wool Scarf</td>
+								<td>Tom Wilson</td>
+								<td>
+									<span style="color: #f39c12;">
+										<i class="fa fa-star"></i>
+										<i class="fa fa-star"></i>
+										<i class="fa fa-star-o"></i>
+										<i class="fa fa-star-o"></i>
+										<i class="fa fa-star-o"></i>
+									</span>
+								</td>
+								<td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+									Not as warm as expected. Material feels cheap.
+								</td>
+								<td>Oct 29, 2024</td>
+								<td><span class="status-badge cancelled">Rejected</span></td>
+								<td>
+									<button class="action-btn view" title="View Full"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit" title="Edit"><i class="fa fa-edit"></i></button>
+									<button class="action-btn delete" title="Delete"><i class="fa fa-trash"></i></button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+					<!-- Pagination -->
+					<div class="admin-pagination">
+						<div class="admin-pagination-info">Showing 1 to 6 of 487 entries</div>
+						<div class="admin-pagination-buttons">
+							<button disabled>Previous</button>
+							<button class="active">1</button>
+							<button>2</button>
+							<button>3</button>
+							<button>...</button>
+							<button>82</button>
+							<button>Next</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<!-- Mobile Toggle -->
+	<button class="admin-mobile-toggle">
+		<i class="fa fa-bars"></i>
+	</button>
+
+	<script src="../../vendor/jquery/jquery-3.2.1.min.js"></script>
+	<script src="../../vendor/bootstrap/js/popper.js"></script>
+	<script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="../../assets/js/pages/admin.js"></script>
+
+</body>
+</html>

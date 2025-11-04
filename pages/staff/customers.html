@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Customers Management - FashionFlex Staff</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" href="../../images/icons/favicon.png"/>
+	<link rel="stylesheet" href="../../vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../../fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="../../fonts/iconic/css/material-design-iconic-font.min.css">
+	<link rel="stylesheet" href="../../css/util.css">
+	<link rel="stylesheet" href="../../css/main.css">
+	<link rel="stylesheet" href="../../assets/css/pages/admin-styles.css">
+</head>
+<body>
+
+	<div class="admin-wrapper">
+		<aside class="admin-sidebar">
+			<div class="admin-sidebar-header">
+				<h3><i class="zmdi zmdi-badge-check"></i> Staff Panel</h3>
+			</div>
+			<ul class="admin-sidebar-menu">
+				<li><a href="dashboard.html"><i class="fa fa-tachometer"></i> Dashboard</a></li>
+				<li><a href="orders.html"><i class="fa fa-shopping-cart"></i> Orders</a></li>
+				<li><a href="inventory.html"><i class="fa fa-cubes"></i> Inventory</a></li>
+				<li><a href="customers.html" class="active"><i class="fa fa-users"></i> Customers</a></li>
+				<li><a href="../../index.html"><i class="fa fa-sign-out"></i> Back to Store</a></li>
+			</ul>
+		</aside>
+
+		<main class="admin-main">
+			<div class="admin-topbar">
+				<h2>Customers Management</h2>
+				<div class="admin-user-info">
+					<span>Staff Member</span>
+					<img src="https://ui-avatars.com/api/?name=Staff+User&size=40&background=28a745&color=fff" alt="Staff">
+				</div>
+			</div>
+
+			<div class="admin-content">
+				<div class="dashboard-cards">
+					<div class="dashboard-card">
+						<div class="dashboard-card-icon primary"><i class="fa fa-users"></i></div>
+						<h4>Total Customers</h4>
+						<div class="value">1,248</div>
+					</div>
+					<div class="dashboard-card">
+						<div class="dashboard-card-icon success"><i class="fa fa-user-plus"></i></div>
+						<h4>New This Month</h4>
+						<div class="value">67</div>
+					</div>
+					<div class="dashboard-card">
+						<div class="dashboard-card-icon info"><i class="fa fa-star"></i></div>
+						<h4>VIP Customers</h4>
+						<div class="value">89</div>
+					</div>
+					<div class="dashboard-card">
+						<div class="dashboard-card-icon warning"><i class="fa fa-clock-o"></i></div>
+						<h4>Active Today</h4>
+						<div class="value">34</div>
+					</div>
+				</div>
+
+				<div class="admin-table-wrapper">
+					<div class="admin-table-header">
+						<h3>All Customers</h3>
+						<input type="text" class="admin-form-control" placeholder="Search customers..." style="width: 300px;">
+					</div>
+
+					<table class="admin-table">
+						<thead>
+							<tr>
+								<th><input type="checkbox"></th>
+								<th>ID</th>
+								<th>Customer</th>
+								<th>Email</th>
+								<th>Phone</th>
+								<th>Orders</th>
+								<th>Total Spent</th>
+								<th>Status</th>
+								<th>Joined</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td>#C1248</td>
+								<td><strong>Sarah Johnson</strong></td>
+								<td>sarah.j@email.com</td>
+								<td>+1 234 567 8901</td>
+								<td>15</td>
+								<td>$1,234.50</td>
+								<td><span class="status-badge completed">Active</span></td>
+								<td>Jan 15, 2024</td>
+								<td>
+									<button class="action-btn view" title="View Profile"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit" title="Send Email"><i class="fa fa-envelope"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td>#C1247</td>
+								<td><strong>Mike Chen</strong></td>
+								<td>mike.chen@email.com</td>
+								<td>+1 234 567 8902</td>
+								<td>8</td>
+								<td>$567.00</td>
+								<td><span class="status-badge completed">Active</span></td>
+								<td>Feb 20, 2024</td>
+								<td>
+									<button class="action-btn view" title="View Profile"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit" title="Send Email"><i class="fa fa-envelope"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td>#C1246</td>
+								<td><strong>Emily White</strong></td>
+								<td>emily.w@email.com</td>
+								<td>+1 234 567 8903</td>
+								<td>22</td>
+								<td>$2,456.75</td>
+								<td><span class="status-badge info">VIP</span></td>
+								<td>Dec 10, 2023</td>
+								<td>
+									<button class="action-btn view" title="View Profile"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit" title="Send Email"><i class="fa fa-envelope"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td>#C1245</td>
+								<td><strong>John Davis</strong></td>
+								<td>john.davis@email.com</td>
+								<td>+1 234 567 8904</td>
+								<td>5</td>
+								<td>$345.00</td>
+								<td><span class="status-badge completed">Active</span></td>
+								<td>Mar 5, 2024</td>
+								<td>
+									<button class="action-btn view" title="View Profile"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit" title="Send Email"><i class="fa fa-envelope"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td>#C1244</td>
+								<td><strong>Lisa Brown</strong></td>
+								<td>lisa.b@email.com</td>
+								<td>+1 234 567 8905</td>
+								<td>18</td>
+								<td>$1,890.25</td>
+								<td><span class="status-badge info">VIP</span></td>
+								<td>Nov 8, 2023</td>
+								<td>
+									<button class="action-btn view" title="View Profile"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit" title="Send Email"><i class="fa fa-envelope"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td>#C1243</td>
+								<td><strong>Tom Wilson</strong></td>
+								<td>tom.w@email.com</td>
+								<td>+1 234 567 8906</td>
+								<td>3</td>
+								<td>$156.00</td>
+								<td><span class="status-badge completed">Active</span></td>
+								<td>Apr 12, 2024</td>
+								<td>
+									<button class="action-btn view" title="View Profile"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit" title="Send Email"><i class="fa fa-envelope"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td>#C1242</td>
+								<td><strong>Anna Lee</strong></td>
+								<td>anna.lee@email.com</td>
+								<td>+1 234 567 8907</td>
+								<td>12</td>
+								<td>$987.50</td>
+								<td><span class="status-badge completed">Active</span></td>
+								<td>Jan 28, 2024</td>
+								<td>
+									<button class="action-btn view" title="View Profile"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit" title="Send Email"><i class="fa fa-envelope"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td>#C1241</td>
+								<td><strong>David Kim</strong></td>
+								<td>david.k@email.com</td>
+								<td>+1 234 567 8908</td>
+								<td>1</td>
+								<td>$45.00</td>
+								<td><span class="status-badge pending">Inactive</span></td>
+								<td>Oct 15, 2023</td>
+								<td>
+									<button class="action-btn view" title="View Profile"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit" title="Send Email"><i class="fa fa-envelope"></i></button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+					<div class="admin-pagination">
+						<div class="admin-pagination-info">Showing 1 to 8 of 1,248 entries</div>
+						<div class="admin-pagination-buttons">
+							<button disabled>Previous</button>
+							<button class="active">1</button>
+							<button>2</button>
+							<button>3</button>
+							<button>...</button>
+							<button>156</button>
+							<button>Next</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<button class="admin-mobile-toggle"><i class="fa fa-bars"></i></button>
+
+	<script src="../../vendor/jquery/jquery-3.2.1.min.js"></script>
+	<script src="../../vendor/bootstrap/js/popper.js"></script>
+	<script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="../../assets/js/pages/admin.js"></script>
+
+</body>
+</html>
