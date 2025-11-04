@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Order Management</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-4">
+    <h1>Order Management</h1>
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <form th:action="@{/admin/orders}" method="get">
+                <div class="input-group">
+                    <input type="text" name="keyword" class="form-control" placeholder="Search by Order #, Email, or Name" th:value="${keyword}">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <form th:action="@{/admin/orders}" method="get">
+                <div class="input-group">
+                    <select name="status" class="form-control" onchange="this.form.submit()">
+                        <option value="">All Statuses</option>
+                        <option th:each="s : ${orderStatuses}" th:value="${s}" th:text="${s}" th:selected="${filterStatus == s}"></option>
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Order #</th>
+            <th>Customer</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Payment</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="order : ${orders}">
+            <td th:text="${order.orderNumber}"></td>
+            <td th:text="${order.userName} + ' (' + ${order.userEmail} + ')'"></td>
+            <td th:text="'$' + ${#numbers.formatDecimal(order.totalAmount, 1, 2)}"></td>
+            <td><span class="badge" th:text="${order.status}" th:classappend="${order.status.toLowerCase()}"></span></td>
+            <td><span class="badge" th:text="${order.paymentStatus}" th:classappend="${order.paymentStatus.toLowerCase()}"></span></td>
+            <td th:text="${#temporals.format(order.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+            <td>
+                <a th:href="@{/admin/orders/view/{id}(id=${order.id})}" class="btn btn-sm btn-info">View</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                <a class="page-link" th:href="@{/admin/orders(page=${currentPage - 1})}">Previous</a>
+            </li>
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${currentPage == i ? 'active' : ''}">
+                <a class="page-link" th:href="@{/admin/orders(page=${i})}" th:text="${i + 1}"></a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
+                <a class="page-link" th:href="@{/admin/orders(page=${currentPage + 1})}">Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+</body>
+</html>

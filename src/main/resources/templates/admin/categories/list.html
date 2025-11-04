@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Categories - FashionFlex Admin</title>
+    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <style>
+        body { background-color: #f8f9fa; font-family: Arial, sans-serif; }
+        .sidebar { min-height: 100vh; background: #343a40; color: white; padding: 20px 0; }
+        .sidebar a { color: #fff; padding: 10px 20px; display: block; text-decoration: none; }
+        .sidebar a:hover, .sidebar a.active { background: #495057; }
+        .main-content { padding: 30px; }
+        .table-card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2 sidebar">
+                <h4 class="text-center mb-4">FashionFlex Admin</h4>
+                <a href="/admin"><i class="fa fa-dashboard"></i> Dashboard</a>
+                <a href="/admin/products"><i class="fa fa-shopping-bag"></i> Products</a>
+                <a href="/admin/categories" class="active"><i class="fa fa-list"></i> Categories</a>
+                <a href="/admin/orders"><i class="fa fa-shopping-cart"></i> Orders</a>
+                <a href="/admin/users"><i class="fa fa-users"></i> Users</a>
+                <hr style="border-color: #495057;">
+                <a href="/"><i class="fa fa-home"></i> Back to Site</a>
+                <a href="/logout"><i class="fa fa-sign-out"></i> Logout</a>
+            </div>
+
+            <div class="col-md-10 main-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>Categories Management</h1>
+                    <a href="/admin/categories/new" class="btn btn-primary">
+                        <i class="fa fa-plus"></i> Add Category
+                    </a>
+                </div>
+
+                <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+                <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+                <div class="table-card">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Products</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${#lists.isEmpty(categories)}">
+                                <td colspan="6" class="text-center">No categories found</td>
+                            </tr>
+                            <tr th:each="cat : ${categories}">
+                                <td th:text="${cat.id}">1</td>
+                                <td th:text="${cat.name}">Category Name</td>
+                                <td th:text="${cat.description}">Description</td>
+                                <td th:text="${cat.productCount}">0</td>
+                                <td>
+                                    <span th:if="${cat.active}" class="badge bg-success">Active</span>
+                                    <span th:unless="${cat.active}" class="badge bg-secondary">Inactive</span>
+                                </td>
+                                <td>
+                                    <a th:href="@{/admin/categories/edit/{id}(id=${cat.id})}" class="btn btn-sm btn-warning">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                    <a th:href="@{/admin/categories/toggle/{id}(id=${cat.id})}" class="btn btn-sm btn-info">
+                                        <i class="fa fa-toggle-on"></i>
+                                    </a>
+                                    <a th:href="@{/admin/categories/delete/{id}(id=${cat.id})}"
+                                       class="btn btn-sm btn-danger"
+                                       onclick="return confirm('Are you sure?')">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

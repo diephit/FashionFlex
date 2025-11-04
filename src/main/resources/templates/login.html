@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-	<title>Login - Cozastore</title>
+	<title>Login - FashionFlex</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->
@@ -570,6 +570,9 @@
 					<div th:if="${param.registered}" style="padding: 10px; background: #d4edda; color: #155724; border-radius: 5px; margin-bottom: 15px; font-size: 14px;">
 						Registration successful! Please log in.
 					</div>
+					<div th:if="${param.reset}" style="padding: 10px; background: #d4edda; color: #155724; border-radius: 5px; margin-bottom: 15px; font-size: 14px;">
+						Password reset successful! Please log in with your new password.
+					</div>
 					<div class="form-group">
 						<input type="email" name="email" class="form-input" placeholder="Email Address" required>
 					</div>
@@ -588,7 +591,7 @@
 					</button>
 
 					<div class="form-link">
-						<a href="#">Forgot Password?</a>
+						<a th:href="@{/forgot-password}">Forgot Password?</a>
 					</div>
 
 					<div class="divider">
@@ -596,14 +599,14 @@
 					</div>
 
 					<div class="social-login">
-						<button type="button" class="btn-social" onclick="alert('Facebook login not implemented yet')">
+						<a th:href="@{/oauth2/authorization/facebook}" class="btn-social">
 							<i class="fa fa-facebook"></i>
 							Facebook
-						</button>
-						<button type="button" class="btn-social" onclick="alert('Google login not implemented yet')">
+						</a>
+						<a th:href="@{/oauth2/authorization/google}" class="btn-social">
 							<i class="fa fa-google"></i>
 							Google
-						</button>
+						</a>
 					</div>
 				</form>
 
@@ -638,14 +641,14 @@
 					</div>
 
 					<div class="social-login">
-						<button type="button" class="btn-social" onclick="alert('Facebook signup not implemented yet')">
+						<a th:href="@{/oauth2/authorization/facebook}" class="btn-social">
 							<i class="fa fa-facebook"></i>
 							Facebook
-						</button>
-						<button type="button" class="btn-social" onclick="alert('Google signup not implemented yet')">
+						</a>
+						<a th:href="@{/oauth2/authorization/google}" class="btn-social">
 							<i class="fa fa-google"></i>
 							Google
-						</button>
+						</a>
 					</div>
 				</form>
 			</div>

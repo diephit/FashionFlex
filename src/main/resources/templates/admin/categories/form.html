@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${category.id != null} ? 'Edit Category' : 'Add Category'">Category Form</title>
+    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <style>
+        body { background-color: #f8f9fa; font-family: Arial, sans-serif; }
+        .sidebar { min-height: 100vh; background: #343a40; color: white; padding: 20px 0; }
+        .sidebar a { color: #fff; padding: 10px 20px; display: block; text-decoration: none; }
+        .sidebar a:hover, .sidebar a.active { background: #495057; }
+        .main-content { padding: 30px; }
+        .form-card { background: white; border-radius: 8px; padding: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2 sidebar">
+                <h4 class="text-center mb-4">FashionFlex Admin</h4>
+                <a href="/admin"><i class="fa fa-dashboard"></i> Dashboard</a>
+                <a href="/admin/products"><i class="fa fa-shopping-bag"></i> Products</a>
+                <a href="/admin/categories" class="active"><i class="fa fa-list"></i> Categories</a>
+                <a href="/admin/orders"><i class="fa fa-shopping-cart"></i> Orders</a>
+                <a href="/admin/users"><i class="fa fa-users"></i> Users</a>
+                <hr style="border-color: #495057;">
+                <a href="/"><i class="fa fa-home"></i> Back to Site</a>
+                <a href="/logout"><i class="fa fa-sign-out"></i> Logout</a>
+            </div>
+
+            <div class="col-md-10 main-content">
+                <h1 th:text="${category.id != null} ? 'Edit Category' : 'Add New Category'">Category Form</h1>
+
+                <div class="form-card">
+                    <form method="post" th:action="@{/admin/categories/save}" th:object="${category}">
+                        <input type="hidden" th:field="*{id}">
+
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Category Name *</label>
+                            <input type="text" class="form-control" id="name" th:field="*{name}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" rows="3" th:field="*{description}"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="active" th:field="*{active}">
+                                <label class="form-check-label" for="active">Active</label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-save"></i> Save
+                        </button>
+                        <a href="/admin/categories" class="btn btn-secondary">
+                            <i class="fa fa-times"></i> Cancel
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

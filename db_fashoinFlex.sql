@@ -1,166 +1,266 @@
--- Tạo cơ sở dữ liệu (tùy chọn)
-CREATE DATABASE IF NOT EXISTS ecommerce_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- ==================================
+-- Database: ff (E-commerce + Membership)
+-- ==================================
+CREATE DATABASE ecommerce_db;
 USE ecommerce_db;
 
--- 1. Users (Khách hàng & Quản trị viên)
+-- ==================================
+-- TABLES
+-- ==================================
+
+-- ==================================
+-- E-commerce Data Model (Final + Membership + Payment History)
+-- ==================================
+
+-- USERS
 CREATE TABLE users (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    full_name VARCHAR(100) NOT NULL,
-    email VARCHAR(150) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    phone_number VARCHAR(20) NULL,
-    address TEXT NULL,
-    role ENUM('customer', 'admin') NOT NULL DEFAULT 'customer',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    
-    INDEX idx_email (email),
-    INDEX idx_role (role)
+  userID INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(100) UNIQUE NOT NULL,
+  passwordHash VARCHAR(255) NOT NULL,
+  roleID INT NOT NULL,
+  status ENUM('active', 'inactive') DEFAULT 'active',
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- 2. Categories (Danh mục sản phẩm - hỗ trợ đa cấp)
+-- ROLES
+CREATE TABLE roles (
+  roleID INT AUTO_INCREMENT PRIMARY KEY,
+  roleName ENUM('customer', 'admin') NOT NULL
+);
+
+-- MEMBERSHIP LEVELS
+CREATE TABLE membership_levels (
+  levelID INT AUTO_INCREMENT PRIMARY KEY,
+  levelName VARCHAR(50) NOT NULL,
+  minSpent DECIMAL(12,2) NOT NULL,
+  discountRate DECIMAL(5,2) NOT NULL,
+  bonusRate DECIMAL(5,2) NOT NULL,
+  description TEXT,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- MEMBERSHIP HISTORY (log khi lên/xuống cấp)
+CREATE TABLE membership_history (
+  historyID INT AUTO_INCREMENT PRIMARY KEY,
+  customerID INT NOT NULL,
+  oldLevelID INT,
+  newLevelID INT,
+  changedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  note TEXT,
+  FOREIGN KEY (customerID) REFERENCES customers(customerID),
+  FOREIGN KEY (oldLevelID) REFERENCES membership_levels(levelID),
+  FOREIGN KEY (newLevelID) REFERENCES membership_levels(levelID)
+);
+
+-- CUSTOMERS
+CREATE TABLE customers (
+  customerID INT AUTO_INCREMENT PRIMARY KEY,
+  userID INT UNIQUE,
+  phone VARCHAR(20),
+  dateOfBirth DATE,
+  loyaltyPoints INT DEFAULT 0,
+  totalSpent DECIMAL(12,2) DEFAULT 0,
+  levelID INT,
+  address TEXT,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (userID) REFERENCES users(userID),
+  FOREIGN KEY (levelID) REFERENCES membership_levels(levelID)
+);
+
+-- ADMINS
+CREATE TABLE admins (
+  adminID INT AUTO_INCREMENT PRIMARY KEY,
+  userID INT UNIQUE,
+  department VARCHAR(100),
+  position VARCHAR(100),
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (userID) REFERENCES users(userID)
+);
+
+-- CATEGORIES
 CREATE TABLE categories (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(100) NOT NULL,
-    parent_id INT NULL,
-    slug VARCHAR(120) UNIQUE NOT NULL,
-    
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    
-    FOREIGN KEY (parent_id) REFERENCES categories(id)
-        ON DELETE SET NULL
-        ON UPDATE CASCADE,
-    
-    INDEX idx_slug (slug),
-    INDEX idx_parent (parent_id)
+  categoryID INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  parentCategoryID INT,
+  FOREIGN KEY (parentCategoryID) REFERENCES categories(categoryID)
 );
 
--- 3. Products (Sản phẩm chính)
+-- PRODUCTS
 CREATE TABLE products (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(255) NOT NULL,
-    description TEXT NULL,
-    price DECIMAL(10, 2) NOT NULL,
-    sku VARCHAR(100) UNIQUE NOT NULL,
-    stock_quantity INT NOT NULL DEFAULT 0,
-    main_image_url VARCHAR(255) NOT NULL,
-    category_id INT NOT NULL,
-    
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    
-    FOREIGN KEY (category_id) REFERENCES categories(id)
-        ON DELETE RESTRICT
-        ON UPDATE CASCADE,
-    
-    INDEX idx_sku (sku),
-    INDEX idx_category (category_id),
-    INDEX idx_price (price)
+  productID INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(150) NOT NULL,
+  description TEXT,
+  categoryID INT,
+  createdByAdminID INT,
+  updatedByAdminID INT,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (categoryID) REFERENCES categories(categoryID),
+  FOREIGN KEY (createdByAdminID) REFERENCES admins(adminID),
+  FOREIGN KEY (updatedByAdminID) REFERENCES admins(adminID)
 );
 
--- 4. Product_Variants (Biến thể: size, color, v.v.)
+-- PRODUCT VARIANTS
 CREATE TABLE product_variants (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    product_id INT NOT NULL,
-    size VARCHAR(50) NULL,
-    color VARCHAR(50) NULL,
-    variant_sku VARCHAR(120) UNIQUE NOT NULL,
-    additional_price DECIMAL(10, 2) DEFAULT 0,
-    stock_quantity INT NOT NULL DEFAULT 0,
-    
-    FOREIGN KEY (product_id) REFERENCES products(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
-    
-    INDEX idx_product_id (product_id),
-    INDEX idx_variant_sku (variant_sku),
-    INDEX idx_size_color (size, color)
+  variantID INT AUTO_INCREMENT PRIMARY KEY,
+  productID INT NOT NULL,
+  sku VARCHAR(100) UNIQUE NOT NULL,
+  price DECIMAL(12,2) NOT NULL,
+  size VARCHAR(50),
+  color VARCHAR(50),
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (productID) REFERENCES products(productID)
 );
 
--- 5. Product_Images (Ảnh phụ của sản phẩm)
-CREATE TABLE product_images (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    product_id INT NOT NULL,
-    image_url VARCHAR(255) NOT NULL,
-    alt_text VARCHAR(150) NULL,
-    
-    FOREIGN KEY (product_id) REFERENCES products(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
-    
-    INDEX idx_product_id (product_id)
+-- STOCKS (logical stock)
+CREATE TABLE stocks (
+  stockID INT AUTO_INCREMENT PRIMARY KEY,
+  variantID INT NOT NULL,
+  currentQuantity INT NOT NULL,
+  changeAmount INT NOT NULL,
+  changeType ENUM('import', 'export', 'adjust'),
+  note TEXT,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  adminID INT,
+  FOREIGN KEY (variantID) REFERENCES product_variants(variantID),
+  FOREIGN KEY (adminID) REFERENCES admins(adminID)
 );
 
--- 6. Coupons (Mã giảm giá - Bổ sung vì Orders có FK đến nó)
-CREATE TABLE coupons (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    code VARCHAR(50) UNIQUE NOT NULL,
-    discount_type ENUM('percent', 'fixed') NOT NULL,
-    discount_value DECIMAL(10, 2) NOT NULL,
-    min_order_amount DECIMAL(10, 2) NULL,
-    max_uses INT NULL DEFAULT NULL, -- NULL = không giới hạn
-    used_count INT DEFAULT 0,
-    valid_from DATETIME NULL,
-    valid_to DATETIME NULL,
-    is_active BOOLEAN DEFAULT TRUE,
-    
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    
-    INDEX idx_code (code),
-    INDEX idx_active (is_active),
-    INDEX idx_valid_dates (valid_from, valid_to)
+-- CARTS
+CREATE TABLE carts (
+  cartID INT AUTO_INCREMENT PRIMARY KEY,
+  customerID INT,
+  sessionID VARCHAR(255),
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  status ENUM('active', 'ordered', 'abandoned') DEFAULT 'active',
+  FOREIGN KEY (customerID) REFERENCES customers(customerID)
 );
 
--- 7. Orders (Đơn hàng)
+-- CART ITEMS
+CREATE TABLE cart_items (
+  cartItemID INT AUTO_INCREMENT PRIMARY KEY,
+  cartID INT NOT NULL,
+  variantID INT NOT NULL,
+  quantity INT NOT NULL,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (cartID) REFERENCES carts(cartID),
+  FOREIGN KEY (variantID) REFERENCES product_variants(variantID)
+);
+
+-- ORDERS
 CREATE TABLE orders (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
-    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    total_amount DECIMAL(12, 2) NOT NULL,
-    status ENUM('pending', 'processing', 'shipped', 'delivered', 'cancelled') 
-        NOT NULL DEFAULT 'pending',
-    shipping_address TEXT NOT NULL,
-    payment_method VARCHAR(50) NULL,
-    coupon_id INT NULL,
-    
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    
-    FOREIGN KEY (user_id) REFERENCES users(id)
-        ON DELETE RESTRICT
-        ON UPDATE CASCADE,
-    FOREIGN KEY (coupon_id) REFERENCES coupons(id)
-        ON DELETE SET NULL
-        ON UPDATE CASCADE,
-    
-    INDEX idx_user_id (user_id),
-    INDEX idx_status (status),
-    INDEX idx_order_date (order_date),
-    INDEX idx_coupon (coupon_id)
+  orderID INT AUTO_INCREMENT PRIMARY KEY,
+  customerID INT NOT NULL,
+  orderDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  status ENUM('pending', 'paid', 'shipped', 'completed', 'canceled') DEFAULT 'pending',
+  totalAmount DECIMAL(12,2),
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (customerID) REFERENCES customers(customerID)
 );
 
--- 8. Order_Items (Chi tiết đơn hàng)
+-- ORDER ITEMS
 CREATE TABLE order_items (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    order_id INT NOT NULL,
-    product_id INT NOT NULL,
-    variant_id INT NULL,
-    quantity INT NOT NULL CHECK (quantity > 0),
-    price_at_purchase DECIMAL(10, 2) NOT NULL, -- Giá tại thời điểm mua (bao gồm giá biến thể)
-    
-    FOREIGN KEY (order_id) REFERENCES orders(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES products(id)
-        ON DELETE RESTRICT
-        ON UPDATE CASCADE,
-    FOREIGN KEY (variant_id) REFERENCES product_variants(id)
-        ON DELETE SET NULL
-        ON UPDATE CASCADE,
-    
-    INDEX idx_order_id (order_id),
-    INDEX idx_product_id (product_id),
-    INDEX idx_variant_id (variant_id)
+  orderItemID INT AUTO_INCREMENT PRIMARY KEY,
+  orderID INT NOT NULL,
+  variantID INT NOT NULL,
+  quantity INT NOT NULL,
+  price DECIMAL(12,2),
+  totalPrice DECIMAL(12,2),
+  FOREIGN KEY (orderID) REFERENCES orders(orderID),
+  FOREIGN KEY (variantID) REFERENCES product_variants(variantID)
 );
+
+-- PAYMENTS
+CREATE TABLE payments (
+  paymentID INT AUTO_INCREMENT PRIMARY KEY,
+  orderID INT NOT NULL,
+  method ENUM('VNPay', 'CreditCard', 'Momo') NOT NULL,
+  amount DECIMAL(12,2) NOT NULL,
+  status ENUM('pending', 'success', 'failed', 'refunded') DEFAULT 'pending',
+  transactionCode VARCHAR(100),
+  paymentDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  paymentDetails JSON,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (orderID) REFERENCES orders(orderID)
+);
+
+-- PAYMENT HISTORY
+CREATE TABLE payment_history (
+  historyID INT AUTO_INCREMENT PRIMARY KEY,
+  paymentID INT NOT NULL,
+  status ENUM('pending', 'success', 'failed', 'refunded'),
+  changedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  note TEXT,
+  gatewayResponse JSON,
+  FOREIGN KEY (paymentID) REFERENCES payments(paymentID)
+);
+
+-- ==================================
+-- SAMPLE DATA
+-- ==================================
+
+-- ROLES
+INSERT INTO roles (roleName) VALUES ('customer'), ('admin');
+
+-- MEMBERSHIP LEVELS
+INSERT INTO membership_levels (levelName, minSpent, discountRate, bonusRate, description)
+VALUES
+('Bronze', 0, 0.00, 1.00, 'Cấp mặc định cho người mới'),
+('Silver', 500, 2.00, 1.50, 'Tăng 2% giảm giá và 1.5x điểm thưởng'),
+('Gold', 1500, 5.00, 2.00, 'Giảm 5%, thưởng 2x'),
+('Platinum', 5000, 10.00, 3.00, 'Khách hàng thân thiết cao cấp');
+
+-- USERS
+INSERT INTO users (name, email, passwordHash, roleID) VALUES
+('Alice', 'alice@mail.com', 'hash1', 1),
+('Bob', 'bob@mail.com', 'hash2', 2);
+
+-- ADMINS
+INSERT INTO admins (userID, department, position) VALUES (2, 'Operations', 'System Admin');
+
+-- CUSTOMERS
+INSERT INTO customers (userID, phone, totalSpent, levelID, address)
+VALUES (1, '0123456789', 300.00, 1, '123 Main St');
+
+-- CATEGORIES
+INSERT INTO categories (name) VALUES ('Electronics'), ('Clothing');
+
+-- PRODUCTS
+INSERT INTO products (name, description, categoryID, createdByAdminID)
+VALUES ('Smartphone', 'Latest smartphone with 5G', 1, 1),
+('T-Shirt', 'Cotton T-shirt', 2, 1);
+
+-- PRODUCT VARIANTS
+INSERT INTO product_variants (productID, sku, price, size, color)
+VALUES (1, 'SPH-001', 500.00, NULL, 'Black'),
+(2, 'TSH-001', 20.00, 'M', 'White');
+
+-- STOCKS
+INSERT INTO stocks (variantID, currentQuantity, changeAmount, changeType, note, adminID)
+VALUES (1, 50, 50, 'import', 'Initial stock', 1),
+(2, 100, 100, 'import', 'Initial stock', 1);
+
+-- ORDERS
+INSERT INTO orders (customerID, status, totalAmount)
+VALUES (1, 'paid', 520.00);
+
+-- ORDER ITEMS
+INSERT INTO order_items (orderID, variantID, quantity, price, totalPrice)
+VALUES (1, 1, 1, 500.00, 500.00),
+(1, 2, 1, 20.00, 20.00);
+
+-- PAYMENTS
+INSERT INTO payments (orderID, method, amount, status, transactionCode)
+VALUES (1, 'VNPay', 520.00, 'success', 'VN123456789');
+
+-- PAYMENT HISTORY
+INSERT INTO payment_history (paymentID, status, note)
+VALUES (1, 'success', 'Payment confirmed via VNPay');
+

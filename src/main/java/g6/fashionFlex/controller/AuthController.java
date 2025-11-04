@@ -113,6 +113,7 @@ public class AuthController {
     }
 
     // Handle form-based login (traditional form submission)
+    
     @PostMapping("/login")
     public String processLogin(@RequestParam String email,
                               @RequestParam String password,
