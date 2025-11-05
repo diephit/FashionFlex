@@ -1,162 +1,133 @@
 package g6.fashionFlex.entity;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "orders")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Order {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "orderID")
+    private Integer orderID;
 
-    @Column(unique = true, nullable = false)
-    private String orderNumber;
+    @ManyToOne
+    @JoinColumn(name = "customerID", nullable = false)
+    private Customer customer;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "orderDate")
+    private LocalDateTime orderDate;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderItem> orderItems = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", columnDefinition = "ENUM('pending','paid','shipped','completed','canceled') DEFAULT 'pending'")
+    private OrderStatus status;
 
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal subtotal;
-
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal shippingCost = BigDecimal.ZERO;
-
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal tax = BigDecimal.ZERO;
-
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal discount = BigDecimal.ZERO;
-
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(name = "totalAmount", precision = 12, scale = 2)
     private BigDecimal totalAmount;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private OrderStatus status = OrderStatus.PENDING;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private PaymentMethod paymentMethod;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private PaymentStatus paymentStatus = PaymentStatus.PENDING;
-
-    // Shipping information
-    @Column(nullable = false)
-    private String shippingName;
-
-    @Column(nullable = false)
-    private String shippingPhone;
-
-    @Column(nullable = false, length = 500)
-    private String shippingAddress;
-
-    @Column(length = 100)
-    private String shippingCity;
-
-    @Column(length = 100)
-    private String shippingState;
-
-    @Column(length = 20)
-    private String shippingZipCode;
-
-    @Column(length = 100)
-    private String shippingCountry;
-
-    @Column(length = 1000)
-    private String notes;
-
-    @Column(name = "tracking_number")
-    private String trackingNumber;
-
-    @Column(name = "shipped_at")
-    private LocalDateTime shippedAt;
-
-    @Column(name = "delivered_at")
-    private LocalDateTime deliveredAt;
-
-    @Column(name = "cancelled_at")
-    private LocalDateTime cancelledAt;
-
-    @Column(name = "cancellation_reason", length = 500)
-    private String cancellationReason;
-
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "createdAt")
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
-    @Column(name = "updated_at")
+    @Column(name = "updatedAt")
     private LocalDateTime updatedAt;
 
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderItem> orderItems;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<Payment> payments;
+
     @PrePersist
-    private void generateOrderNumber() {
-        if (orderNumber == null) {
-            orderNumber = "ORD-" + System.currentTimeMillis();
+    protected void onCreate() {
+        orderDate = LocalDateTime.now();
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+        if (status == null) {
+            status = OrderStatus.pending;
         }
     }
 
-    public void calculateTotalAmount() {
-        this.totalAmount = subtotal
-                .add(shippingCost)
-                .add(tax)
-                .subtract(discount);
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
     }
 
-    public void addOrderItem(OrderItem item) {
-        orderItems.add(item);
-        item.setOrder(this);
+    public Order() {
     }
 
-    public void removeOrderItem(OrderItem item) {
-        orderItems.remove(item);
-        item.setOrder(null);
+    public Integer getOrderID() {
+        return orderID;
     }
 
-    // Order status enum
+    public void setOrderID(Integer orderID) {
+        this.orderID = orderID;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public LocalDateTime getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(LocalDateTime orderDate) {
+        this.orderDate = orderDate;
+    }
+
+    public OrderStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(OrderStatus status) {
+        this.status = status;
+    }
+
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+    public List<OrderItem> getOrderItems() {
+        return orderItems;
+    }
+
+    public void setOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
+    }
+
+    public List<Payment> getPayments() {
+        return payments;
+    }
+
+    public void setPayments(List<Payment> payments) {
+        this.payments = payments;
+    }
+
     public enum OrderStatus {
-        PENDING,
-        CONFIRMED,
-        PROCESSING,
-        SHIPPED,
-        DELIVERED,
-        CANCELLED,
-        REFUNDED
-    }
-
-    // Payment method enum
-    public enum PaymentMethod {
-        CASH_ON_DELIVERY,
-        CREDIT_CARD,
-        DEBIT_CARD,
-        PAYPAL,
-        BANK_TRANSFER
-    }
-
-    // Payment status enum
-    public enum PaymentStatus {
-        PENDING,
-        PAID,
-        FAILED,
-        REFUNDED
+        pending, paid, shipped, completed, canceled
     }
 }

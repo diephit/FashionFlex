@@ -1,7 +1,8 @@
 package g6.fashionFlex.security;
 
-import g6.fashionFlex.entity.User;
-import g6.fashionFlex.repository.UserRepository;
+import java.util.Collections;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,8 +12,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import g6.fashionFlex.entity.User;
+import g6.fashionFlex.repository.UserRepository;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -26,38 +27,44 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
-        Set<GrantedAuthority> authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toSet());
+        String authority = "ROLE_" + user.getRole().getRoleName().name().toUpperCase();
+        Set<GrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority(authority));
+
+        boolean disabled = user.getStatus() != User.UserStatus.active;
+
+        String presentedPassword = "{noop}" + (user.getPassword() == null ? "" : user.getPassword());
 
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getEmail())
-                .password(user.getPassword())
+                .password(presentedPassword)
                 .authorities(authorities)
                 .accountExpired(false)
                 .accountLocked(false)
                 .credentialsExpired(false)
-                .disabled(!user.isEnabled())
+                .disabled(disabled)
                 .build();
     }
 
     @Transactional
     public UserDetails loadUserById(Long id) {
-        User user = userRepository.findById(id)
+        User user = userRepository.findById(id == null ? null : Integer.valueOf(id.intValue()))
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + id));
 
-        Set<GrantedAuthority> authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toSet());
+        String authority = "ROLE_" + user.getRole().getRoleName().name().toUpperCase();
+        Set<GrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority(authority));
+
+        boolean disabled = user.getStatus() != User.UserStatus.active;
+
+        String presentedPassword = "{noop}" + (user.getPassword() == null ? "" : user.getPassword());
 
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getEmail())
-                .password(user.getPassword())
+                .password(presentedPassword)
                 .authorities(authorities)
                 .accountExpired(false)
                 .accountLocked(false)
                 .credentialsExpired(false)
-                .disabled(!user.isEnabled())
+                .disabled(disabled)
                 .build();
     }
 }

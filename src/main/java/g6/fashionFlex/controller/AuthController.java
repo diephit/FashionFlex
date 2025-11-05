@@ -20,6 +20,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import g6.fashionFlex.repository.UserRepository;
+import g6.fashionFlex.entity.User;
+
 @Controller
 public class AuthController {
 
@@ -32,11 +35,15 @@ public class AuthController {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
+    @Autowired
+    private UserRepository userRepository;
+
     // Display login page
     @GetMapping("/login")
     public String showLoginPage(@RequestParam(required = false) String error,
                                 @RequestParam(required = false) String logout,
                                 @RequestParam(required = false) String registered,
+                                @RequestParam(required = false) String message,
                                 Model model) {
         if (error != null) {
             model.addAttribute("error", "Invalid email or password");
@@ -46,6 +53,9 @@ public class AuthController {
         }
         if (registered != null) {
             model.addAttribute("success", "Registration successful! Please login.");
+        }
+        if (message != null) {
+            model.addAttribute("message", message);
         }
         model.addAttribute("user", new RegisterRequest());
         return "login";
@@ -131,6 +141,21 @@ public class AuthController {
             redirectAttributes.addAttribute("error", "true");
             return "redirect:/login";
         }
+    }
+
+    @PostMapping("/forgot")
+    public String forgotPassword(@RequestParam String email, RedirectAttributes redirectAttributes) {
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            redirectAttributes.addFlashAttribute("message", "No account found for that email.");
+            return "redirect:/login";
+        }
+        // Demo: reset to a temporary password. In production, send email with token.
+        String temp = "123456";
+        user.setPassword(temp);
+        userRepository.save(user);
+        redirectAttributes.addFlashAttribute("message", "Temporary password has been set (demo): " + temp + ". Please sign in and change it.");
+        return "redirect:/login";
     }
 
     @GetMapping("/user/home")

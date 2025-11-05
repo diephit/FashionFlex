@@ -1,57 +1,82 @@
 package g6.fashionFlex.entity;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "order_items")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class OrderItem {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "orderItemID")
+    private Integer orderItemID;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "orderID", nullable = false)
     private Order order;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    @ManyToOne
+    @JoinColumn(name = "variantID", nullable = false)
+    private ProductVariant variant;
 
-    @Column(nullable = false)
+    @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(name = "price", precision = 12, scale = 2)
     private BigDecimal price;
 
-    @Column(name = "discount_price", precision = 10, scale = 2)
-    private BigDecimal discountPrice;
+    @Column(name = "totalPrice", precision = 12, scale = 2)
+    private BigDecimal totalPrice;
 
-    @Column(length = 50)
-    private String size;
-
-    @Column(length = 50)
-    private String color;
-
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal subtotal;
-
-    @PrePersist
-    @PreUpdate
-    private void calculateSubtotal() {
-        BigDecimal effectivePrice = discountPrice != null ? discountPrice : price;
-        this.subtotal = effectivePrice.multiply(BigDecimal.valueOf(quantity));
+    public OrderItem() {
     }
 
-    public BigDecimal getEffectivePrice() {
-        return discountPrice != null ? discountPrice : price;
+    public Integer getOrderItemID() {
+        return orderItemID;
+    }
+
+    public void setOrderItemID(Integer orderItemID) {
+        this.orderItemID = orderItemID;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    public ProductVariant getVariant() {
+        return variant;
+    }
+
+    public void setVariant(ProductVariant variant) {
+        this.variant = variant;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
     }
 }
