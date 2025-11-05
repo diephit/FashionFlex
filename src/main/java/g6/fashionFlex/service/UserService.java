@@ -1,21 +1,22 @@
 package g6.fashionFlex.service;
 
-import g6.fashionFlex.dto.RegisterRequest;
-import g6.fashionFlex.dto.UserDTO;
-import g6.fashionFlex.entity.Role;
-import g6.fashionFlex.entity.User;
-import g6.fashionFlex.exception.ResourceNotFoundException;
-import g6.fashionFlex.exception.UserAlreadyExistsException;
-import g6.fashionFlex.repository.RoleRepository;
-import g6.fashionFlex.repository.UserRepository;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
+import g6.fashionFlex.dto.RegisterRequest;
+import g6.fashionFlex.dto.UserDTO;
+import g6.fashionFlex.entity.Role;
+import g6.fashionFlex.entity.Role.RoleName;
+import g6.fashionFlex.entity.User;
+import g6.fashionFlex.exception.ResourceNotFoundException;
+import g6.fashionFlex.exception.UserAlreadyExistsException;
+import g6.fashionFlex.repository.RoleRepository;
+import g6.fashionFlex.repository.UserRepository;
 
 @Service
 public class UserService {
@@ -38,22 +39,20 @@ public class UserService {
 
         // Create new user
         User user = new User();
-        user.setFullName(registerRequest.getFullName());
+        user.setName(registerRequest.getFullName());
         user.setEmail(registerRequest.getEmail());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        user.setEnabled(true);
-        user.setProvider("local");
+        user.setStatus(User.UserStatus.active);
 
-        // Assign default role
-        Role userRole = roleRepository.findByName("ROLE_USER")
+        // Assign default role (customer)
+        Role userRole = roleRepository.findByRoleName(RoleName.customer)
                 .orElseGet(() -> {
-                    Role newRole = new Role("ROLE_USER");
+                    Role newRole = new Role();
+                    newRole.setRoleName(RoleName.customer);
                     return roleRepository.save(newRole);
                 });
 
-        Set<Role> roles = new HashSet<>();
-        roles.add(userRole);
-        user.setRoles(roles);
+        user.setRole(userRole);
 
         // Save user
         User savedUser = userRepository.save(user);
@@ -64,7 +63,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserDTO getUserById(Long id) {
-        User user = userRepository.findById(id)
+        User user = userRepository.findById(id == null ? null : Integer.valueOf(id.intValue()))
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
         return convertToDTO(user);
     }
@@ -83,18 +82,15 @@ public class UserService {
 
     private UserDTO convertToDTO(User user) {
         UserDTO dto = new UserDTO();
-        dto.setId(user.getId());
-        dto.setFullName(user.getFullName());
+        dto.setId(user.getUserID() == null ? null : user.getUserID().longValue());
+        dto.setFullName(user.getName());
         dto.setEmail(user.getEmail());
-        dto.setPhoneNumber(user.getPhoneNumber());
-        dto.setAddress(user.getAddress());
-        dto.setEnabled(user.isEnabled());
-        dto.setProvider(user.getProvider());
+        // Fields not present in the new schema are left null (phone, address, provider)
+        dto.setEnabled(user.getStatus() == User.UserStatus.active);
         dto.setCreatedAt(user.getCreatedAt());
 
-        Set<String> roleNames = user.getRoles().stream()
-                .map(Role::getName)
-                .collect(Collectors.toSet());
+        Set<String> roleNames = new HashSet<>();
+        roleNames.add("ROLE_" + user.getRole().getRoleName().name().toUpperCase());
         dto.setRoles(roleNames);
 
         return dto;
@@ -102,24 +98,23 @@ public class UserService {
 
     @Transactional
     public User createOrUpdateOAuth2User(String provider, String providerId, String email, String fullName) {
-        return userRepository.findByProviderAndProviderId(provider, providerId)
+        // Since provider fields are not part of the new schema, fall back to email-based lookup
+        return userRepository.findByEmail(email)
                 .orElseGet(() -> {
                     User newUser = new User();
-                    newUser.setProvider(provider);
-                    newUser.setProviderId(providerId);
                     newUser.setEmail(email);
-                    newUser.setFullName(fullName);
+                    newUser.setName(fullName);
                     newUser.setPassword(passwordEncoder.encode("OAUTH2_USER_" + System.currentTimeMillis()));
-                    newUser.setEnabled(true);
+                    newUser.setStatus(User.UserStatus.active);
 
-                    // Assign default role
-                    Role userRole = roleRepository.findByName("ROLE_USER")
-                            .orElseGet(() -> roleRepository.save(new Role("ROLE_USER")));
+                    Role userRole = roleRepository.findByRoleName(RoleName.customer)
+                            .orElseGet(() -> {
+                                Role r = new Role();
+                                r.setRoleName(RoleName.customer);
+                                return roleRepository.save(r);
+                            });
 
-                    Set<Role> roles = new HashSet<>();
-                    roles.add(userRole);
-                    newUser.setRoles(roles);
-
+                    newUser.setRole(userRole);
                     return userRepository.save(newUser);
                 });
     }

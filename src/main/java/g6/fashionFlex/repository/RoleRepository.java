@@ -1,13 +1,15 @@
 package g6.fashionFlex.repository;
 
-import g6.fashionFlex.entity.Role;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import g6.fashionFlex.entity.Role;
+import g6.fashionFlex.entity.Role.RoleName;
 
 @Repository
-public interface RoleRepository extends JpaRepository<Role, Long> {
+public interface RoleRepository extends JpaRepository<Role, Integer> {
 
-    Optional<Role> findByName(String name);
+    Optional<Role> findByRoleName(RoleName roleName);
 }

@@ -1,4 +1,4 @@
-package com.g6.fashionFlex.entity;
+package g6.fashionFlex.entity;
 
 
 import jakarta.persistence.*;

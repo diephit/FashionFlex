@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>My Account - Profile</title>
+	<link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+	<div class="container" style="max-width: 800px; margin: 40px auto;">
+		<div th:if="${message}" class="alert alert-info" th:text="${message}"></div>
+		<h2>My Account</h2>
+		<div>
+			<p><strong>Name:</strong> <span th:text="${user.name}"></span></p>
+			<p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+			<p><strong>Phone:</strong> <span th:text="${customer.phone}"></span></p>
+			<p><strong>Loyalty Points:</strong> <span th:text="${customer.loyaltyPoints}"></span></p>
+			<p><strong>Address:</strong> <span th:text="${customer.address}"></span></p>
+			<p><strong>Date of Birth:</strong> <span th:text="${customer.dateOfBirth}"></span></p>
+		</div>
+
+		<hr/>
+		<h3>Change Password</h3>
+		<form th:action="@{/profile/change-password}" method="post" style="max-width: 500px;">
+			<div style="margin-bottom: 12px;">
+				<label>Current Password</label>
+				<input type="password" name="currentPassword" required style="width:100%;padding:8px;" />
+			</div>
+			<div style="margin-bottom: 12px;">
+				<label>New Password (min 6 chars)</label>
+				<input type="password" name="newPassword" minlength="6" required style="width:100%;padding:8px;" />
+			</div>
+			<div style="margin-bottom: 12px;">
+				<label>Confirm New Password</label>
+				<input type="password" name="confirmPassword" minlength="6" required style="width:100%;padding:8px;" />
+			</div>
+			<button type="submit" style="padding:8px 16px;">Update Password</button>
+		</form>
+	</div>
+</body>
+</html>
