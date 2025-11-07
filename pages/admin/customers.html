@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Customers Management - Admin</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" href="../../images/icons/favicon.png"/>
+	<link rel="stylesheet" type="text/css" href="../../vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="../../fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="../../fonts/iconic/css/material-design-iconic-font.min.css">
+	<link rel="stylesheet" type="text/css" href="../../css/util.css">
+	<link rel="stylesheet" type="text/css" href="../../css/main.css">
+	<link rel="stylesheet" type="text/css" href="../../assets/css/pages/admin-styles.css">
+</head>
+<body>
+
+	<div class="admin-wrapper">
+		<aside class="admin-sidebar">
+			<div class="admin-sidebar-header">
+				<h3><i class="zmdi zmdi-shield-security"></i> Admin Panel</h3>
+			</div>
+			<ul class="admin-sidebar-menu">
+				<li><a href="dashboard.html"><i class="fa fa-tachometer"></i> Dashboard</a></li>
+				<li><a href="products.html"><i class="fa fa-shopping-bag"></i> Products</a></li>
+				<li><a href="orders.html"><i class="fa fa-shopping-cart"></i> Orders</a></li>
+				<li><a href="customers.html" class="active"><i class="fa fa-users"></i> Customers</a></li>
+				<li><a href="categories.html"><i class="fa fa-folder"></i> Categories</a></li>
+				<li><a href="coupons.html"><i class="fa fa-tag"></i> Coupons</a></li>
+				<li><a href="reviews.html"><i class="fa fa-star"></i> Reviews</a></li>
+				<li><a href="settings.html"><i class="fa fa-cog"></i> Settings</a></li>
+				<li><a href="../../index.html"><i class="fa fa-sign-out"></i> Back to Store</a></li>
+			</ul>
+		</aside>
+
+		<main class="admin-main">
+			<div class="admin-topbar">
+				<h2>Customers Management</h2>
+				<div class="admin-user-info">
+					<span>Admin User</span>
+					<img src="https://ui-avatars.com/api/?name=Admin+User&size=40&background=667eea&color=fff" alt="Admin">
+				</div>
+			</div>
+
+			<div class="admin-content">
+				<div class="dashboard-cards">
+					<div class="dashboard-card">
+						<div class="dashboard-card-icon primary">
+							<i class="fa fa-users"></i>
+						</div>
+						<h4>Total Customers</h4>
+						<p class="value">3,567</p>
+						<p class="change positive"><i class="fa fa-arrow-up"></i> 15.7% this month</p>
+					</div>
+					<div class="dashboard-card">
+						<div class="dashboard-card-icon success">
+							<i class="fa fa-user-plus"></i>
+						</div>
+						<h4>New This Month</h4>
+						<p class="value">124</p>
+					</div>
+					<div class="dashboard-card">
+						<div class="dashboard-card-icon info">
+							<i class="fa fa-star"></i>
+						</div>
+						<h4>VIP Customers</h4>
+						<p class="value">256</p>
+					</div>
+					<div class="dashboard-card">
+						<div class="dashboard-card-icon warning">
+							<i class="fa fa-ban"></i>
+						</div>
+						<h4>Blocked</h4>
+						<p class="value">12</p>
+					</div>
+				</div>
+
+				<div style="display: flex; justify-content: space-between; margin-bottom: 25px;">
+					<div style="display: flex; gap: 10px;">
+						<input type="text" id="tableSearch" placeholder="Search customers..." style="padding: 10px 15px; border: 1px solid #ddd; border-radius: 4px; width: 300px;">
+						<select style="padding: 10px 15px; border: 1px solid #ddd; border-radius: 4px;">
+							<option>All Customers</option>
+							<option>VIP</option>
+							<option>Regular</option>
+							<option>New</option>
+						</select>
+					</div>
+					<button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
+						<i class="fa fa-download"></i> Export
+					</button>
+				</div>
+
+				<div class="admin-table-wrapper">
+					<div class="admin-table-header">
+						<h3>All Customers (3,567)</h3>
+					</div>
+
+					<table class="admin-table">
+						<thead>
+							<tr>
+								<th>Customer</th>
+								<th>Email</th>
+								<th>Phone</th>
+								<th>Orders</th>
+								<th>Total Spent</th>
+								<th>Status</th>
+								<th>Joined</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>
+									<div style="display: flex; align-items: center; gap: 10px;">
+										<img src="https://ui-avatars.com/api/?name=John+Doe&size=40" style="border-radius: 50%;">
+										<strong>John Doe</strong>
+									</div>
+								</td>
+								<td>john@example.com</td>
+								<td>+1 234 567 8900</td>
+								<td>12 orders</td>
+								<td><strong>$1,245.00</strong></td>
+								<td><span class="status-badge completed">VIP</span></td>
+								<td>Jan 15, 2023</td>
+								<td>
+									<button class="action-btn view"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit"><i class="fa fa-edit"></i></button>
+									<button class="action-btn delete" data-item="John Doe"><i class="fa fa-ban"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div style="display: flex; align-items: center; gap: 10px;">
+										<img src="https://ui-avatars.com/api/?name=Jane+Smith&size=40" style="border-radius: 50%;">
+										<strong>Jane Smith</strong>
+									</div>
+								</td>
+								<td>jane@example.com</td>
+								<td>+1 234 567 8901</td>
+								<td>5 orders</td>
+								<td><strong>$456.00</strong></td>
+								<td><span class="status-badge processing">Regular</span></td>
+								<td>Mar 20, 2023</td>
+								<td>
+									<button class="action-btn view"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit"><i class="fa fa-edit"></i></button>
+									<button class="action-btn delete" data-item="Jane Smith"><i class="fa fa-ban"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div style="display: flex; align-items: center; gap: 10px;">
+										<img src="https://ui-avatars.com/api/?name=Mike+Johnson&size=40" style="border-radius: 50%;">
+										<strong>Mike Johnson</strong>
+									</div>
+								</td>
+								<td>mike@example.com</td>
+								<td>+1 234 567 8902</td>
+								<td>1 order</td>
+								<td><strong>$89.00</strong></td>
+								<td><span class="status-badge pending">New</span></td>
+								<td>Jan 10, 2024</td>
+								<td>
+									<button class="action-btn view"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit"><i class="fa fa-edit"></i></button>
+									<button class="action-btn delete" data-item="Mike Johnson"><i class="fa fa-ban"></i></button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<button class="admin-mobile-toggle"><i class="fa fa-bars"></i></button>
+
+	<script src="../../vendor/jquery/jquery-3.2.1.min.js"></script>
+	<script src="../../vendor/bootstrap/js/popper.js"></script>
+	<script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="../../vendor/sweetalert/sweetalert.min.js"></script>
+	<script src="../../assets/js/pages/admin.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Verify Token')}"></head>
+<body class="animsition">
+
+<!-- Header -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<!-- Verify Token Section -->
+<div class="forgot-container">
+    <div class="forgot-box">
+        <div class="forgot-header">
+            <h2>Verify Your Email</h2>
+            <p>A verification code has been sent to your email address. Please enter the code below to proceed.</p>
+        </div>
+
+        <!-- Success Message -->
+        <div th:if="${message}" class="alert alert-success">
+            <span th:text="${message}"></span>
+        </div>
+
+        <!-- Error Message -->
+        <div th:if="${error}" class="alert alert-danger">
+            <span th:text="${error}"></span>
+        </div>
+
+        <form th:action="@{/verify-token}" method="post">
+            <div class="form-group">
+                <input type="text" name="token" class="form-input" placeholder="Verification Code" required autofocus>
+            </div>
+
+            <button type="submit" class="btn-submit">
+                Verify
+            </button>
+        </form>
+
+        <div class="back-link">
+            <a th:href="@{/login}">Back to Login</a>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<!-- Scripts -->
+<div th:replace="~{fragments/header :: scripts}"></div>
+
+</body>
+</html>

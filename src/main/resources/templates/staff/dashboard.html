@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Staff Dashboard - FashionFlex</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" href="../../images/icons/favicon.png"/>
+	<link rel="stylesheet" href="../../vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../../fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="../../fonts/iconic/css/material-design-iconic-font.min.css">
+	<link rel="stylesheet" href="../../css/util.css">
+	<link rel="stylesheet" href="../../css/main.css">
+	<link rel="stylesheet" href="../../assets/css/pages/admin-styles.css">
+</head>
+<body>
+
+	<div class="admin-wrapper">
+		<aside class="admin-sidebar">
+			<div class="admin-sidebar-header">
+				<h3><i class="zmdi zmdi-badge-check"></i> Staff Panel</h3>
+			</div>
+			<ul class="admin-sidebar-menu">
+				<li><a href="dashboard.html" class="active"><i class="fa fa-tachometer"></i> Dashboard</a></li>
+				<li><a href="orders.html"><i class="fa fa-shopping-cart"></i> Orders</a></li>
+				<li><a href="inventory.html"><i class="fa fa-cubes"></i> Inventory</a></li>
+				<li><a href="customers.html"><i class="fa fa-users"></i> Customers</a></li>
+				<li><a href="../../index.html"><i class="fa fa-sign-out"></i> Back to Store</a></li>
+			</ul>
+		</aside>
+
+		<main class="admin-main">
+			<div class="admin-topbar">
+				<h2>Staff Dashboard</h2>
+				<div class="admin-user-info">
+					<span>Staff Member</span>
+					<img src="https://ui-avatars.com/api/?name=Staff+User&size=40&background=28a745&color=fff" alt="Staff">
+				</div>
+			</div>
+
+			<div class="admin-content">
+				<div class="dashboard-cards">
+					<div class="dashboard-card">
+						<div class="dashboard-card-icon pending">
+							<i class="fa fa-clock-o"></i>
+						</div>
+						<h4>Pending Orders</h4>
+						<p class="value">45</p>
+						<p style="font-size: 13px; margin-top: 8px;">Need processing</p>
+					</div>
+					<div class="dashboard-card">
+						<div class="dashboard-card-icon processing">
+							<i class="fa fa-shopping-cart"></i>
+						</div>
+						<h4>Today's Orders</h4>
+						<p class="value">28</p>
+						<p style="font-size: 13px; margin-top: 8px;">Orders today</p>
+					</div>
+					<div class="dashboard-card">
+						<div class="dashboard-card-icon warning">
+							<i class="fa fa-exclamation-triangle"></i>
+						</div>
+						<h4>Low Stock Items</h4>
+						<p class="value">12</p>
+						<p style="font-size: 13px; margin-top: 8px;">Need restock</p>
+					</div>
+					<div class="dashboard-card">
+						<div class="dashboard-card-icon info">
+							<i class="fa fa-users"></i>
+						</div>
+						<h4>Customer Inquiries</h4>
+						<p class="value">7</p>
+						<p style="font-size: 13px; margin-top: 8px;">Pending responses</p>
+					</div>
+				</div>
+
+				<div class="admin-table-wrapper">
+					<div class="admin-table-header">
+						<h3>Orders to Process</h3>
+						<a href="orders.html" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">View All</a>
+					</div>
+					<table class="admin-table">
+						<thead>
+							<tr>
+								<th>Order ID</th>
+								<th>Customer</th>
+								<th>Date</th>
+								<th>Total</th>
+								<th>Status</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><strong>#ORD-2024-001</strong></td>
+								<td>John Doe</td>
+								<td>Jan 15, 2024</td>
+								<td>$156.40</td>
+								<td><span class="status-badge pending">Pending</span></td>
+								<td>
+									<button class="action-btn edit"><i class="fa fa-check"></i></button>
+									<button class="action-btn view"><i class="fa fa-eye"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td><strong>#ORD-2024-002</strong></td>
+								<td>Jane Smith</td>
+								<td>Jan 15, 2024</td>
+								<td>$89.50</td>
+								<td><span class="status-badge pending">Pending</span></td>
+								<td>
+									<button class="action-btn edit"><i class="fa fa-check"></i></button>
+									<button class="action-btn view"><i class="fa fa-eye"></i></button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<button class="admin-mobile-toggle"><i class="fa fa-bars"></i></button>
+
+	<script src="../../vendor/jquery/jquery-3.2.1.min.js"></script>
+	<script src="../../vendor/bootstrap/js/popper.js"></script>
+	<script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="../../vendor/sweetalert/sweetalert.min.js"></script>
+	<script src="../../assets/js/pages/admin.js"></script>
+
+</body>
+</html>

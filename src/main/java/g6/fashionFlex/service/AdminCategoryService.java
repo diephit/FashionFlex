@@ -91,7 +91,8 @@ public class AdminCategoryService {
         dto.setName(category.getName());
         dto.setDescription(category.getDescription());
         dto.setActive(category.getActive());
-        dto.setProductCount(category.getProducts() != null ? category.getProducts().size() : 0);
+        // Use productRepository to count products instead of accessing lazy-loaded collection
+        dto.setProductCount((int) productRepository.countByCategoryId(category.getId()));
         dto.setCreatedAt(category.getCreatedAt());
         dto.setUpdatedAt(category.getUpdatedAt());
         return dto;

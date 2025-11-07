@@ -1,6 +1,8 @@
 package g6.fashionFlex.service;
 
+import g6.fashionFlex.dto.ChangePasswordRequest;
 import g6.fashionFlex.dto.RegisterRequest;
+import g6.fashionFlex.dto.UpdateProfileRequest;
 import g6.fashionFlex.dto.UserDTO;
 import g6.fashionFlex.entity.Role;
 import g6.fashionFlex.entity.User;
@@ -90,6 +92,7 @@ public class UserService {
         dto.setAddress(user.getAddress());
         dto.setEnabled(user.isEnabled());
         dto.setProvider(user.getProvider());
+        dto.setProfileImageUrl(user.getProfileImageUrl());
         dto.setCreatedAt(user.getCreatedAt());
 
         Set<String> roleNames = user.getRoles().stream()
@@ -122,5 +125,62 @@ public class UserService {
 
                     return userRepository.save(newUser);
                 });
+    }
+
+    @Transactional
+    public UserDTO updateProfile(Long userId, UpdateProfileRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+
+        // Check if email is being changed and if new email already exists
+        if (!user.getEmail().equals(request.getEmail()) && userRepository.existsByEmail(request.getEmail())) {
+            throw new UserAlreadyExistsException("Email already in use: " + request.getEmail());
+        }
+
+        // Update user information
+        user.setFullName(request.getFullName());
+        user.setEmail(request.getEmail());
+        user.setPhoneNumber(request.getPhoneNumber());
+        user.setAddress(request.getAddress());
+
+        // Update profile image if provided
+        if (request.getProfileImageUrl() != null && !request.getProfileImageUrl().isEmpty()) {
+            user.setProfileImageUrl(request.getProfileImageUrl());
+        }
+
+        User updatedUser = userRepository.save(user);
+        return convertToDTO(updatedUser);
+    }
+
+    @Transactional
+    public void changePassword(Long userId, ChangePasswordRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+
+        // Check if user is OAuth2 user (Google, Facebook, etc.)
+        boolean isOAuth2User = user.getProvider() != null && !user.getProvider().equals("local");
+
+        // Check if OAuth2 user has a temporary password (never set a real password)
+        boolean hasTemporaryPassword = isOAuth2User && user.getPassword() != null && user.getPassword().startsWith("$2a$") && user.getPassword().contains("OAUTH2_USER_");
+
+        // If OAuth2 user without password or with temporary password, allow setting password without current password
+        if (isOAuth2User && (request.getCurrentPassword() == null || request.getCurrentPassword().isEmpty())) {
+            // Allow OAuth2 users to set password for the first time
+            // No need to verify current password
+        } else {
+            // Verify current password for local users or OAuth2 users changing existing password
+            if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+                throw new IllegalArgumentException("Current password is incorrect");
+            }
+        }
+
+        // Verify new password and confirm password match
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new IllegalArgumentException("New password and confirm password do not match");
+        }
+
+        // Update password
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
     }
 }

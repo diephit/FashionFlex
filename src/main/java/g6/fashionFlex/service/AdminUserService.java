@@ -90,7 +90,6 @@ public class AdminUserService {
 
         user.setFullName(userDTO.getFullName());
         user.setPhoneNumber(userDTO.getPhoneNumber());
-        user.setAddress(userDTO.getAddress());
 
         User updatedUser = userRepository.save(user);
         return convertToDTO(updatedUser);
@@ -113,7 +112,6 @@ public class AdminUserService {
         dto.setFullName(user.getFullName());
         dto.setEmail(user.getEmail());
         dto.setPhoneNumber(user.getPhoneNumber());
-        dto.setAddress(user.getAddress());
         dto.setEnabled(user.isEnabled());
         dto.setProvider(user.getProvider());
         dto.setCreatedAt(user.getCreatedAt());

@@ -1,1 +1,226 @@
-<h1>hehehehe</h1>
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Page Not Found - FashionFlex</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" th:href="@{/images/icons/favicon.png}"/>
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/bootstrap/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/font-awesome-4.7.0/css/font-awesome.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/iconic/css/material-design-iconic-font.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/linearicons-v1.0.0/icon-font.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/animate/animate.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/animsition/css/animsition.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/util.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
+	<style>
+		.error-wrapper {
+			min-height: 100vh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			padding: 40px 15px;
+		}
+		.error-container {
+			background: #ffffff;
+			border-radius: 12px;
+			padding: 60px 40px;
+			max-width: 600px;
+			width: 100%;
+			text-align: center;
+			box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+			animation: slideUp 0.6s ease;
+		}
+		@keyframes slideUp {
+			from {
+				opacity: 0;
+				transform: translateY(30px);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+		.error-code {
+			font-family: Poppins-Bold;
+			font-size: 120px;
+			color: #717fe0;
+			margin: 0;
+			line-height: 1;
+			text-shadow: 4px 4px 0px rgba(113, 127, 224, 0.2);
+		}
+		.error-title {
+			font-family: Poppins-Bold;
+			font-size: 32px;
+			color: #333333;
+			margin: 20px 0 15px 0;
+		}
+		.error-message {
+			font-family: Poppins-Regular;
+			font-size: 16px;
+			color: #666666;
+			line-height: 1.8;
+			margin-bottom: 35px;
+		}
+		.error-actions {
+			display: flex;
+			gap: 15px;
+			justify-content: center;
+			flex-wrap: wrap;
+		}
+		.error-btn {
+			padding: 15px 35px;
+			border-radius: 4px;
+			font-family: Poppins-Medium;
+			font-size: 15px;
+			text-decoration: none;
+			display: inline-flex;
+			align-items: center;
+			gap: 10px;
+			transition: all 0.4s;
+			-webkit-transition: all 0.4s;
+			-o-transition: all 0.4s;
+			-moz-transition: all 0.4s;
+		}
+		.error-btn-primary {
+			background: #717fe0;
+			color: #ffffff;
+		}
+		.error-btn-primary:hover {
+			background: #5a67d8;
+			transform: translateY(-2px);
+			-webkit-transform: translateY(-2px);
+			-moz-transform: translateY(-2px);
+			-ms-transform: translateY(-2px);
+			-o-transform: translateY(-2px);
+			box-shadow: 0 4px 15px rgba(113, 127, 224, 0.4);
+			color: #ffffff;
+		}
+		.error-btn-secondary {
+			background: transparent;
+			color: #717fe0;
+			border: 2px solid #717fe0;
+			padding: 13px 33px;
+		}
+		.error-btn-secondary:hover {
+			background: #717fe0;
+			color: #ffffff;
+		}
+		.error-icon {
+			width: 100px;
+			height: 100px;
+			margin: 0 auto 30px;
+			background: #f8f9ff;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 50px;
+			color: #717fe0;
+		}
+		.error-suggestions {
+			margin-top: 40px;
+			padding-top: 30px;
+			border-top: 1px solid #e6e6e6;
+		}
+		.error-suggestions h3 {
+			font-family: Poppins-Medium;
+			font-size: 18px;
+			color: #333333;
+			margin-bottom: 15px;
+		}
+		.error-links {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			gap: 20px;
+			list-style: none;
+			padding: 0;
+			margin: 0;
+		}
+		.error-links li a {
+			font-family: Poppins-Regular;
+			font-size: 14px;
+			color: #717fe0;
+			text-decoration: none;
+			transition: all 0.4s;
+			-webkit-transition: all 0.4s;
+			-o-transition: all 0.4s;
+			-moz-transition: all 0.4s;
+		}
+		.error-links li a:hover {
+			color: #5a67d8;
+			text-decoration: underline;
+		}
+		@media (max-width: 768px) {
+			.error-container {
+				padding: 40px 25px;
+			}
+			.error-code {
+				font-size: 80px;
+			}
+			.error-title {
+				font-size: 24px;
+			}
+			.error-message {
+				font-size: 15px;
+			}
+			.error-actions {
+				flex-direction: column;
+			}
+			.error-btn {
+				width: 100%;
+				justify-content: center;
+			}
+		}
+	</style>
+</head>
+<body>
+
+	<div class="error-wrapper">
+		<div class="error-container">
+			<div class="error-icon">
+				<i class="fa fa-search"></i>
+			</div>
+
+			<h1 class="error-code">404</h1>
+			<h2 class="error-title">Oops! Page Not Found</h2>
+			<p class="error-message">
+				The page you're looking for doesn't exist or has been moved.
+				Don't worry, it happens to the best of us!
+			</p>
+
+			<div class="error-actions">
+				<a th:href="@{/index.html" class="error-btn error-btn-primary">
+					<i class="fa fa-home"></i>
+					Back to Home
+				</a>
+				<a th:href="@{/product.html" class="error-btn error-btn-secondary">
+					<i class="fa fa-shopping-bag"></i>
+					Continue Shopping
+				</a>
+			</div>
+
+			<div class="error-suggestions">
+				<h3>Popular Pages</h3>
+				<ul class="error-links">
+					<li><a th:href="@{/index.html">Home</a></li>
+					<li><a th:href="@{/product.html">Shop</a></li>
+					<li><a href="sale.html">Sale</a></li>
+					<li><a th:href="@{/about.html">About Us</a></li>
+					<li><a th:href="@{/contact.html">Contact</a></li>
+					<li><a href="info/faq.html">FAQs</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<script th:src="@{/vendor/jquery/jquery-3.2.1.min.js}"></script>
+	<script th:src="@{/vendor/animsition/js/animsition.min.js}"></script>
+	<script th:src="@{/vendor/bootstrap/js/popper.js}"></script>
+	<script th:src="@{/vendor/bootstrap/js/bootstrap.min.js}"></script>
+	<script th:src="@{/js/main.js}"></script>
+
+</body>
+</html>

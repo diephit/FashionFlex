@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head(${pageTitle ?: 'Home'})}">
+</head>
+<body class="animsition">
+
+<!-- Header -->
+<div th:replace="~{fragments/header :: header(${activeMenu ?: 'home'})}"></div>
+
+<!-- Cart Sidebar -->
+<div th:replace="~{fragments/header :: cart}"></div>
+
+<!-- Main Content -->
+<main th:fragment="content">
+	<!-- This will be replaced by page-specific content -->
+</main>
+
+<!-- Footer -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<!-- Back to top -->
+<div th:replace="~{fragments/footer :: back-to-top}"></div>
+
+<!-- Scripts -->
+<div th:replace="~{fragments/header :: scripts}"></div>
+
+</body>
+</html>

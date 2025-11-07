@@ -1,21 +1,27 @@
 package g6.fashionFlex.service;
 
 import g6.fashionFlex.dto.ProductDTO;
+import g6.fashionFlex.entity.Brand;
 import g6.fashionFlex.entity.Category;
 import g6.fashionFlex.entity.Product;
+import g6.fashionFlex.repository.BrandRepository;
 import g6.fashionFlex.repository.CategoryRepository;
 import g6.fashionFlex.repository.ProductRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@Slf4j
 public class AdminProductService {
 
     @Autowired
@@ -23,6 +29,12 @@ public class AdminProductService {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private BrandRepository brandRepository;
+
+    @Autowired
+    private FileUploadService fileUploadService;
 
     public Page<ProductDTO> getAllProducts(Pageable pageable) {
         return productRepository.findAll(pageable).map(this::convertToDTO);
@@ -40,13 +52,32 @@ public class AdminProductService {
         return convertToDTO(product);
     }
 
-    public ProductDTO createProduct(ProductDTO productDTO) {
+    public ProductDTO createProduct(ProductDTO productDTO) throws IOException {
         Product product = convertToEntity(productDTO);
+
+        // Generate SKU if not provided
+        if (product.getSku() == null || product.getSku().trim().isEmpty()) {
+            product.setSku(generateSKU(product.getName()));
+        }
+
+        // Handle main image upload
+        if (productDTO.getMainImage() != null && !productDTO.getMainImage().isEmpty()) {
+            String imagePath = fileUploadService.uploadFile(productDTO.getMainImage(), "products");
+            product.setImageUrl(imagePath);
+        }
+
+        // Handle additional images upload
+        if (productDTO.getAdditionalImagesFiles() != null && !productDTO.getAdditionalImagesFiles().isEmpty()) {
+            var uploadedPaths = fileUploadService.uploadFiles(productDTO.getAdditionalImagesFiles(), "products");
+            product.setAdditionalImages(new HashSet<>(uploadedPaths));
+        }
+
         Product savedProduct = productRepository.save(product);
+        log.info("Product created successfully with id: {}", savedProduct.getId());
         return convertToDTO(savedProduct);
     }
 
-    public ProductDTO updateProduct(Long id, ProductDTO productDTO) {
+    public ProductDTO updateProduct(Long id, ProductDTO productDTO) throws IOException {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
 
@@ -56,10 +87,12 @@ public class AdminProductService {
         product.setDiscountPrice(productDTO.getDiscountPrice());
         product.setStock(productDTO.getStock());
         product.setSku(productDTO.getSku());
-        product.setImageUrl(productDTO.getImageUrl());
-        product.setAdditionalImages(productDTO.getAdditionalImages());
         product.setActive(productDTO.getActive());
         product.setFeatured(productDTO.getFeatured());
+
+        // Parse and update sizes and colors
+        productDTO.parseSizesInput();
+        productDTO.parseColorsInput();
         product.setAvailableSizes(productDTO.getAvailableSizes());
         product.setAvailableColors(productDTO.getAvailableColors());
 
@@ -69,7 +102,39 @@ public class AdminProductService {
             product.setCategory(category);
         }
 
+        // Update brand
+        if (productDTO.getBrandId() != null) {
+            Brand brand = brandRepository.findById(productDTO.getBrandId())
+                    .orElseThrow(() -> new RuntimeException("Brand not found with id: " + productDTO.getBrandId()));
+            product.setBrand(brand);
+        } else {
+            product.setBrand(null);
+        }
+
+        // Handle main image upload if new image provided
+        if (productDTO.getMainImage() != null && !productDTO.getMainImage().isEmpty()) {
+            // Delete old image if exists
+            if (product.getImageUrl() != null) {
+                fileUploadService.deleteFile(product.getImageUrl());
+            }
+            // Upload new image
+            String imagePath = fileUploadService.uploadFile(productDTO.getMainImage(), "products");
+            product.setImageUrl(imagePath);
+        }
+
+        // Handle additional images upload if provided
+        if (productDTO.getAdditionalImagesFiles() != null && !productDTO.getAdditionalImagesFiles().isEmpty()) {
+            // Delete old additional images
+            if (product.getAdditionalImages() != null) {
+                product.getAdditionalImages().forEach(fileUploadService::deleteFile);
+            }
+            // Upload new images
+            var uploadedPaths = fileUploadService.uploadFiles(productDTO.getAdditionalImagesFiles(), "products");
+            product.setAdditionalImages(new HashSet<>(uploadedPaths));
+        }
+
         Product updatedProduct = productRepository.save(product);
+        log.info("Product updated successfully with id: {}", updatedProduct.getId());
         return convertToDTO(updatedProduct);
     }
 
@@ -128,6 +193,15 @@ public class AdminProductService {
             dto.setCategoryName(product.getCategory().getName());
         }
 
+        if (product.getBrand() != null) {
+            dto.setBrandId(product.getBrand().getId());
+            dto.setBrandName(product.getBrand().getName());
+        }
+
+        // Set sizes and colors as comma-separated strings for form
+        dto.setSizesInput(dto.getSizesAsString());
+        dto.setColorsInput(dto.getColorsAsString());
+
         return dto;
     }
 
@@ -143,6 +217,10 @@ public class AdminProductService {
         product.setAdditionalImages(dto.getAdditionalImages());
         product.setActive(dto.getActive() != null ? dto.getActive() : true);
         product.setFeatured(dto.getFeatured() != null ? dto.getFeatured() : false);
+
+        // Parse sizes and colors from input
+        dto.parseSizesInput();
+        dto.parseColorsInput();
         product.setAvailableSizes(dto.getAvailableSizes());
         product.setAvailableColors(dto.getAvailableColors());
 
@@ -152,6 +230,24 @@ public class AdminProductService {
             product.setCategory(category);
         }
 
+        if (dto.getBrandId() != null) {
+            Brand brand = brandRepository.findById(dto.getBrandId())
+                    .orElseThrow(() -> new RuntimeException("Brand not found with id: " + dto.getBrandId()));
+            product.setBrand(brand);
+        }
+
         return product;
+    }
+
+    /**
+     * Generate SKU from product name
+     */
+    private String generateSKU(String productName) {
+        String base = productName.replaceAll("[^a-zA-Z0-9]", "").toUpperCase();
+        if (base.length() > 10) {
+            base = base.substring(0, 10);
+        }
+        String timestamp = String.valueOf(System.currentTimeMillis()).substring(8);
+        return base + "-" + timestamp;
     }
 }

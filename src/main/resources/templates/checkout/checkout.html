@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Checkout - FashionFlex</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--===============================================================================================-->
+	<link rel="icon" type="image/png" th:href="@{/images/icons/favicon.png}"/>
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/bootstrap/css/bootstrap.min.css}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/font-awesome-4.7.0/css/font-awesome.min.css}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/iconic/css/material-design-iconic-font.min.css}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/linearicons-v1.0.0/icon-font.min.css}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/animate/animate.css}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/css-hamburgers/hamburgers.min.css}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/animsition/css/animsition.min.css}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/select2/select2.min.css}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/perfect-scrollbar/perfect-scrollbar.css}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/css/util.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/assets/css/pages/checkout-styles.css}">
+<!--===============================================================================================-->
+</head>
+<body class="animsition">
+
+	<!-- Header -->
+	<div th:replace="~{fragments/header :: header}"></div>
+
+	<!-- Main Content -->
+	<div class="container" style="padding: 60px 15px;">
+		<!-- Checkout Progress Steps -->
+		<ul class="checkout-progress">
+			<li class="checkout-step active">
+				<div class="checkout-step-circle">1</div>
+				<div class="checkout-step-label">Shipping</div>
+			</li>
+			<li class="checkout-step">
+				<div class="checkout-step-circle">2</div>
+				<div class="checkout-step-label">Payment</div>
+			</li>
+			<li class="checkout-step">
+				<div class="checkout-step-circle">3</div>
+				<div class="checkout-step-label">Review</div>
+			</li>
+			<li class="checkout-step">
+				<div class="checkout-step-circle">4</div>
+				<div class="checkout-step-label">Complete</div>
+			</li>
+		</ul>
+
+		<div class="row">
+			<!-- Shipping Information Form -->
+			<div class="col-lg-8">
+				<div class="checkout-section">
+					<h3 class="checkout-section-title">Shipping Information</h3>
+
+					<form id="checkoutForm" th:action="@{/checkout/process}" method="post">
+						<div class="checkout-form-row">
+							<div class="checkout-form-group">
+								<label for="firstName" class="required">First Name</label>
+								<input type="text" id="firstName" name="firstName" class="checkout-form-control" required>
+							</div>
+							<div class="checkout-form-group">
+								<label for="lastName" class="required">Last Name</label>
+								<input type="text" id="lastName" name="lastName" class="checkout-form-control" required>
+							</div>
+						</div>
+
+						<div class="checkout-form-row">
+							<div class="checkout-form-group">
+								<label for="email" class="required">Email Address</label>
+								<input type="email" id="email" name="email" class="checkout-form-control" required>
+							</div>
+							<div class="checkout-form-group">
+								<label for="phone" class="required">Phone Number</label>
+								<input type="tel" id="phone" name="phone" class="checkout-form-control" required>
+							</div>
+						</div>
+
+						<div class="checkout-form-row full">
+							<div class="checkout-form-group">
+								<label for="address" class="required">Street Address</label>
+								<input type="text" id="address" name="address" class="checkout-form-control" placeholder="House number and street name" required>
+							</div>
+						</div>
+
+						<div class="checkout-form-row full">
+							<div class="checkout-form-group">
+								<label for="address2">Apartment, suite, unit, etc. (optional)</label>
+								<input type="text" id="address2" name="address2" class="checkout-form-control" placeholder="Apartment, suite, unit, etc.">
+							</div>
+						</div>
+
+						<div class="checkout-form-row">
+							<div class="checkout-form-group">
+								<label for="city" class="required">City</label>
+								<input type="text" id="city" name="city" class="checkout-form-control" required>
+							</div>
+							<div class="checkout-form-group">
+								<label for="country" class="required">Country</label>
+								<select id="country" name="country" class="checkout-form-control" required>
+									<option value="">Select a country</option>
+									<option value="US">United States</option>
+									<option value="UK">United Kingdom</option>
+									<option value="CA">Canada</option>
+									<option value="AU">Australia</option>
+									<option value="VN">Vietnam</option>
+								</select>
+							</div>
+						</div>
+
+						<div class="checkout-form-row">
+							<div class="checkout-form-group">
+								<label for="state" class="required">State / Province</label>
+								<input type="text" id="state" name="state" class="checkout-form-control" required>
+							</div>
+							<div class="checkout-form-group">
+								<label for="postalCode" class="required">Postal Code</label>
+								<input type="text" id="postalCode" name="postalCode" class="checkout-form-control" required>
+							</div>
+						</div>
+
+						<div class="checkout-form-row full">
+							<div class="checkout-form-group">
+								<label for="notes">Order Notes (optional)</label>
+								<textarea id="notes" name="notes" class="checkout-form-control" rows="4" placeholder="Notes about your order, e.g. special notes for delivery"></textarea>
+							</div>
+						</div>
+
+						<div style="text-align: right; margin-top: 30px;">
+							<a th:href="@{/cart}" class="flex-c-m stext-101 cl2 size-116 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer" style="display: inline-flex; margin-right: 10px;">
+								Back to Cart
+							</a>
+							<a th:href="@{/checkout/payment}" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer" style="display: inline-flex;">
+								Continue to Payment
+							</a>
+						</div>
+					</form>
+				</div>
+			</div>
+
+			<!-- Order Summary Sidebar -->
+			<div class="col-lg-4">
+				<div class="order-summary">
+					<h3 class="order-summary-title">Order Summary</h3>
+
+					<div class="order-summary-items">
+						<div class="order-summary-item" th:each="item : ${cartItems}">
+							<img th:src="@{${item.product.imageUrl}}" alt="Product" class="order-summary-item-image">
+							<div class="order-summary-item-info">
+								<h4 class="order-summary-item-name" th:text="${item.product.name}">Product Name</h4>
+								<p class="order-summary-item-details">
+									<span th:if="${item.size}">Size: <span th:text="${item.size}">M</span>, </span>
+									<span th:if="${item.color}">Color: <span th:text="${item.color}">White</span></span>
+								</p>
+								<p class="order-summary-item-details">Qty: <span th:text="${item.quantity}">1</span></p>
+							</div>
+							<div class="order-summary-item-price" th:text="${'$' + #numbers.formatDecimal(item.subtotal, 1, 2)}">$16.64</div>
+						</div>
+					</div>
+
+					<div class="order-summary-totals">
+						<div class="order-summary-row">
+							<span>Subtotal</span>
+							<span th:text="${'$' + #numbers.formatDecimal(subtotal, 1, 2)}">$77.45</span>
+						</div>
+						<div class="order-summary-row">
+							<span>Shipping</span>
+							<span th:text="${'$' + #numbers.formatDecimal(shipping, 1, 2)}">$5.00</span>
+						</div>
+						<div class="order-summary-row">
+							<span>Tax (<span th:text="${taxRate + '%'}">10%</span>)</span>
+							<span th:text="${'$' + #numbers.formatDecimal(tax, 1, 2)}">$7.75</span>
+						</div>
+						<div class="order-summary-row total">
+							<span>Total</span>
+							<span th:text="${'$' + #numbers.formatDecimal(total, 1, 2)}">$90.20</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Footer -->
+	<div th:replace="~{fragments/footer :: footer}"></div>
+
+	<!-- Back to top -->
+	<div class="btn-back-to-top" id="myBtn">
+		<span class="symbol-btn-back-to-top">
+			<i class="zmdi zmdi-chevron-up"></i>
+		</span>
+	</div>
+
+<!--===============================================================================================-->
+	<script th:src="@{/vendor/jquery/jquery-3.2.1.min.js}"></script>
+<!--===============================================================================================-->
+	<script th:src="@{/vendor/animsition/js/animsition.min.js}"></script>
+<!--===============================================================================================-->
+	<script th:src="@{/vendor/bootstrap/js/popper.js}"></script>
+	<script th:src="@{/vendor/bootstrap/js/bootstrap.min.js}"></script>
+<!--===============================================================================================-->
+	<script th:src="@{/vendor/select2/select2.min.js}"></script>
+<!--===============================================================================================-->
+	<script th:src="@{/vendor/perfect-scrollbar/perfect-scrollbar.min.js}"></script>
+	<script>
+		$('.js-pscroll').each(function(){
+			$(this).css('position','relative');
+			$(this).css('overflow','hidden');
+			var ps = new PerfectScrollbar(this, {
+				wheelSpeed: 1,
+				scrollingThreshold: 1000,
+				wheelPropagation: false,
+			});
+
+			$(window).on('resize', function(){
+				ps.update();
+			})
+		});
+	</script>
+<!--===============================================================================================-->
+	<script th:src="@{/js/main.js}"></script>
+
+</body>
+</html>

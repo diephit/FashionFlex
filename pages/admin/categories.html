@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Categories Management - FashionFlex Admin</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" href="../../images/icons/favicon.png"/>
+	<link rel="stylesheet" type="text/css" href="../../vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="../../fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="../../fonts/iconic/css/material-design-iconic-font.min.css">
+	<link rel="stylesheet" type="text/css" href="../../css/util.css">
+	<link rel="stylesheet" type="text/css" href="../../css/main.css">
+	<link rel="stylesheet" type="text/css" href="../../assets/css/pages/admin-styles.css">
+</head>
+<body>
+
+	<div class="admin-wrapper">
+		<!-- Sidebar -->
+		<aside class="admin-sidebar">
+			<div class="admin-sidebar-header">
+				<h3><i class="zmdi zmdi-shield-security"></i> Admin Panel</h3>
+			</div>
+
+			<ul class="admin-sidebar-menu">
+				<li><a href="dashboard.html"><i class="fa fa-tachometer"></i> Dashboard</a></li>
+				<li><a href="products.html"><i class="fa fa-shopping-bag"></i> Products</a></li>
+				<li><a href="orders.html"><i class="fa fa-shopping-cart"></i> Orders</a></li>
+				<li><a href="customers.html"><i class="fa fa-users"></i> Customers</a></li>
+				<li><a href="categories.html" class="active"><i class="fa fa-folder"></i> Categories</a></li>
+				<li><a href="coupons.html"><i class="fa fa-tag"></i> Coupons</a></li>
+				<li><a href="reviews.html"><i class="fa fa-star"></i> Reviews</a></li>
+				<li><a href="settings.html"><i class="fa fa-cog"></i> Settings</a></li>
+				<li><a href="../../index.html"><i class="fa fa-sign-out"></i> Back to Store</a></li>
+			</ul>
+		</aside>
+
+		<!-- Main Content -->
+		<main class="admin-main">
+			<!-- Topbar -->
+			<div class="admin-topbar">
+				<h2>Categories Management</h2>
+				<div class="admin-user-info">
+					<img src="../../images/avatar-01.jpg" alt="Admin">
+					<span>Admin User</span>
+				</div>
+			</div>
+
+			<!-- Content -->
+			<div class="admin-content">
+				<!-- Stats Cards -->
+				<div class="dashboard-cards">
+					<div class="dashboard-card">
+						<div class="dashboard-card-icon primary">
+							<i class="fa fa-folder"></i>
+						</div>
+						<h4>Total Categories</h4>
+						<div class="value">12</div>
+					</div>
+					<div class="dashboard-card">
+						<div class="dashboard-card-icon success">
+							<i class="fa fa-check-circle"></i>
+						</div>
+						<h4>Active</h4>
+						<div class="value">10</div>
+					</div>
+					<div class="dashboard-card">
+						<div class="dashboard-card-icon warning">
+							<i class="fa fa-pause-circle"></i>
+						</div>
+						<h4>Inactive</h4>
+						<div class="value">2</div>
+					</div>
+					<div class="dashboard-card">
+						<div class="dashboard-card-icon info">
+							<i class="fa fa-shopping-bag"></i>
+						</div>
+						<h4>Total Products</h4>
+						<div class="value">256</div>
+					</div>
+				</div>
+
+				<!-- Categories Table -->
+				<div class="admin-table-wrapper">
+					<div class="admin-table-header">
+						<h3>All Categories</h3>
+						<button class="btn-user-primary" onclick="openAddModal()">
+							<i class="fa fa-plus"></i> Add Category
+						</button>
+					</div>
+
+					<table class="admin-table">
+						<thead>
+							<tr>
+								<th><input type="checkbox"></th>
+								<th>ID</th>
+								<th>Name</th>
+								<th>Slug</th>
+								<th>Parent</th>
+								<th>Products</th>
+								<th>Status</th>
+								<th>Created</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td>#1</td>
+								<td><strong>Women</strong></td>
+								<td>women</td>
+								<td>-</td>
+								<td>128</td>
+								<td><span class="status-badge completed">Active</span></td>
+								<td>2024-01-15</td>
+								<td>
+									<button class="action-btn view" title="View"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit" title="Edit"><i class="fa fa-edit"></i></button>
+									<button class="action-btn delete" title="Delete"><i class="fa fa-trash"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td>#2</td>
+								<td>Dresses</td>
+								<td>dresses</td>
+								<td>Women</td>
+								<td>45</td>
+								<td><span class="status-badge completed">Active</span></td>
+								<td>2024-01-15</td>
+								<td>
+									<button class="action-btn view" title="View"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit" title="Edit"><i class="fa fa-edit"></i></button>
+									<button class="action-btn delete" title="Delete"><i class="fa fa-trash"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td>#3</td>
+								<td>Tops</td>
+								<td>tops</td>
+								<td>Women</td>
+								<td>38</td>
+								<td><span class="status-badge completed">Active</span></td>
+								<td>2024-01-20</td>
+								<td>
+									<button class="action-btn view" title="View"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit" title="Edit"><i class="fa fa-edit"></i></button>
+									<button class="action-btn delete" title="Delete"><i class="fa fa-trash"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td>#4</td>
+								<td><strong>Men</strong></td>
+								<td>men</td>
+								<td>-</td>
+								<td>98</td>
+								<td><span class="status-badge completed">Active</span></td>
+								<td>2024-01-15</td>
+								<td>
+									<button class="action-btn view" title="View"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit" title="Edit"><i class="fa fa-edit"></i></button>
+									<button class="action-btn delete" title="Delete"><i class="fa fa-trash"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td>#5</td>
+								<td>Shirts</td>
+								<td>shirts</td>
+								<td>Men</td>
+								<td>42</td>
+								<td><span class="status-badge completed">Active</span></td>
+								<td>2024-01-20</td>
+								<td>
+									<button class="action-btn view" title="View"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit" title="Edit"><i class="fa fa-edit"></i></button>
+									<button class="action-btn delete" title="Delete"><i class="fa fa-trash"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td>#6</td>
+								<td><strong>Shoes</strong></td>
+								<td>shoes</td>
+								<td>-</td>
+								<td>67</td>
+								<td><span class="status-badge completed">Active</span></td>
+								<td>2024-01-18</td>
+								<td>
+									<button class="action-btn view" title="View"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit" title="Edit"><i class="fa fa-edit"></i></button>
+									<button class="action-btn delete" title="Delete"><i class="fa fa-trash"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td>#7</td>
+								<td><strong>Accessories</strong></td>
+								<td>accessories</td>
+								<td>-</td>
+								<td>23</td>
+								<td><span class="status-badge completed">Active</span></td>
+								<td>2024-02-01</td>
+								<td>
+									<button class="action-btn view" title="View"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit" title="Edit"><i class="fa fa-edit"></i></button>
+									<button class="action-btn delete" title="Delete"><i class="fa fa-trash"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td>#8</td>
+								<td>Bags</td>
+								<td>bags</td>
+								<td>Accessories</td>
+								<td>15</td>
+								<td><span class="status-badge pending">Inactive</span></td>
+								<td>2024-02-05</td>
+								<td>
+									<button class="action-btn view" title="View"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit" title="Edit"><i class="fa fa-edit"></i></button>
+									<button class="action-btn delete" title="Delete"><i class="fa fa-trash"></i></button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+					<!-- Pagination -->
+					<div class="admin-pagination">
+						<div class="admin-pagination-info">Showing 1 to 8 of 12 entries</div>
+						<div class="admin-pagination-buttons">
+							<button disabled>Previous</button>
+							<button class="active">1</button>
+							<button>2</button>
+							<button>Next</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<!-- Mobile Toggle -->
+	<button class="admin-mobile-toggle">
+		<i class="fa fa-bars"></i>
+	</button>
+
+	<script src="../../vendor/jquery/jquery-3.2.1.min.js"></script>
+	<script src="../../vendor/bootstrap/js/popper.js"></script>
+	<script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="../../assets/js/pages/admin.js"></script>
+	<script>
+		function openAddModal() {
+			alert('Add Category Modal - To be implemented with backend');
+		}
+	</script>
+
+</body>
+</html>

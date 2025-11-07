@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Wishlist - FashionFlex</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--===============================================================================================-->
+	<link rel="icon" type="image/png" th:href="@{/images/icons/favicon.png}"/>
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/bootstrap/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/font-awesome-4.7.0/css/font-awesome.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/iconic/css/material-design-iconic-font.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/linearicons-v1.0.0/icon-font.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/animate/animate.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/css-hamburgers/hamburgers.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/animsition/css/animsition.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/select2/select2.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/perfect-scrollbar/perfect-scrollbar.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/util.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/assets/css/pages/user-pages.css}">
+<!--===============================================================================================-->
+</head>
+<body class="animsition">
+
+	<!-- Header -->
+	<div th:replace="~{fragments/header :: header('home')}"></div>
+
+	<!-- Cart -->
+	<div th:replace="~{fragments/header :: cart}"></div>
+
+	<!-- Main Content -->
+	<div class="user-account-wrapper">
+		<div class="container">
+			<div class="row">
+				<!-- Sidebar Navigation -->
+				<div class="col-md-3">
+					<div th:replace="~{fragments/user-sidebar :: sidebar('wishlist')}"></div>
+				</div>
+
+				<!-- Main Content -->
+				<div class="col-md-9">
+					<div class="user-account-content">
+						<div class="user-account-header">
+							<h2>My Wishlist</h2>
+							<p>Your favorite products saved for later</p>
+						</div>
+
+						<!-- Wishlist Grid -->
+						<div class="wishlist-grid">
+							<!-- Wishlist Item 1 -->
+							<div class="wishlist-item">
+								<div class="wishlist-item-image">
+									<img th:src="@{/images/product-01.jpg}" alt="Product">
+									<button class="wishlist-remove">
+										<i class="fa fa-times"></i>
+									</button>
+								</div>
+								<div class="wishlist-item-info">
+									<h4>Esprit Ruffle Shirt</h4>
+									<div class="wishlist-item-price">$16.64</div>
+									<button class="btn-user-primary" style="width: 100%;">
+										<i class="fa fa-shopping-cart"></i> Add to Cart
+									</button>
+								</div>
+							</div>
+
+							<!-- Wishlist Item 2 -->
+							<div class="wishlist-item">
+								<div class="wishlist-item-image">
+									<img th:src="@{/images/product-02.jpg}" alt="Product">
+									<button class="wishlist-remove">
+										<i class="fa fa-times"></i>
+									</button>
+								</div>
+								<div class="wishlist-item-info">
+									<h4>Herschel supply</h4>
+									<div class="wishlist-item-price">$35.31</div>
+									<button class="btn-user-primary" style="width: 100%;">
+										<i class="fa fa-shopping-cart"></i> Add to Cart
+									</button>
+								</div>
+							</div>
+
+							<!-- Wishlist Item 3 -->
+							<div class="wishlist-item">
+								<div class="wishlist-item-image">
+									<img th:src="@{/images/product-03.jpg}" alt="Product">
+									<button class="wishlist-remove">
+										<i class="fa fa-times"></i>
+									</button>
+								</div>
+								<div class="wishlist-item-info">
+									<h4>Only Check Trouser</h4>
+									<div class="wishlist-item-price">$25.50</div>
+									<button class="btn-user-primary" style="width: 100%;">
+										<i class="fa fa-shopping-cart"></i> Add to Cart
+									</button>
+								</div>
+							</div>
+
+							<!-- Wishlist Item 4 -->
+							<div class="wishlist-item">
+								<div class="wishlist-item-image">
+									<img th:src="@{/images/product-04.jpg}" alt="Product">
+									<button class="wishlist-remove">
+										<i class="fa fa-times"></i>
+									</button>
+								</div>
+								<div class="wishlist-item-info">
+									<h4>Classic Trench Coat</h4>
+									<div class="wishlist-item-price">$75.00</div>
+									<button class="btn-user-primary" style="width: 100%;">
+										<i class="fa fa-shopping-cart"></i> Add to Cart
+									</button>
+								</div>
+							</div>
+
+							<!-- Wishlist Item 5 -->
+							<div class="wishlist-item">
+								<div class="wishlist-item-image">
+									<img th:src="@{/images/product-05.jpg}" alt="Product">
+									<button class="wishlist-remove">
+										<i class="fa fa-times"></i>
+									</button>
+								</div>
+								<div class="wishlist-item-info">
+									<h4>Front Pocket Jumper</h4>
+									<div class="wishlist-item-price">$34.75</div>
+									<button class="btn-user-primary" style="width: 100%;">
+										<i class="fa fa-shopping-cart"></i> Add to Cart
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Footer -->
+	<div th:replace="~{fragments/footer :: footer}"></div>
+
+	<!-- Back to top -->
+	<div class="btn-back-to-top" id="myBtn">
+		<span class="symbol-btn-back-to-top">
+			<i class="zmdi zmdi-chevron-up"></i>
+		</span>
+	</div>
+
+<!--===============================================================================================-->
+	<script th:src="@{/vendor/jquery/jquery-3.2.1.min.js}"></script>
+	<script th:src="@{/vendor/animsition/js/animsition.min.js}"></script>
+	<script th:src="@{/vendor/bootstrap/js/popper.js}"></script>
+	<script th:src="@{/vendor/bootstrap/js/bootstrap.min.js}"></script>
+	<script th:src="@{/vendor/select2/select2.min.js}"></script>
+	<script th:src="@{/vendor/perfect-scrollbar/perfect-scrollbar.min.js}"></script>
+	<script>
+		$('.js-pscroll').each(function(){
+			$(this).css('position','relative');
+			$(this).css('overflow','hidden');
+			var ps = new PerfectScrollbar(this, {
+				wheelSpeed: 1,
+				scrollingThreshold: 1000,
+				wheelPropagation: false,
+			});
+
+			$(window).on('resize', function(){
+				ps.update();
+			})
+		});
+	</script>
+	<script th:src="@{/js/main.js}"></script>
+
+</body>
+</html>

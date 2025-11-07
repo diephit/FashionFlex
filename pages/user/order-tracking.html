@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Order Tracking - FashionFlex</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--===============================================================================================-->
+	<link rel="icon" type="image/png" href="../../images/icons/favicon.png"/>
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="../../vendor/bootstrap/css/bootstrap.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="../../fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="../../fonts/iconic/css/material-design-iconic-font.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="../../fonts/linearicons-v1.0.0/icon-font.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="../../vendor/animate/animate.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="../../vendor/css-hamburgers/hamburgers.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="../../vendor/animsition/css/animsition.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="../../vendor/select2/select2.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="../../vendor/perfect-scrollbar/perfect-scrollbar.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="../../css/util.css">
+	<link rel="stylesheet" type="text/css" href="../../css/main.css">
+	<link rel="stylesheet" type="text/css" href="../../assets/css/pages/user-pages.css">
+	<link rel="stylesheet" type="text/css" href="../../assets/css/pages/checkout-styles.css">
+<!--===============================================================================================-->
+<style>
+.tracking-form-section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 40px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    text-align: center;
+}
+
+.tracking-form-section h3 {
+    font-family: Poppins-Medium;
+    font-size: 20px;
+    color: #333;
+    margin: 0 0 10px 0;
+}
+
+.tracking-form-section p {
+    font-family: Poppins-Regular;
+    font-size: 14px;
+    color: #999;
+    margin: 0 0 30px 0;
+}
+
+.tracking-form {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.tracking-result-section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.tracking-order-info {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 8px;
+    padding: 25px;
+    color: #fff;
+    margin-bottom: 30px;
+}
+
+.tracking-order-info h4 {
+    font-family: Poppins-Medium;
+    font-size: 18px;
+    margin: 0 0 15px 0;
+}
+
+.tracking-info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-family: Poppins-Regular;
+    font-size: 14px;
+}
+
+.tracking-info-row:last-child {
+    margin-bottom: 0;
+}
+
+.tracking-info-label {
+    opacity: 0.9;
+}
+
+.tracking-info-value {
+    font-family: Poppins-Medium;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-family: Poppins-Medium;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.status-badge.processing {
+    background: #fff3cd;
+    color: #856404;
+}
+
+@media (max-width: 768px) {
+    .tracking-form-section {
+        padding: 30px 20px;
+    }
+
+    .tracking-info-row {
+        flex-direction: column;
+        gap: 5px;
+    }
+}
+</style>
+</head>
+<body class="animsition">
+
+	<!-- Header -->
+	<header>
+		<!-- Header desktop -->
+		<div class="container-menu-desktop">
+			<!-- Topbar -->
+			<div class="top-bar">
+				<div class="content-topbar flex-sb-m h-full container">
+					<div class="left-top-bar">
+						Free shipping for standard order over $100
+					</div>
+
+					<div class="right-top-bar flex-w h-full">
+						<a href="../info/faq.html" class="flex-c-m trans-04 p-lr-25">
+							Help & FAQs
+						</a>
+
+						<a href="my-account.html" class="flex-c-m trans-04 p-lr-25">
+							My Account
+						</a>
+
+						<a href="#" class="flex-c-m trans-04 p-lr-25">
+							EN
+						</a>
+
+						<a href="#" class="flex-c-m trans-04 p-lr-25">
+							USD
+						</a>
+					</div>
+				</div>
+			</div>
+
+			<div class="wrap-menu-desktop">
+				<nav class="limiter-menu-desktop container">
+
+					<!-- Logo desktop -->
+					<a href="../../index.html" class="logo">
+						<img src="../../images/icons/logo-01.png" alt="IMG-LOGO">
+					</a>
+
+					<!-- Menu desktop -->
+					<div class="menu-desktop">
+						<ul class="main-menu">
+							<li>
+								<a href="../../index.html">Home</a>
+								<ul class="sub-menu">
+									<li><a href="../../index.html">Homepage 1</a></li>
+									<li><a href="../../home-02.html">Homepage 2</a></li>
+									<li><a href="../../home-03.html">Homepage 3</a></li>
+								</ul>
+							</li>
+
+							<li>
+								<a href="../../product.html">Shop</a>
+							</li>
+
+							<li class="label1" data-label1="hot">
+								<a href="../../shoping-cart.html">Cart</a>
+							</li>
+
+							<li>
+								<a href="../../blog.html">Blog</a>
+							</li>
+
+							<li>
+								<a href="../../about.html">About</a>
+							</li>
+
+							<li>
+								<a href="../../contact.html">Contact</a>
+							</li>
+						</ul>
+					</div>
+
+					<!-- Icon header -->
+					<div class="wrap-icon-header flex-w flex-r-m">
+						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
+							<i class="zmdi zmdi-search"></i>
+						</div>
+
+						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="2">
+							<i class="zmdi zmdi-shopping-cart"></i>
+						</div>
+
+						<a href="wishlist.html" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti" data-notify="3">
+							<i class="zmdi zmdi-favorite-outline"></i>
+						</a>
+					</div>
+				</nav>
+			</div>
+		</div>
+
+		<!-- Header Mobile -->
+		<div class="wrap-header-mobile">
+			<!-- Logo moblie -->
+			<div class="logo-mobile">
+				<a href="../../index.html"><img src="../../images/icons/logo-01.png" alt="IMG-LOGO"></a>
+			</div>
+
+			<!-- Icon header -->
+			<div class="wrap-icon-header flex-w flex-r-m m-r-15">
+				<div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 js-show-modal-search">
+					<i class="zmdi zmdi-search"></i>
+				</div>
+
+				<div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart" data-notify="2">
+					<i class="zmdi zmdi-shopping-cart"></i>
+				</div>
+
+				<a href="wishlist.html" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti" data-notify="3">
+					<i class="zmdi zmdi-favorite-outline"></i>
+				</a>
+			</div>
+
+			<!-- Button show menu -->
+			<div class="btn-show-menu-mobile hamburger hamburger--squeeze">
+				<span class="hamburger-box">
+					<span class="hamburger-inner"></span>
+				</span>
+			</div>
+		</div>
+
+		<!-- Menu Mobile -->
+		<div class="menu-mobile">
+			<ul class="main-menu-m">
+				<li>
+					<a href="../../index.html">Home</a>
+					<ul class="sub-menu-m">
+						<li><a href="../../index.html">Homepage 1</a></li>
+						<li><a href="../../home-02.html">Homepage 2</a></li>
+						<li><a href="../../home-03.html">Homepage 3</a></li>
+					</ul>
+					<span class="arrow-main-menu-m">
+						<i class="fa fa-angle-right" aria-hidden="true"></i>
+					</span>
+				</li>
+
+				<li>
+					<a href="../../product.html">Shop</a>
+				</li>
+
+				<li>
+					<a href="../../shoping-cart.html">Cart</a>
+				</li>
+
+				<li>
+					<a href="../../blog.html">Blog</a>
+				</li>
+
+				<li>
+					<a href="../../about.html">About</a>
+				</li>
+
+				<li>
+					<a href="../../contact.html">Contact</a>
+				</li>
+			</ul>
+		</div>
+
+		<!-- Modal Search -->
+		<div class="modal-search-header flex-c-m trans-04 js-hide-modal-search">
+			<div class="container-search-header">
+				<button class="flex-c-m btn-hide-modal-search trans-04 js-hide-modal-search">
+					<img src="../../images/icons/icon-close2.png" alt="CLOSE">
+				</button>
+
+				<form class="wrap-search-header flex-w p-l-15">
+					<button class="flex-c-m trans-04">
+						<i class="zmdi zmdi-search"></i>
+					</button>
+					<input class="plh3" type="text" name="search" placeholder="Search...">
+				</form>
+			</div>
+		</div>
+	</header>
+
+	<!-- Main Content -->
+	<div class="user-account-wrapper">
+		<div class="container">
+			<div class="row">
+				<!-- Sidebar Navigation -->
+				<div class="col-md-3">
+					<div class="user-account-nav">
+						<ul>
+							<li>
+								<a href="my-account.html">
+									<i class="fa fa-tachometer"></i>
+									Dashboard
+								</a>
+							</li>
+							<li>
+								<a href="order-history.html">
+									<i class="fa fa-shopping-bag"></i>
+									Orders
+								</a>
+							</li>
+							<li>
+								<a href="order-tracking.html" class="active">
+									<i class="fa fa-map-marker"></i>
+									Track Order
+								</a>
+							</li>
+							<li>
+								<a href="wishlist.html">
+									<i class="fa fa-heart"></i>
+									Wishlist
+								</a>
+							</li>
+							<li>
+								<a href="address-book.html">
+									<i class="fa fa-map"></i>
+									Addresses
+								</a>
+							</li>
+							<li>
+								<a href="profile-edit.html">
+									<i class="fa fa-user"></i>
+									Profile
+								</a>
+							</li>
+							<li>
+								<a href="../../login.html">
+									<i class="fa fa-sign-out"></i>
+									Logout
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+
+				<!-- Main Content -->
+				<div class="col-md-9">
+					<!-- Tracking Form Section -->
+					<div class="tracking-form-section" id="trackingForm">
+						<h3>Track Your Order</h3>
+						<p>Enter your order number and email address to track your order</p>
+
+						<form class="tracking-form">
+							<div class="user-form-group" style="text-align: left;">
+								<label>Order Number</label>
+								<input type="text" class="user-form-control" placeholder="e.g., ORD-2024-001" value="ORD-2024-001">
+							</div>
+							<div class="user-form-group" style="text-align: left;">
+								<label>Email Address</label>
+								<input type="email" class="user-form-control" placeholder="john.doe@example.com" value="john.doe@example.com">
+							</div>
+							<button type="button" class="btn-user-primary" onclick="showTracking()">
+								<i class="fa fa-search"></i> Track Order
+							</button>
+						</form>
+					</div>
+
+					<!-- Tracking Result Section (Initially Hidden) -->
+					<div class="tracking-result-section" id="trackingResult" style="display: block;">
+						<div class="user-account-header">
+							<h2>Order Tracking</h2>
+							<p>Track the status of your order</p>
+						</div>
+
+						<!-- Order Info -->
+						<div class="tracking-order-info">
+							<h4>Order #ORD-2024-001</h4>
+							<div class="tracking-info-row">
+								<span class="tracking-info-label">Order Date:</span>
+								<span class="tracking-info-value">January 15, 2024</span>
+							</div>
+							<div class="tracking-info-row">
+								<span class="tracking-info-label">Expected Delivery:</span>
+								<span class="tracking-info-value">January 22, 2024</span>
+							</div>
+							<div class="tracking-info-row">
+								<span class="tracking-info-label">Shipping Method:</span>
+								<span class="tracking-info-value">Standard Shipping</span>
+							</div>
+							<div class="tracking-info-row">
+								<span class="tracking-info-label">Status:</span>
+								<span class="tracking-info-value">
+									<span class="status-badge processing">Processing</span>
+								</span>
+							</div>
+						</div>
+
+						<!-- Tracking Timeline -->
+						<div class="tracking-timeline">
+							<!-- Step 1: Order Placed - Completed -->
+							<div class="tracking-step completed">
+								<div class="tracking-step-title">
+									<i class="fa fa-check-circle"></i> Order Placed
+								</div>
+								<div class="tracking-step-time">January 15, 2024 - 10:30 AM</div>
+								<div class="tracking-step-description">
+									Your order has been successfully placed and we've received your payment.
+								</div>
+							</div>
+
+							<!-- Step 2: Order Confirmed - Completed -->
+							<div class="tracking-step completed">
+								<div class="tracking-step-title">
+									<i class="fa fa-check-circle"></i> Order Confirmed
+								</div>
+								<div class="tracking-step-time">January 15, 2024 - 11:45 AM</div>
+								<div class="tracking-step-description">
+									We've confirmed your order details and it's ready for processing.
+								</div>
+							</div>
+
+							<!-- Step 3: Processing - Active -->
+							<div class="tracking-step active">
+								<div class="tracking-step-title">
+									<i class="fa fa-spinner"></i> Processing
+								</div>
+								<div class="tracking-step-time">January 16, 2024 - 09:15 AM</div>
+								<div class="tracking-step-description">
+									Your order is currently being prepared for shipment. Our team is carefully packaging your items.
+								</div>
+							</div>
+
+							<!-- Step 4: Shipped - Pending -->
+							<div class="tracking-step">
+								<div class="tracking-step-title">
+									<i class="fa fa-truck"></i> Shipped
+								</div>
+								<div class="tracking-step-time">Pending</div>
+								<div class="tracking-step-description">
+									Your order will be shipped soon. You'll receive tracking information once it's on its way.
+								</div>
+							</div>
+
+							<!-- Step 5: Out for Delivery - Pending -->
+							<div class="tracking-step">
+								<div class="tracking-step-title">
+									<i class="fa fa-motorcycle"></i> Out for Delivery
+								</div>
+								<div class="tracking-step-time">Pending</div>
+								<div class="tracking-step-description">
+									Your order is out for delivery and will arrive soon.
+								</div>
+							</div>
+
+							<!-- Step 6: Delivered - Pending -->
+							<div class="tracking-step">
+								<div class="tracking-step-title">
+									<i class="fa fa-gift"></i> Delivered
+								</div>
+								<div class="tracking-step-time">Pending</div>
+								<div class="tracking-step-description">
+									Your order has been delivered successfully.
+								</div>
+							</div>
+						</div>
+
+						<!-- Order Items -->
+						<div style="margin-top: 40px; padding-top: 30px; border-top: 2px solid #e6e6e6;">
+							<h4 style="font-family: Poppins-Medium; font-size: 16px; margin-bottom: 20px;">Order Items</h4>
+
+							<div class="order-item" style="display: flex; gap: 15px; margin-bottom: 15px; padding: 15px; border: 1px solid #e6e6e6; border-radius: 8px;">
+								<img src="../../images/product-01.jpg" alt="Product" class="order-item-image">
+								<div class="order-item-info">
+									<h4>Esprit Ruffle Shirt</h4>
+									<p>Size: M, Color: White, Qty: 1</p>
+								</div>
+								<div style="margin-left: auto; font-family: Poppins-Medium; font-size: 16px; color: #717fe0;">
+									$16.64
+								</div>
+							</div>
+
+							<div class="order-item" style="display: flex; gap: 15px; margin-bottom: 15px; padding: 15px; border: 1px solid #e6e6e6; border-radius: 8px;">
+								<img src="../../images/product-02.jpg" alt="Product" class="order-item-image">
+								<div class="order-item-info">
+									<h4>Herschel supply</h4>
+									<p>Size: L, Color: Black, Qty: 2</p>
+								</div>
+								<div style="margin-left: auto; font-family: Poppins-Medium; font-size: 16px; color: #717fe0;">
+									$70.62
+								</div>
+							</div>
+						</div>
+
+						<!-- Action Buttons -->
+						<div style="margin-top: 30px; text-align: center;">
+							<button class="btn-user-outline" style="margin-right: 10px;" onclick="hideTracking()">
+								<i class="fa fa-search"></i> Track Another Order
+							</button>
+							<a href="order-history.html" class="btn-user-primary">
+								<i class="fa fa-list"></i> View All Orders
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Footer -->
+	<footer class="bg3 p-t-75 p-b-32">
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-6 col-lg-3 p-b-50">
+					<h4 class="stext-301 cl0 p-b-30">
+						Categories
+					</h4>
+
+					<ul>
+						<li class="p-b-10">
+							<a href="../../product.html" class="stext-107 cl7 hov-cl1 trans-04">
+								Women
+							</a>
+						</li>
+
+						<li class="p-b-10">
+							<a href="../../product.html" class="stext-107 cl7 hov-cl1 trans-04">
+								Men
+							</a>
+						</li>
+
+						<li class="p-b-10">
+							<a href="../../product.html" class="stext-107 cl7 hov-cl1 trans-04">
+								Shoes
+							</a>
+						</li>
+
+						<li class="p-b-10">
+							<a href="../../product.html" class="stext-107 cl7 hov-cl1 trans-04">
+								Watches
+							</a>
+						</li>
+					</ul>
+				</div>
+
+				<div class="col-sm-6 col-lg-3 p-b-50">
+					<h4 class="stext-301 cl0 p-b-30">
+						Help
+					</h4>
+
+					<ul>
+						<li class="p-b-10">
+							<a href="order-tracking.html" class="stext-107 cl7 hov-cl1 trans-04">
+								Track Order
+							</a>
+						</li>
+
+						<li class="p-b-10">
+							<a href="../info/return-policy.html" class="stext-107 cl7 hov-cl1 trans-04">
+								Returns
+							</a>
+						</li>
+
+						<li class="p-b-10">
+							<a href="../info/shipping-policy.html" class="stext-107 cl7 hov-cl1 trans-04">
+								Shipping
+							</a>
+						</li>
+
+						<li class="p-b-10">
+							<a href="../info/faq.html" class="stext-107 cl7 hov-cl1 trans-04">
+								FAQs
+							</a>
+						</li>
+					</ul>
+				</div>
+
+				<div class="col-sm-6 col-lg-3 p-b-50">
+					<h4 class="stext-301 cl0 p-b-30">
+						GET IN TOUCH
+					</h4>
+
+					<p class="stext-107 cl7 size-201">
+						Any questions? Let us know in store at 8th floor, 379 Hudson St, New York, NY 10018 or call us on (+1) 96 716 6879
+					</p>
+
+					<div class="p-t-27">
+						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+							<i class="fa fa-facebook"></i>
+						</a>
+
+						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+							<i class="fa fa-instagram"></i>
+						</a>
+
+						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+							<i class="fa fa-pinterest-p"></i>
+						</a>
+					</div>
+				</div>
+
+				<div class="col-sm-6 col-lg-3 p-b-50">
+					<h4 class="stext-301 cl0 p-b-30">
+						Newsletter
+					</h4>
+
+					<form>
+						<div class="wrap-input1 w-full p-b-4">
+							<input class="input1 bg-none plh1 stext-107 cl7" type="text" name="email" placeholder="email@example.com">
+							<div class="focus-input1 trans-04"></div>
+						</div>
+
+						<div class="p-t-18">
+							<button class="flex-c-m stext-101 cl0 size-103 bg1 bor1 hov-btn2 p-lr-15 trans-04">
+								Subscribe
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+
+			<div class="p-t-40">
+				<div class="flex-c-m flex-w p-b-18">
+					<a href="#" class="m-all-1">
+						<img src="../../images/icons/icon-pay-01.png" alt="ICON-PAY">
+					</a>
+
+					<a href="#" class="m-all-1">
+						<img src="../../images/icons/icon-pay-02.png" alt="ICON-PAY">
+					</a>
+
+					<a href="#" class="m-all-1">
+						<img src="../../images/icons/icon-pay-03.png" alt="ICON-PAY">
+					</a>
+
+					<a href="#" class="m-all-1">
+						<img src="../../images/icons/icon-pay-04.png" alt="ICON-PAY">
+					</a>
+
+					<a href="#" class="m-all-1">
+						<img src="../../images/icons/icon-pay-05.png" alt="ICON-PAY">
+					</a>
+				</div>
+
+				<p class="stext-107 cl6 txt-center">
+					Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | FashionFlex E-commerce
+				</p>
+			</div>
+		</div>
+	</footer>
+
+	<!-- Back to top -->
+	<div class="btn-back-to-top" id="myBtn">
+		<span class="symbol-btn-back-to-top">
+			<i class="zmdi zmdi-chevron-up"></i>
+		</span>
+	</div>
+
+<!--===============================================================================================-->
+	<script src="../../vendor/jquery/jquery-3.2.1.min.js"></script>
+<!--===============================================================================================-->
+	<script src="../../vendor/animsition/js/animsition.min.js"></script>
+<!--===============================================================================================-->
+	<script src="../../vendor/bootstrap/js/popper.js"></script>
+	<script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
+<!--===============================================================================================-->
+	<script src="../../vendor/select2/select2.min.js"></script>
+<!--===============================================================================================-->
+	<script src="../../vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+	<script>
+		$('.js-pscroll').each(function(){
+			$(this).css('position','relative');
+			$(this).css('overflow','hidden');
+			var ps = new PerfectScrollbar(this, {
+				wheelSpeed: 1,
+				scrollingThreshold: 1000,
+				wheelPropagation: false,
+			});
+
+			$(window).on('resize', function(){
+				ps.update();
+			})
+		});
+
+		// Toggle tracking views
+		function showTracking() {
+			document.getElementById('trackingForm').style.display = 'none';
+			document.getElementById('trackingResult').style.display = 'block';
+		}
+
+		function hideTracking() {
+			document.getElementById('trackingForm').style.display = 'block';
+			document.getElementById('trackingResult').style.display = 'none';
+		}
+	</script>
+<!--===============================================================================================-->
+	<script src="../../js/main.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Order History - FashionFlex</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--===============================================================================================-->
+	<link rel="icon" type="image/png" th:href="@{/images/icons/favicon.png}"/>
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/bootstrap/css/bootstrap.min.css}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/font-awesome-4.7.0/css/font-awesome.min.css}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/iconic/css/material-design-iconic-font.min.css}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/linearicons-v1.0.0/icon-font.min.css}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/animate/animate.css}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/css-hamburgers/hamburgers.min.css}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/animsition/css/animsition.min.css}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/select2/select2.min.css}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/perfect-scrollbar/perfect-scrollbar.css}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/css/util.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/assets/css/pages/user-pages.css}">
+<!--===============================================================================================-->
+<style>
+.status-badge {
+    display: inline-block;
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-family: Poppins-Medium;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.status-badge.processing {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-badge.completed {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-badge.cancelled {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.status-badge.shipped {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.order-filter {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 8px 20px;
+    border: 2px solid #e6e6e6;
+    background: #fff;
+    border-radius: 20px;
+    font-family: Poppins-Medium;
+    font-size: 13px;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+    border-color: #717fe0;
+    background: #717fe0;
+    color: #fff;
+}
+</style>
+</head>
+<body class="animsition">
+
+	<!-- Header -->
+	<div th:replace="~{fragments/header :: header('home')}"></div>
+
+	<!-- Cart -->
+	<div th:replace="~{fragments/header :: cart}"></div>
+
+	<!-- Main Content -->
+	<div class="user-account-wrapper">
+		<div class="container">
+			<div class="row">
+				<!-- Sidebar Navigation -->
+				<div class="col-md-3">
+					<div th:replace="~{fragments/user-sidebar :: sidebar('orders')}"></div>
+				</div>
+
+				<!-- Main Content -->
+				<div class="col-md-9">
+					<div class="user-account-content">
+						<div class="user-account-header">
+							<h2>Order History</h2>
+							<p>View and manage all your orders</p>
+						</div>
+
+						<!-- Order Filter -->
+						<div class="order-filter">
+							<button class="filter-btn active">All Orders</button>
+							<button class="filter-btn">Processing</button>
+							<button class="filter-btn">Shipped</button>
+							<button class="filter-btn">Completed</button>
+							<button class="filter-btn">Cancelled</button>
+						</div>
+
+						<!-- Order Card 1 -->
+						<div class="order-card">
+							<div class="order-card-header">
+								<div>
+									<div class="order-number">#ORD-2024-001</div>
+									<div class="order-date">Ordered on January 15, 2024</div>
+								</div>
+								<span class="status-badge processing">Processing</span>
+							</div>
+							<div class="order-items">
+								<div class="order-item">
+									<img th:src="@{/images/product-01.jpg}" alt="Product" class="order-item-image">
+									<div class="order-item-info">
+										<h4>Esprit Ruffle Shirt</h4>
+										<p>Size: M, Color: White, Qty: 1</p>
+									</div>
+								</div>
+								<div class="order-item">
+									<img th:src="@{/images/product-02.jpg}" alt="Product" class="order-item-image">
+									<div class="order-item-info">
+										<h4>Herschel supply</h4>
+										<p>Size: L, Color: Black, Qty: 2</p>
+									</div>
+								</div>
+							</div>
+							<div class="order-card-footer">
+								<div class="order-total">Total: $156.40</div>
+								<div class="order-actions">
+									<a th:href="@{/user/order-tracking}" class="btn-user-outline">Track Order</a>
+									<a href="#" class="btn-user-primary">View Details</a>
+								</div>
+							</div>
+						</div>
+
+						<!-- Order Card 2 -->
+						<div class="order-card">
+							<div class="order-card-header">
+								<div>
+									<div class="order-number">#ORD-2024-002</div>
+									<div class="order-date">Ordered on January 10, 2024</div>
+								</div>
+								<span class="status-badge completed">Delivered</span>
+							</div>
+							<div class="order-items">
+								<div class="order-item">
+									<img th:src="@{/images/product-03.jpg}" alt="Product" class="order-item-image">
+									<div class="order-item-info">
+										<h4>Only Check Trouser</h4>
+										<p>Size: L, Color: Blue, Qty: 1</p>
+									</div>
+								</div>
+							</div>
+							<div class="order-card-footer">
+								<div class="order-total">Total: $75.00</div>
+								<div class="order-actions">
+									<a href="#" class="btn-user-outline">Review Product</a>
+									<a href="#" class="btn-user-primary">Buy Again</a>
+								</div>
+							</div>
+						</div>
+
+						<!-- Order Card 3 -->
+						<div class="order-card">
+							<div class="order-card-header">
+								<div>
+									<div class="order-number">#ORD-2024-003</div>
+									<div class="order-date">Ordered on January 5, 2024</div>
+								</div>
+								<span class="status-badge shipped">Shipped</span>
+							</div>
+							<div class="order-items">
+								<div class="order-item">
+									<img th:src="@{/images/product-04.jpg}" alt="Product" class="order-item-image">
+									<div class="order-item-info">
+										<h4>Classic Trench Coat</h4>
+										<p>Size: M, Color: Beige, Qty: 1</p>
+									</div>
+								</div>
+								<div class="order-item">
+									<img th:src="@{/images/product-05.jpg}" alt="Product" class="order-item-image">
+									<div class="order-item-info">
+										<h4>Front Pocket Jumper</h4>
+										<p>Size: L, Color: Gray, Qty: 1</p>
+									</div>
+								</div>
+							</div>
+							<div class="order-card-footer">
+								<div class="order-total">Total: $109.75</div>
+								<div class="order-actions">
+									<a th:href="@{/user/order-tracking}" class="btn-user-outline">Track Order</a>
+									<a href="#" class="btn-user-primary">View Details</a>
+								</div>
+							</div>
+						</div>
+
+						<!-- Order Card 4 -->
+						<div class="order-card">
+							<div class="order-card-header">
+								<div>
+									<div class="order-number">#ORD-2024-004</div>
+									<div class="order-date">Ordered on December 28, 2023</div>
+								</div>
+								<span class="status-badge cancelled">Cancelled</span>
+							</div>
+							<div class="order-items">
+								<div class="order-item">
+									<img th:src="@{/images/product-06.jpg}" alt="Product" class="order-item-image">
+									<div class="order-item-info">
+										<h4>Vintage Denim Jacket</h4>
+										<p>Size: M, Color: Blue, Qty: 1</p>
+									</div>
+								</div>
+							</div>
+							<div class="order-card-footer">
+								<div class="order-total">Total: $89.99</div>
+								<div class="order-actions">
+									<a href="#" class="btn-user-outline">View Details</a>
+									<a href="#" class="btn-user-primary">Buy Again</a>
+								</div>
+							</div>
+						</div>
+
+						<!-- Order Card 5 -->
+						<div class="order-card">
+							<div class="order-card-header">
+								<div>
+									<div class="order-number">#ORD-2024-005</div>
+									<div class="order-date">Ordered on December 20, 2023</div>
+								</div>
+								<span class="status-badge completed">Delivered</span>
+							</div>
+							<div class="order-items">
+								<div class="order-item">
+									<img th:src="@{/images/product-07.jpg}" alt="Product" class="order-item-image">
+									<div class="order-item-info">
+										<h4>Leather Backpack</h4>
+										<p>Size: One Size, Color: Brown, Qty: 1</p>
+									</div>
+								</div>
+								<div class="order-item">
+									<img th:src="@{/images/product-08.jpg}" alt="Product" class="order-item-image">
+									<div class="order-item-info">
+										<h4>Canvas Sneakers</h4>
+										<p>Size: 42, Color: White, Qty: 1</p>
+									</div>
+								</div>
+							</div>
+							<div class="order-card-footer">
+								<div class="order-total">Total: $135.50</div>
+								<div class="order-actions">
+									<a href="#" class="btn-user-outline">Review Products</a>
+									<a href="#" class="btn-user-primary">Buy Again</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Footer -->
+	<div th:replace="~{fragments/footer :: footer}"></div>
+
+	<!-- Back to top -->
+	<div class="btn-back-to-top" id="myBtn">
+		<span class="symbol-btn-back-to-top">
+			<i class="zmdi zmdi-chevron-up"></i>
+		</span>
+	</div>
+
+<!--===============================================================================================-->
+	<script th:src="@{/vendor/jquery/jquery-3.2.1.min.js}"></script>
+<!--===============================================================================================-->
+	<script th:src="@{/vendor/animsition/js/animsition.min.js}"></script>
+<!--===============================================================================================-->
+	<script th:src="@{/vendor/bootstrap/js/popper.js}"></script>
+	<script th:src="@{/vendor/bootstrap/js/bootstrap.min.js}"></script>
+<!--===============================================================================================-->
+	<script th:src="@{/vendor/select2/select2.min.js}"></script>
+<!--===============================================================================================-->
+	<script th:src="@{/vendor/perfect-scrollbar/perfect-scrollbar.min.js}"></script>
+	<script>
+		$('.js-pscroll').each(function(){
+			$(this).css('position','relative');
+			$(this).css('overflow','hidden');
+			var ps = new PerfectScrollbar(this, {
+				wheelSpeed: 1,
+				scrollingThreshold: 1000,
+				wheelPropagation: false,
+			});
+
+			$(window).on('resize', function(){
+				ps.update();
+			})
+		});
+	</script>
+<!--===============================================================================================-->
+	<script th:src="@{/js/main.js}"></script>
+
+</body>
+</html>

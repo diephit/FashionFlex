@@ -68,21 +68,29 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
             .authorizeHttpRequests(auth -> auth
                     // Public pages - ĐẶT TRƯỚC để ưu tiên
-                    .requestMatchers("/", "/index", "/home", "/about", "/contact", "/blog", "/blog-detail").permitAll()
-                    .requestMatchers("/product", "/product-detail/**").permitAll()
-                    
+                    .requestMatchers("/", "/index", "/home", "/home-02", "/home-03").permitAll()
+                    .requestMatchers("/about", "/contact", "/blog", "/blog-detail").permitAll()
+                    .requestMatchers("/product", "/products", "/product/**").permitAll()
+
                     // Auth & Password Reset - QUAN TRỌNG: đặt trước anyRequest()
                     .requestMatchers("/login", "/register", "/api/auth/**").permitAll()
                     .requestMatchers("/forgot-password", "/reset-password", "/reset-password/**").permitAll()
-                    
+
                     // Static resources
-                    .requestMatchers("/css/**", "/js/**", "/images/**", "/fonts/**", "/vendor/**").permitAll()
+                    .requestMatchers("/css/**", "/js/**", "/images/**", "/fonts/**", "/vendor/**", "/assets/**").permitAll()
                     .requestMatchers("/h2-console/**").permitAll()
+
+                    // User pages - require authentication
+                    .requestMatchers("/user/**").authenticated()
+                    .requestMatchers("/wishlist/**").authenticated()
+                    .requestMatchers("/cart/**").authenticated()
+                    .requestMatchers("/checkout/**").authenticated()
+                    .requestMatchers("/order/**").authenticated()
 
                     // Admin pages - both web UI and API
                     .requestMatchers("/admin/**").hasRole("ADMIN")
                     .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                    
+
                     // Tất cả các request khác cần authentication
                     .anyRequest().authenticated()
             )

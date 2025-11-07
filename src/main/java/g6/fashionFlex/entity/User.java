@@ -46,6 +46,9 @@ public class User {
     @Column(name = "provider_id")
     private String providerId;
 
+    @Column(name = "profile_image_url")
+    private String profileImageUrl;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "user_roles",
@@ -53,6 +56,9 @@ public class User {
         inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Address> addresses = new HashSet<>();
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

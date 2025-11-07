@@ -14,34 +14,58 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    // Find by active status
-    Page<Product> findByActiveTrue(Pageable pageable);
-
+    // Find by active status with JOIN FETCH to avoid N+1 problem
+    @Query("SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.category LEFT JOIN FETCH p.brand WHERE p.active = true")
     List<Product> findByActiveTrue();
 
-    // Find by category
-    Page<Product> findByCategoryIdAndActiveTrue(Long categoryId, Pageable pageable);
+    @Query(value = "SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.category LEFT JOIN FETCH p.brand WHERE p.active = true",
+           countQuery = "SELECT COUNT(p) FROM Product p WHERE p.active = true")
+    Page<Product> findByActiveTrue(Pageable pageable);
 
-    // Find featured products
+    // Find by category with JOIN FETCH
+    @Query(value = "SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.category LEFT JOIN FETCH p.brand WHERE p.category.id = :categoryId AND p.active = true",
+           countQuery = "SELECT COUNT(p) FROM Product p WHERE p.category.id = :categoryId AND p.active = true")
+    Page<Product> findByCategoryIdAndActiveTrue(@Param("categoryId") Long categoryId, Pageable pageable);
+
+    // Find by category name with JOIN FETCH
+    @Query(value = "SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.category LEFT JOIN FETCH p.brand WHERE LOWER(p.category.name) = LOWER(:categoryName) AND p.active = true",
+           countQuery = "SELECT COUNT(p) FROM Product p WHERE LOWER(p.category.name) = LOWER(:categoryName) AND p.active = true")
+    Page<Product> findByCategoryNameAndActiveTrue(@Param("categoryName") String categoryName, Pageable pageable);
+
+    // Find by brand with JOIN FETCH
+    @Query(value = "SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.category LEFT JOIN FETCH p.brand WHERE p.brand.id = :brandId AND p.active = true",
+           countQuery = "SELECT COUNT(p) FROM Product p WHERE p.brand.id = :brandId AND p.active = true")
+    Page<Product> findByBrandIdAndActiveTrue(@Param("brandId") Long brandId, Pageable pageable);
+
+    // Find featured products with JOIN FETCH
+    @Query("SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.category LEFT JOIN FETCH p.brand WHERE p.featured = true AND p.active = true ORDER BY p.createdAt DESC")
     List<Product> findByFeaturedTrueAndActiveTrueOrderByCreatedAtDesc();
 
+    @Query(value = "SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.category LEFT JOIN FETCH p.brand WHERE p.featured = true AND p.active = true",
+           countQuery = "SELECT COUNT(p) FROM Product p WHERE p.featured = true AND p.active = true")
     Page<Product> findByFeaturedTrueAndActiveTrue(Pageable pageable);
 
-    // Search by name
-    @Query("SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) AND p.active = true")
+    // Search by name with JOIN FETCH
+    @Query(value = "SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.category LEFT JOIN FETCH p.brand WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) AND p.active = true",
+           countQuery = "SELECT COUNT(p) FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) AND p.active = true")
     Page<Product> searchByName(@Param("keyword") String keyword, Pageable pageable);
 
-    // Find by price range
-    Page<Product> findByPriceBetweenAndActiveTrue(BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable);
+    // Find by price range with JOIN FETCH
+    @Query(value = "SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.category LEFT JOIN FETCH p.brand WHERE p.price BETWEEN :minPrice AND :maxPrice AND p.active = true",
+           countQuery = "SELECT COUNT(p) FROM Product p WHERE p.price BETWEEN :minPrice AND :maxPrice AND p.active = true")
+    Page<Product> findByPriceBetweenAndActiveTrue(@Param("minPrice") BigDecimal minPrice, @Param("maxPrice") BigDecimal maxPrice, Pageable pageable);
 
-    // Find products with discount
-    @Query("SELECT p FROM Product p WHERE p.discountPrice IS NOT NULL AND p.discountPrice < p.price AND p.active = true")
+    // Find products with discount with JOIN FETCH
+    @Query(value = "SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.category LEFT JOIN FETCH p.brand WHERE p.discountPrice IS NOT NULL AND p.discountPrice < p.price AND p.active = true",
+           countQuery = "SELECT COUNT(p) FROM Product p WHERE p.discountPrice IS NOT NULL AND p.discountPrice < p.price AND p.active = true")
     Page<Product> findProductsWithDiscount(Pageable pageable);
 
-    // Find best sellers (by sold count)
+    // Find best sellers (by sold count) with JOIN FETCH
+    @Query("SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.category LEFT JOIN FETCH p.brand WHERE p.active = true ORDER BY p.soldCount DESC")
     List<Product> findTop10ByActiveTrueOrderBySoldCountDesc();
 
-    // Find most viewed
+    // Find most viewed with JOIN FETCH
+    @Query("SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.category LEFT JOIN FETCH p.brand WHERE p.active = true ORDER BY p.viewCount DESC")
     List<Product> findTop10ByActiveTrueOrderByViewCountDesc();
 
     // Check SKU exists

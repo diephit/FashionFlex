@@ -1,5 +1,6 @@
 package g6.fashionFlex.security;
 
+import g6.fashionFlex.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -9,14 +10,18 @@ import java.util.Map;
 
 public class CustomOAuth2User implements OAuth2User, UserDetails {
 
-    private OAuth2User oauth2User;
-    private Collection<? extends GrantedAuthority> authorities;
-    private String password;
+    private final User user;
+    private final OAuth2User oauth2User;
+    private final Collection<? extends GrantedAuthority> authorities;
 
-    public CustomOAuth2User(OAuth2User oauth2User, Collection<? extends GrantedAuthority> authorities, String password) {
+    public CustomOAuth2User(OAuth2User oauth2User, User user, Collection<? extends GrantedAuthority> authorities) {
         this.oauth2User = oauth2User;
+        this.user = user;
         this.authorities = authorities;
-        this.password = password;
+    }
+
+    public User getUser() {
+        return user;
     }
 
     @Override
@@ -36,12 +41,12 @@ public class CustomOAuth2User implements OAuth2User, UserDetails {
 
     @Override
     public String getPassword() {
-        return password;
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return oauth2User.getAttribute("email");
+        return user.getEmail();
     }
 
     @Override
@@ -61,6 +66,6 @@ public class CustomOAuth2User implements OAuth2User, UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return user.isEnabled();
     }
 }

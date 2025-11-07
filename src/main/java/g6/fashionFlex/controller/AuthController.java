@@ -48,7 +48,7 @@ public class AuthController {
             model.addAttribute("success", "Registration successful! Please login.");
         }
         model.addAttribute("user", new RegisterRequest());
-        return "login";
+        return "auth/login";  // Updated path
     }
 
     // Handle registration from form submission
@@ -59,7 +59,7 @@ public class AuthController {
                                Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("registerError", "Please fix the errors in the form");
-            return "login";
+            return "auth/login";  // Updated path
         }
 
         try {
@@ -68,7 +68,7 @@ public class AuthController {
             return "redirect:/login";
         } catch (Exception e) {
             model.addAttribute("registerError", e.getMessage());
-            return "login";
+            return "auth/login";  // Updated path
         }
     }
 

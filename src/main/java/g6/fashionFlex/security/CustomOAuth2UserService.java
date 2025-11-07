@@ -85,7 +85,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .collect(Collectors.toSet());
 
         // Return CustomOAuth2User with proper authorities
-        return new CustomOAuth2User(oauth2User, authorities, user.getPassword());
+        return new CustomOAuth2User(oauth2User, user, authorities);
     }
 }
-
