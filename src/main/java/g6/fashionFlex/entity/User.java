@@ -46,6 +46,9 @@ public class User {
     @Column(name = "provider_id")
     private String providerId;
 
+    @Column(name = "has_set_password")
+    private boolean hasSetPassword = false; // Track if OAuth2 user has set a custom password
+
     @Column(name = "profile_image_url")
     private String profileImageUrl;
 
@@ -73,5 +76,6 @@ public class User {
         this.email = email;
         this.password = password;
         this.provider = "local";
+        this.hasSetPassword = true; // Local users always have a password
     }
 }

@@ -192,17 +192,18 @@
 
 						<!-- Change Password Section -->
 						<div class="section-divider">
-							<h3>Change Password</h3>
+							<h3 th:text="${user != null && !user.hasSetPassword ? 'Set Password' : 'Change Password'}">Change Password</h3>
 						</div>
 
-						<!-- Show message for OAuth users -->
-						<div th:if="${user != null && user.provider != 'local'}" class="alert alert-info" style="margin-bottom: 20px;">
+						<!-- Show message for OAuth users who haven't set password -->
+						<div th:if="${user != null && user.provider != 'local' && !user.hasSetPassword}" class="alert alert-info" style="margin-bottom: 20px;">
 							<i class="fa fa-info-circle"></i>
-							You signed in using <strong th:text="${user.provider}"></strong>. You can set a password to enable login with email and password.
+							You signed in using <strong th:text="${user.provider}"></strong>. Set a password to enable login with email and password in addition to <span th:text="${user.provider}"></span>.
 						</div>
 
 						<form th:action="@{/user/password/change}" method="post">
-							<div class="user-form-group" th:if="${user != null && user.provider == 'local'}">
+							<!-- Only show current password field if user has already set a password -->
+							<div class="user-form-group" th:if="${user != null && user.hasSetPassword}">
 								<label>Current Password</label>
 								<input type="password" class="user-form-control" name="currentPassword" placeholder="Enter current password" required>
 							</div>
@@ -221,7 +222,7 @@
 
 							<div style="margin-top: 20px;">
 								<button type="submit" class="btn-user-primary">
-									<i class="fa fa-lock"></i> <span th:text="${user != null && user.provider != 'local' ? 'Set Password' : 'Update Password'}">Update Password</span>
+									<i class="fa fa-lock"></i> <span th:text="${user != null && !user.hasSetPassword ? 'Set Password' : 'Update Password'}">Update Password</span>
 								</button>
 							</div>
 						</form>
@@ -267,6 +268,13 @@
 		document.getElementById('avatarInput').addEventListener('change', function(e) {
 			const file = e.target.files[0];
 			if (file) {
+				// Validate file size (5MB max)
+				if (file.size > 5 * 1024 * 1024) {
+					alert('File size must be less than 5MB');
+					e.target.value = '';
+					return;
+				}
+
 				const reader = new FileReader();
 				reader.onload = function(e) {
 					document.getElementById('avatarPreview').src = e.target.result;
@@ -274,6 +282,29 @@
 				reader.readAsDataURL(file);
 			}
 		});
+
+		// Password form validation
+		const passwordForm = document.querySelector('form[action*="password/change"]');
+		if (passwordForm) {
+			passwordForm.addEventListener('submit', function(e) {
+				const newPassword = this.querySelector('input[name="newPassword"]').value;
+				const confirmPassword = this.querySelector('input[name="confirmPassword"]').value;
+
+				// Check if passwords match
+				if (newPassword !== confirmPassword) {
+					e.preventDefault();
+					alert('New password and confirm password do not match!');
+					return false;
+				}
+
+				// Check password strength
+				if (newPassword.length < 6) {
+					e.preventDefault();
+					alert('Password must be at least 6 characters long!');
+					return false;
+				}
+			});
+		}
 	</script>
 	<script th:src="@{/js/main.js}"></script>
 

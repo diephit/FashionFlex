@@ -19,6 +19,7 @@ public class UserDTO {
     private String address;
     private boolean enabled;
     private String provider;
+    private boolean hasSetPassword;
     private String profileImageUrl;
     private Set<String> roles;
     private LocalDateTime createdAt;

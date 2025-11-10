@@ -418,30 +418,32 @@
 
 						<!-- Change Password Section -->
 						<div class="section-divider">
-							<h3>Change Password</h3>
+							<h3 id="passwordSectionTitle">Change Password</h3>
+							<p id="passwordSectionDesc" style="font-size: 13px; color: #999; margin-top: 5px;"></p>
 						</div>
 
-						<form>
-							<div class="user-form-group">
-								<label>Current Password</label>
-								<input type="password" class="user-form-control" placeholder="Enter current password">
+						<form id="changePasswordForm" action="/user/password/change" method="post">
+							<!-- Current Password Field (conditionally shown) -->
+							<div class="user-form-group" id="currentPasswordGroup">
+								<label>Current Password <span style="color: red;">*</span></label>
+								<input type="password" name="currentPassword" id="currentPassword" class="user-form-control" placeholder="Enter current password">
 							</div>
 
 							<div class="form-row">
 								<div class="user-form-group">
-									<label>New Password</label>
-									<input type="password" class="user-form-control" placeholder="Enter new password">
+									<label>New Password <span style="color: red;">*</span></label>
+									<input type="password" name="newPassword" id="newPassword" class="user-form-control" placeholder="Enter new password" required>
 								</div>
 
 								<div class="user-form-group">
-									<label>Confirm New Password</label>
-									<input type="password" class="user-form-control" placeholder="Confirm new password">
+									<label>Confirm New Password <span style="color: red;">*</span></label>
+									<input type="password" name="confirmPassword" id="confirmPassword" class="user-form-control" placeholder="Confirm new password" required>
 								</div>
 							</div>
 
 							<div style="margin-top: 20px;">
 								<button type="submit" class="btn-user-primary">
-									<i class="fa fa-lock"></i> Update Password
+									<i class="fa fa-lock"></i> <span id="passwordButtonText">Update Password</span>
 								</button>
 							</div>
 						</form>
@@ -636,6 +638,65 @@
 				}
 				reader.readAsDataURL(file);
 			}
+		});
+
+		// Password form logic based on user provider
+		// Get user provider from Thymeleaf (will be set by backend)
+		const userProvider = '${user != null ? user.provider : "local"}';
+		const isOAuth2User = userProvider !== 'local';
+
+		// Update form based on user type
+		if (isOAuth2User) {
+			// OAuth2 user - setting password for first time
+			document.getElementById('passwordSectionTitle').textContent = 'Set Password';
+			document.getElementById('passwordSectionDesc').textContent = 'Set a password to enable login with email/password in addition to ' + userProvider.charAt(0).toUpperCase() + userProvider.slice(1);
+			document.getElementById('currentPasswordGroup').style.display = 'none';
+			document.getElementById('currentPassword').removeAttribute('required');
+			document.getElementById('passwordButtonText').textContent = 'Set Password';
+		} else {
+			// Local user - changing existing password
+			document.getElementById('passwordSectionDesc').textContent = 'Update your account password';
+			document.getElementById('currentPassword').setAttribute('required', 'required');
+		}
+
+		// Form validation
+		document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
+			e.preventDefault();
+
+			const currentPassword = document.getElementById('currentPassword').value;
+			const newPassword = document.getElementById('newPassword').value;
+			const confirmPassword = document.getElementById('confirmPassword').value;
+
+			// Validate for local users
+			if (!isOAuth2User && !currentPassword) {
+				alert('Please enter your current password');
+				return false;
+			}
+
+			// Validate new password
+			if (!newPassword) {
+				alert('Please enter a new password');
+				return false;
+			}
+
+			if (newPassword.length < 6) {
+				alert('Password must be at least 6 characters long');
+				return false;
+			}
+
+			// Validate password match
+			if (newPassword !== confirmPassword) {
+				alert('New password and confirm password do not match');
+				return false;
+			}
+
+			// If OAuth2 user, remove current password from form submission
+			if (isOAuth2User) {
+				document.getElementById('currentPassword').value = '';
+			}
+
+			// Submit form
+			this.submit();
 		});
 	</script>
 <!--===============================================================================================-->

@@ -45,6 +45,7 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setEnabled(true);
         user.setProvider("local");
+        user.setHasSetPassword(true); // Local users register with a password
 
         // Assign default role
         Role userRole = roleRepository.findByName("ROLE_USER")
@@ -92,6 +93,7 @@ public class UserService {
         dto.setAddress(user.getAddress());
         dto.setEnabled(user.isEnabled());
         dto.setProvider(user.getProvider());
+        dto.setHasSetPassword(user.isHasSetPassword());
         dto.setProfileImageUrl(user.getProfileImageUrl());
         dto.setCreatedAt(user.getCreatedAt());
 
@@ -114,6 +116,7 @@ public class UserService {
                     newUser.setFullName(fullName);
                     newUser.setPassword(passwordEncoder.encode("OAUTH2_USER_" + System.currentTimeMillis()));
                     newUser.setEnabled(true);
+                    newUser.setHasSetPassword(false); // OAuth2 users haven't set a custom password yet
 
                     // Assign default role
                     Role userRole = roleRepository.findByName("ROLE_USER")
@@ -157,30 +160,44 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
-        // Check if user is OAuth2 user (Google, Facebook, etc.)
-        boolean isOAuth2User = user.getProvider() != null && !user.getProvider().equals("local");
-
-        // Check if OAuth2 user has a temporary password (never set a real password)
-        boolean hasTemporaryPassword = isOAuth2User && user.getPassword() != null && user.getPassword().startsWith("$2a$") && user.getPassword().contains("OAUTH2_USER_");
-
-        // If OAuth2 user without password or with temporary password, allow setting password without current password
-        if (isOAuth2User && (request.getCurrentPassword() == null || request.getCurrentPassword().isEmpty())) {
-            // Allow OAuth2 users to set password for the first time
-            // No need to verify current password
-        } else {
-            // Verify current password for local users or OAuth2 users changing existing password
-            if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
-                throw new IllegalArgumentException("Current password is incorrect");
-            }
-        }
-
-        // Verify new password and confirm password match
+        // Validate that new password and confirm password match
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
             throw new IllegalArgumentException("New password and confirm password do not match");
         }
 
-        // Update password
-        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        // Check if user is OAuth2 user who hasn't set a password yet
+        boolean isOAuth2User = user.getProvider() != null && !user.getProvider().equals("local");
+        boolean hasNotSetPassword = !user.isHasSetPassword();
+
+        // For OAuth2 users setting password for the first time:
+        // Allow empty/null current password
+        if (isOAuth2User && hasNotSetPassword && (request.getCurrentPassword() == null || request.getCurrentPassword().isEmpty())) {
+            // OAuth2 user is setting password for the first time
+            // No need to verify current password (temporary OAuth2 password)
+            user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+            // Mark that user has set a custom password
+            user.setHasSetPassword(true);
+            // Keep provider as is (google, facebook, etc.) so they can still login via OAuth2
+        } else {
+            // For local users or OAuth2 users who have already set a password:
+            // Require current password verification
+            if (request.getCurrentPassword() == null || request.getCurrentPassword().isEmpty()) {
+                throw new IllegalArgumentException("Current password is required");
+            }
+
+            if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+                throw new IllegalArgumentException("Current password is incorrect");
+            }
+
+            // Update password
+            user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+
+            // Mark as having set password (in case it wasn't already)
+            if (!user.isHasSetPassword()) {
+                user.setHasSetPassword(true);
+            }
+        }
+
         userRepository.save(user);
     }
 }
