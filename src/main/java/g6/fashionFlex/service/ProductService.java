@@ -50,4 +50,7 @@ public interface ProductService {
 
     // Delete product
     void delete(Long id);
+
+    // Increment view count
+    void incrementViewCount(Long id);
 }

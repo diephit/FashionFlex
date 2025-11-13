@@ -96,17 +96,30 @@ public class EmailService {
     }
 
     public void sendPasswordResetVerificationCode(String recipientEmail, String verificationCode) throws MessagingException {
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+        System.out.println("=== EMAIL SERVICE - START ===");
+        System.out.println("From: " + fromEmail);
+        System.out.println("To: " + recipientEmail);
+        System.out.println("Verification Code: " + verificationCode);
 
-        helper.setFrom(fromEmail);
-        helper.setTo(recipientEmail);
-        helper.setSubject("Password Reset Verification Code - FashionFlex");
+        try {
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
-        String htmlContent = buildPasswordResetVerificationCodeTemplate(verificationCode);
-        helper.setText(htmlContent, true);
+            helper.setFrom(fromEmail);
+            helper.setTo(recipientEmail);
+            helper.setSubject("Password Reset Verification Code - FashionFlex");
 
-        mailSender.send(mimeMessage);
+            String htmlContent = buildPasswordResetVerificationCodeTemplate(verificationCode);
+            helper.setText(htmlContent, true);
+
+            System.out.println("Sending email...");
+            mailSender.send(mimeMessage);
+            System.out.println("Email sent successfully!");
+        } catch (Exception e) {
+            System.out.println("ERROR sending email: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     /**

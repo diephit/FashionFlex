@@ -1,9 +1,7 @@
 package g6.fashionFlex.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -13,7 +11,10 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode(of = "id") // Correctly implement equals and hashCode
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
@@ -37,7 +38,7 @@ public class User {
     @Column(name = "address")
     private String address;
 
-    @Column(name = "enabled")
+    @Column(name = "enabled", columnDefinition = "BOOLEAN DEFAULT TRUE", nullable = false)
     private boolean enabled = true;
 
     @Column(name = "provider")
@@ -46,7 +47,7 @@ public class User {
     @Column(name = "provider_id")
     private String providerId;
 
-    @Column(name = "has_set_password")
+    @Column(name = "has_set_password", columnDefinition = "BOOLEAN DEFAULT FALSE", nullable = false)
     private boolean hasSetPassword = false; // Track if OAuth2 user has set a custom password
 
     @Column(name = "profile_image_url")
@@ -58,9 +59,11 @@ public class User {
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "role_id")
     )
+    @ToString.Exclude // Exclude collections from toString
     private Set<Role> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude // Exclude collections from toString
     private Set<Address> addresses = new HashSet<>();
 
     @CreationTimestamp

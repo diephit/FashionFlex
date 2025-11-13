@@ -1,9 +1,7 @@
 package g6.fashionFlex.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -14,7 +12,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "orders")
-@Data
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode(of = "id") // Correctly implement equals and hashCode
 @NoArgsConstructor
 @AllArgsConstructor
 public class Order {
@@ -28,9 +29,11 @@ public class Order {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @ToString.Exclude
     private User user;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
     private List<OrderItem> orderItems = new ArrayList<>();
 
     @Column(nullable = false, precision = 10, scale = 2)

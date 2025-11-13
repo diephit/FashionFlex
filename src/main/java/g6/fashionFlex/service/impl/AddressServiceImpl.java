@@ -8,11 +8,14 @@ import g6.fashionFlex.repository.UserRepository;
 import g6.fashionFlex.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class AddressServiceImpl implements AddressService {
 
     @Autowired
@@ -35,6 +38,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public AddressDTO save(AddressDTO addressDTO, Long userId) {
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {

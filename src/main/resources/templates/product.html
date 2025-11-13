@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: head('Products')}"></head>
-<body class="animsition">
+<body class="animsition" th:attr="data-authenticated=${isAuthenticated != null ? isAuthenticated : false}">
 
 	<!-- Header -->
 	<div th:replace="~{fragments/header :: header('shop')}"></div>
@@ -264,14 +264,15 @@
 							</div>
 
 							<div class="block2-txt-child2 flex-r p-t-3">
-								<a th:href="@{/wishlist/add/{id}(id=${product.id})}"
-								   class="btn-addwish-b2 dis-block pos-relative js-addwish-b2"
-								   title="Add to Wishlist">
-									<img class="icon-heart1 dis-block trans-04"
-									     src="images/icons/icon-heart-01.png" alt="ICON">
-									<img class="icon-heart2 dis-block trans-04 ab-t-l"
-									     src="images/icons/icon-heart-02.png" alt="ICON">
-								</a>
+								<button type="button"
+								        th:data-product-id="${product.id}"
+								        th:onclick="'toggleWishlist(' + ${product.id} + ', this)'"
+								        class="wishlist-btn btn-addwish-b2 dis-block pos-relative"
+								        style="background: none; border: none; padding: 0; cursor: pointer;"
+								        title="Add to wishlist">
+									<i class="fa fa-heart text-muted trans-04"
+									   style="font-size: 20px;"></i>
+								</button>
 							</div>
 						</div>
 					</div>
@@ -410,16 +411,166 @@
 	<!-- Isotope for filtering (kept for animation effects) -->
 	<script src="vendor/isotope/isotope.pkgd.min.js"></script>
 	<script>
+		// Add to Cart function for quick view modal
+		function addToCartFromModal(productId, quantity, size, color) {
+			console.log('addToCartFromModal called:', {productId, quantity, size, color});
+
+			// Check if user is authenticated
+			const isAuthenticated = $('body').data('authenticated');
+			if (!isAuthenticated) {
+				swal("Login Required", "Please login to add items to cart", "warning").then(() => {
+					window.location.href = '/login';
+				});
+				return;
+			}
+
+			// Prepare request data
+			const requestData = {
+				productId: productId,
+				quantity: quantity || 1
+			};
+
+			if (size && size !== 'Choose an option') {
+				requestData.size = size;
+			}
+			if (color && color !== 'Choose an option') {
+				requestData.color = color;
+			}
+
+			console.log('Sending add to cart request:', requestData);
+
+			// Send AJAX request
+			$.ajax({
+				url: '/api/cart/add',
+				method: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify(requestData),
+				success: function(response) {
+					console.log('Add to cart response:', response);
+					if (response.success) {
+						swal("Success!", "Product added to cart successfully", "success");
+						// Update cart count in header
+						if ($('.js-show-cart').length) {
+							$('.js-show-cart').attr('data-notify', response.cart.totalItems || 0);
+						}
+						// Close modal
+						$('.js-modal1').removeClass('show-modal1');
+					} else {
+						swal("Error", response.message || "Failed to add product to cart", "error");
+					}
+				},
+				error: function(xhr) {
+					console.error('Add to cart error:', xhr);
+					const response = xhr.responseJSON;
+					swal("Error", response?.message || "An error occurred while adding to cart", "error");
+				}
+			});
+		}
+
+		// Add to wishlist function for quick view modal
+		function addToWishlistFromModal(productId) {
+			console.log('addToWishlistFromModal called:', productId);
+
+			// Check if user is authenticated
+			const isAuthenticated = $('body').data('authenticated');
+			if (!isAuthenticated) {
+				swal("Login Required", "Please login to add items to wishlist", "warning").then(() => {
+					window.location.href = '/login';
+				});
+				return;
+			}
+
+			// Call the global toggleWishlist function if available
+			if (typeof toggleWishlist === 'function') {
+				const wishlistBtn = $('.js-modal1 .js-addwish-detail');
+				toggleWishlist(productId, wishlistBtn[0]);
+			} else {
+				// Fallback: direct AJAX call
+				$.ajax({
+					url: '/user/api/wishlist/add',
+					method: 'POST',
+					contentType: 'application/json',
+					data: JSON.stringify({ productId: productId }),
+					success: function(response) {
+						if (response.success) {
+							swal("Success!", "Product added to wishlist", "success");
+							// Update heart icon
+							$('.js-modal1 .js-addwish-detail i').removeClass('zmdi-favorite-outline').addClass('zmdi-favorite');
+						} else {
+							swal("Error", response.message || "Failed to add to wishlist", "error");
+						}
+					},
+					error: function(xhr) {
+						const response = xhr.responseJSON;
+						swal("Error", response?.message || "An error occurred", "error");
+					}
+				});
+			}
+		}
+
 		$(document).ready(function(){
 			var $grid = $('.isotope-grid').isotope({
 				itemSelector: '.isotope-item',
 				layoutMode: 'fitRows'
 			});
 
+			// Use event delegation for quantity buttons (works for dynamically loaded content)
+			$(document).on('click', '.js-modal1 .btn-num-product-down', function(e){
+				e.preventDefault();
+				console.log('Decrease button clicked');
+				var $input = $(this).next('.num-product');
+				var numProduct = parseInt($input.val()) || 1;
+				if(numProduct > 1) {
+					$input.val(numProduct - 1);
+					console.log('New quantity:', numProduct - 1);
+				}
+			});
+
+			$(document).on('click', '.js-modal1 .btn-num-product-up', function(e){
+				e.preventDefault();
+				console.log('Increase button clicked');
+				var $input = $(this).prev('.num-product');
+				var numProduct = parseInt($input.val()) || 1;
+				var maxStock = parseInt($input.attr('max')) || 999;
+				if(numProduct < maxStock) {
+					$input.val(numProduct + 1);
+					console.log('New quantity:', numProduct + 1);
+				} else {
+					console.log('Max stock reached:', maxStock);
+				}
+			});
+
+			// Use event delegation for Add to Cart button
+			$(document).on('click', '.js-modal1 .js-addcart-detail', function(e){
+				e.preventDefault();
+				console.log('Add to cart button clicked');
+
+				var productId = $(this).data('product-id');
+				var quantity = parseInt($('.js-modal1 input[name="num-product"]').val()) || 1;
+				var size = $('.js-modal1 select[name="size"]').val();
+				var color = $('.js-modal1 select[name="color"]').val();
+
+				console.log('Product details:', {productId, quantity, size, color});
+				addToCartFromModal(productId, quantity, size, color);
+			});
+
+			// Use event delegation for Add to Wishlist button
+			$(document).on('click', '.js-modal1 .js-addwish-detail', function(e){
+				e.preventDefault();
+				console.log('Add to wishlist button clicked');
+
+				// Get product ID from the add to cart button (since wishlist button doesn't have it)
+				var productId = $('.js-modal1 .js-addcart-detail').data('product-id');
+				console.log('Product ID:', productId);
+
+				addToWishlistFromModal(productId);
+			});
+
 			// Quick View functionality
 			$('.js-show-modal1').on('click', function(e){
 				e.preventDefault();
 				var productId = $(this).data('product-id');
+				console.log('Opening quick view for product:', productId);
 
 				// Show modal
 				$('.js-modal1').addClass('show-modal1');
@@ -429,69 +580,68 @@
 					url: '/product/quick-view/' + productId,
 					method: 'GET',
 					success: function(data) {
+						console.log('Quick view content loaded');
 						$('.quick-view-content').html(data);
 
-						// Re-initialize slick carousel
-						if($('.slick3').length > 0) {
-							$('.slick3').slick('unslick');
-						}
+						// Wait a bit for DOM to be ready
+						setTimeout(function() {
+							// Re-initialize slick carousel
+							if($('.js-modal1 .slick3').length > 0) {
+								$('.js-modal1 .slick3').not('.slick-initialized').slick({
+									slidesToShow: 1,
+									slidesToScroll: 1,
+									fade: true,
+									infinite: true,
+									autoplay: false,
+									autoplaySpeed: 6000,
+									arrows: true,
+									appendArrows: $('.js-modal1 .wrap-slick3-arrows'),
+									prevArrow:'<button class="arrow-slick3 prev-slick3"><i class="fa fa-angle-left" aria-hidden="true"></i></button>',
+									nextArrow:'<button class="arrow-slick3 next-slick3"><i class="fa fa-angle-right" aria-hidden="true"></i></button>',
+									dots: true,
+									appendDots: $('.js-modal1 .wrap-slick3-dots'),
+									dotsClass:'slick3-dots',
+									customPaging: function(slick, index) {
+										var portrait = $(slick.$slides[index]).data('thumb');
+										return '<img src=" ' + portrait + ' "/><div class="slick3-dot-overlay"></div>';
+									},
+								});
+							}
 
-						$('.slick3').slick({
-							slidesToShow: 1,
-							slidesToScroll: 1,
-							fade: true,
-							infinite: true,
-							autoplay: false,
-							autoplaySpeed: 6000,
-							arrows: true,
-							appendArrows: $('.wrap-slick3-arrows'),
-							prevArrow:'<button class="arrow-slick3 prev-slick3"><i class="fa fa-angle-left" aria-hidden="true"></i></button>',
-							nextArrow:'<button class="arrow-slick3 next-slick3"><i class="fa fa-angle-right" aria-hidden="true"></i></button>',
-							dots: true,
-							appendDots: $('.wrap-slick3-dots'),
-							dotsClass:'slick3-dots',
-							customPaging: function(slick, index) {
-								var portrait = $(slick.$slides[index]).data('thumb');
-								return '<img src=" ' + portrait + ' "/><div class="slick3-dot-overlay"></div>';
-							},
-						});
-
-						// Re-initialize select2
-						$(".js-select2").each(function(){
-							$(this).select2({
-								minimumResultsForSearch: 20,
-								dropdownParent: $(this).next('.dropDownSelect2')
+							// Re-initialize select2
+							$(".js-modal1 .js-select2").each(function(){
+								if (!$(this).hasClass('select2-hidden-accessible')) {
+									$(this).select2({
+										minimumResultsForSearch: 20,
+										dropdownParent: $(this).next('.dropDownSelect2')
+									});
+								}
 							});
-						});
 
-						// Re-initialize magnific popup
-						$('.gallery-lb').magnificPopup({
-							delegate: 'a',
-							type: 'image',
-							gallery: {
-								enabled:true
-							},
-							mainClass: 'mfp-fade'
-						});
+							// Re-initialize magnific popup
+							$('.js-modal1 .gallery-lb').magnificPopup({
+								delegate: 'a',
+								type: 'image',
+								gallery: {
+									enabled:true
+								},
+								mainClass: 'mfp-fade'
+							});
 
-						// Re-initialize number input
-						$('.btn-num-product-down').on('click', function(){
-							var numProduct = Number($(this).next().val());
-							if(numProduct > 0) $(this).next().val(numProduct - 1);
-						});
-
-						$('.btn-num-product-up').on('click', function(){
-							var numProduct = Number($(this).prev().val());
-							$(this).prev().val(numProduct + 1);
-						});
+							console.log('Quick view initialized successfully');
+						}, 100);
 					},
 					error: function() {
+						console.error('Error loading quick view');
 						$('.quick-view-content').html('<div class="text-center p-t-50 p-b-50"><p class="stext-102 cl6">Error loading product details. Please try again.</p></div>');
 					}
 				});
 			});
 		});
 	</script>
+
+	<!-- Wishlist JavaScript -->
+	<script th:src="@{/js/wishlist.js}"></script>
 
 </body>
 </html>

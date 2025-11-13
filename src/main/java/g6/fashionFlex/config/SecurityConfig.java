@@ -74,7 +74,7 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
                     // Auth & Password Reset - QUAN TRỌNG: đặt trước anyRequest()
                     .requestMatchers("/login", "/register", "/api/auth/**").permitAll()
-                    .requestMatchers("/forgot-password", "/reset-password", "/reset-password/**").permitAll()
+                    .requestMatchers("/forgot-password", "/verify-token", "/reset-password", "/resend-code", "/check-cooldown").permitAll()
 
                     // Static resources
                     .requestMatchers("/css/**", "/js/**", "/images/**", "/fonts/**", "/vendor/**", "/assets/**").permitAll()
@@ -83,7 +83,12 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
                     // User pages - require authentication
                     .requestMatchers("/user/**").authenticated()
                     .requestMatchers("/wishlist/**").authenticated()
-                    .requestMatchers("/cart/**").authenticated()
+
+                    // Cart: allow viewing page, but protect API operations
+                    .requestMatchers("/cart", "/shopping-cart").permitAll()  // Allow viewing cart page
+                    .requestMatchers("/api/cart/**").authenticated()  // Protect cart API operations
+                    .requestMatchers("/cart/**").authenticated()  // Protect other cart actions
+
                     .requestMatchers("/checkout/**").authenticated()
                     .requestMatchers("/order/**").authenticated()
 
@@ -99,7 +104,7 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
                     .loginProcessingUrl("/login")
                     .usernameParameter("email")
                     .passwordParameter("password")
-                    .defaultSuccessUrl("/", true)
+                    .defaultSuccessUrl("/", false)  // false = redirect to original requested page
                     .failureUrl("/login?error=true")
                     .permitAll()
             )

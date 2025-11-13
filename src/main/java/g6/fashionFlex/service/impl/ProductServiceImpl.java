@@ -101,4 +101,12 @@ public class ProductServiceImpl implements ProductService {
     public void delete(Long id) {
         productRepository.deleteById(id);
     }
+
+    @Override
+    public void incrementViewCount(Long id) {
+        productRepository.findById(id).ifPresent(product -> {
+            product.setViewCount(product.getViewCount() + 1);
+            productRepository.save(product);
+        });
+    }
 }

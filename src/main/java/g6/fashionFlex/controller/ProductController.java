@@ -98,6 +98,9 @@ public class ProductController {
         Product product = productService.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
 
+        // Increment view count
+        productService.incrementViewCount(id);
+
         model.addAttribute("product", product);
 
         // Get related products (same category)

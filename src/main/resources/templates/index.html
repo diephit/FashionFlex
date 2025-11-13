@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: head('Home')}">
 </head>
-<body class="animsition">
+<body class="animsition" th:attr="data-authenticated=${isAuthenticated != null ? isAuthenticated : false}">
 
 <!-- Header -->
 <div th:replace="~{fragments/header :: header('home')}"></div>
@@ -201,10 +201,15 @@
 						</div>
 
 						<div class="block2-txt-child2 flex-r p-t-3">
-							<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-								<img class="icon-heart1 dis-block trans-04" th:src="@{/images/icons/icon-heart-01.png}" alt="ICON">
-								<img class="icon-heart2 dis-block trans-04 ab-t-l" th:src="@{/images/icons/icon-heart-02.png}" alt="ICON">
-							</a>
+							<button type="button"
+							        th:data-product-id="${product.id}"
+							        th:onclick="'toggleWishlist(' + ${product.id} + ', this)'"
+							        class="wishlist-btn btn-addwish-b2 dis-block pos-relative"
+							        style="background: none; border: none; padding: 0; cursor: pointer;"
+							        title="Add to wishlist">
+								<i class="fa fa-heart text-muted trans-04"
+								   style="font-size: 20px;"></i>
+							</button>
 						</div>
 					</div>
 				</div>
@@ -385,6 +390,9 @@
 		});
 	});
 </script>
+
+<!-- Wishlist JavaScript -->
+<script th:src="@{/js/wishlist.js}"></script>
 
 </body>
 </html>

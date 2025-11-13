@@ -106,6 +106,16 @@
 				<!-- Main Content -->
 				<div class="col-md-9">
 					<div class="user-account-content">
+						<!-- Error/Success Messages -->
+						<div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+							<i class="fa fa-exclamation-triangle"></i> <span th:text="${error}"></span>
+							<button type="button" class="close" data-dismiss="alert">&times;</button>
+						</div>
+						<div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+							<i class="fa fa-check-circle"></i> <span th:text="${success}"></span>
+							<button type="button" class="close" data-dismiss="alert">&times;</button>
+						</div>
+
 						<div class="user-account-header">
 							<h2>Order History</h2>
 							<p>View and manage all your orders</p>
@@ -113,165 +123,87 @@
 
 						<!-- Order Filter -->
 						<div class="order-filter">
-							<button class="filter-btn active">All Orders</button>
-							<button class="filter-btn">Processing</button>
-							<button class="filter-btn">Shipped</button>
-							<button class="filter-btn">Completed</button>
-							<button class="filter-btn">Cancelled</button>
+							<a th:href="@{/user/orders(status='ALL')}" class="filter-btn" th:classappend="${filterStatus == 'ALL' ? 'active' : ''}">All Orders</a>
+							<a th:href="@{/user/orders(status='PENDING')}" class="filter-btn" th:classappend="${filterStatus == 'PENDING' ? 'active' : ''}">Pending</a>
+							<a th:href="@{/user/orders(status='PROCESSING')}" class="filter-btn" th:classappend="${filterStatus == 'PROCESSING' ? 'active' : ''}">Processing</a>
+							<a th:href="@{/user/orders(status='SHIPPED')}" class="filter-btn" th:classappend="${filterStatus == 'SHIPPED' ? 'active' : ''}">Shipped</a>
+							<a th:href="@{/user/orders(status='DELIVERED')}" class="filter-btn" th:classappend="${filterStatus == 'DELIVERED' ? 'active' : ''}">Delivered</a>
+							<a th:href="@{/user/orders(status='CANCELLED')}" class="filter-btn" th:classappend="${filterStatus == 'CANCELLED' ? 'active' : ''}">Cancelled</a>
 						</div>
 
-						<!-- Order Card 1 -->
-						<div class="order-card">
+						<!-- Empty State -->
+						<div th:if="${#lists.isEmpty(orders)}" style="text-align: center; padding: 60px 20px;">
+							<i class="fa fa-shopping-bag" style="font-size: 80px; color: #ddd; margin-bottom: 20px;"></i>
+							<h3 style="font-size: 22px; color: #666; margin-bottom: 10px;">No Orders Found</h3>
+							<p style="color: #999; margin-bottom: 30px;">
+								<span th:if="${filterStatus != null}">
+									No orders with status: <strong th:text="${filterStatus}"></strong>
+								</span>
+								<span th:if="${filterStatus == null}">
+									You haven't placed any orders yet
+								</span>
+							</p>
+							<a th:href="@{/product}" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer" style="display: inline-flex;">
+								<i class="fa fa-shopping-bag" style="margin-right: 8px;"></i> Start Shopping
+							</a>
+						</div>
+
+						<!-- Dynamic Order Cards -->
+						<div th:each="order : ${orders}" class="order-card">
 							<div class="order-card-header">
 								<div>
-									<div class="order-number">#ORD-2024-001</div>
-									<div class="order-date">Ordered on January 15, 2024</div>
+									<div class="order-number" th:text="'#' + ${order.orderNumber}">#ORD-2024-001</div>
+									<div class="order-date" th:text="'Ordered on ' + ${#temporals.format(order.createdAt, 'MMMM dd, yyyy')}">Ordered on January 15, 2024</div>
 								</div>
-								<span class="status-badge processing">Processing</span>
+								<span class="status-badge"
+								      th:classappend="${order.status.toLowerCase()}"
+								      th:text="${order.status}">Processing</span>
 							</div>
 							<div class="order-items">
-								<div class="order-item">
-									<img th:src="@{/images/product-01.jpg}" alt="Product" class="order-item-image">
+								<div th:each="item, iterStat : ${order.orderItems}"
+								     th:if="${iterStat.index < 3}"
+								     class="order-item">
+									<img th:src="@{${item.productImageUrl}}" alt="Product" class="order-item-image"
+									     onerror="this.src='/images/product-placeholder.jpg'">
 									<div class="order-item-info">
-										<h4>Esprit Ruffle Shirt</h4>
-										<p>Size: M, Color: White, Qty: 1</p>
+										<h4 th:text="${item.productName}">Product Name</h4>
+										<p>
+											<span th:if="${item.size != null}">Size: <span th:text="${item.size}">M</span>, </span>
+											<span th:if="${item.color != null}">Color: <span th:text="${item.color}">White</span>, </span>
+											Qty: <span th:text="${item.quantity}">1</span>
+										</p>
 									</div>
 								</div>
-								<div class="order-item">
-									<img th:src="@{/images/product-02.jpg}" alt="Product" class="order-item-image">
-									<div class="order-item-info">
-										<h4>Herschel supply</h4>
-										<p>Size: L, Color: Black, Qty: 2</p>
-									</div>
+								<!-- Show "and X more items" if more than 3 items -->
+								<div th:if="${#lists.size(order.orderItems) > 3}" style="padding: 10px 0; color: #666; font-size: 14px;">
+									<i class="fa fa-plus-circle"></i> and <span th:text="${#lists.size(order.orderItems) - 3}">2</span> more item(s)
 								</div>
 							</div>
 							<div class="order-card-footer">
-								<div class="order-total">Total: $156.40</div>
+								<div class="order-total">
+									Total: $<span th:text="${#numbers.formatDecimal(order.totalAmount, 1, 2)}">156.40</span>
+									<span style="font-size: 13px; color: #666; font-weight: normal; margin-left: 10px;">
+										(<span th:text="${#lists.size(order.orderItems)}">2</span> items)
+									</span>
+								</div>
 								<div class="order-actions">
-									<a th:href="@{/user/order-tracking}" class="btn-user-outline">Track Order</a>
-									<a href="#" class="btn-user-primary">View Details</a>
-								</div>
-							</div>
-						</div>
-
-						<!-- Order Card 2 -->
-						<div class="order-card">
-							<div class="order-card-header">
-								<div>
-									<div class="order-number">#ORD-2024-002</div>
-									<div class="order-date">Ordered on January 10, 2024</div>
-								</div>
-								<span class="status-badge completed">Delivered</span>
-							</div>
-							<div class="order-items">
-								<div class="order-item">
-									<img th:src="@{/images/product-03.jpg}" alt="Product" class="order-item-image">
-									<div class="order-item-info">
-										<h4>Only Check Trouser</h4>
-										<p>Size: L, Color: Blue, Qty: 1</p>
-									</div>
-								</div>
-							</div>
-							<div class="order-card-footer">
-								<div class="order-total">Total: $75.00</div>
-								<div class="order-actions">
-									<a href="#" class="btn-user-outline">Review Product</a>
-									<a href="#" class="btn-user-primary">Buy Again</a>
-								</div>
-							</div>
-						</div>
-
-						<!-- Order Card 3 -->
-						<div class="order-card">
-							<div class="order-card-header">
-								<div>
-									<div class="order-number">#ORD-2024-003</div>
-									<div class="order-date">Ordered on January 5, 2024</div>
-								</div>
-								<span class="status-badge shipped">Shipped</span>
-							</div>
-							<div class="order-items">
-								<div class="order-item">
-									<img th:src="@{/images/product-04.jpg}" alt="Product" class="order-item-image">
-									<div class="order-item-info">
-										<h4>Classic Trench Coat</h4>
-										<p>Size: M, Color: Beige, Qty: 1</p>
-									</div>
-								</div>
-								<div class="order-item">
-									<img th:src="@{/images/product-05.jpg}" alt="Product" class="order-item-image">
-									<div class="order-item-info">
-										<h4>Front Pocket Jumper</h4>
-										<p>Size: L, Color: Gray, Qty: 1</p>
-									</div>
-								</div>
-							</div>
-							<div class="order-card-footer">
-								<div class="order-total">Total: $109.75</div>
-								<div class="order-actions">
-									<a th:href="@{/user/order-tracking}" class="btn-user-outline">Track Order</a>
-									<a href="#" class="btn-user-primary">View Details</a>
-								</div>
-							</div>
-						</div>
-
-						<!-- Order Card 4 -->
-						<div class="order-card">
-							<div class="order-card-header">
-								<div>
-									<div class="order-number">#ORD-2024-004</div>
-									<div class="order-date">Ordered on December 28, 2023</div>
-								</div>
-								<span class="status-badge cancelled">Cancelled</span>
-							</div>
-							<div class="order-items">
-								<div class="order-item">
-									<img th:src="@{/images/product-06.jpg}" alt="Product" class="order-item-image">
-									<div class="order-item-info">
-										<h4>Vintage Denim Jacket</h4>
-										<p>Size: M, Color: Blue, Qty: 1</p>
-									</div>
-								</div>
-							</div>
-							<div class="order-card-footer">
-								<div class="order-total">Total: $89.99</div>
-								<div class="order-actions">
-									<a href="#" class="btn-user-outline">View Details</a>
-									<a href="#" class="btn-user-primary">Buy Again</a>
-								</div>
-							</div>
-						</div>
-
-						<!-- Order Card 5 -->
-						<div class="order-card">
-							<div class="order-card-header">
-								<div>
-									<div class="order-number">#ORD-2024-005</div>
-									<div class="order-date">Ordered on December 20, 2023</div>
-								</div>
-								<span class="status-badge completed">Delivered</span>
-							</div>
-							<div class="order-items">
-								<div class="order-item">
-									<img th:src="@{/images/product-07.jpg}" alt="Product" class="order-item-image">
-									<div class="order-item-info">
-										<h4>Leather Backpack</h4>
-										<p>Size: One Size, Color: Brown, Qty: 1</p>
-									</div>
-								</div>
-								<div class="order-item">
-									<img th:src="@{/images/product-08.jpg}" alt="Product" class="order-item-image">
-									<div class="order-item-info">
-										<h4>Canvas Sneakers</h4>
-										<p>Size: 42, Color: White, Qty: 1</p>
-									</div>
-								</div>
-							</div>
-							<div class="order-card-footer">
-								<div class="order-total">Total: $135.50</div>
-								<div class="order-actions">
-									<a href="#" class="btn-user-outline">Review Products</a>
-									<a href="#" class="btn-user-primary">Buy Again</a>
+									<!-- Track order button (for non-delivered/cancelled orders) -->
+									<a th:if="${order.status != 'DELIVERED' and order.status != 'CANCELLED'}"
+									   th:href="@{/user/orders/track/{orderNumber}(orderNumber=${order.orderNumber})}"
+									   class="btn-user-outline">
+									   <i class="fa fa-map-marker"></i> Track Order
+									</a>
+									<!-- View details button -->
+									<a th:href="@{/user/orders/{id}(id=${order.id})}" class="btn-user-primary">
+										<i class="fa fa-eye"></i> View Details
+									</a>
+									<!-- Cancel button (only for PENDING orders) -->
+									<button th:if="${order.status == 'PENDING'}"
+									        type="button"
+									        th:attr="onclick='confirmCancelOrder(' + ${order.id} + ', \'' + ${order.orderNumber} + '\')'"
+									        class="btn-user-outline" style="border: none; background: #dc3545; color: white; cursor: pointer;">
+										<i class="fa fa-times"></i> Cancel
+									</button>
 								</div>
 							</div>
 						</div>
@@ -319,6 +251,45 @@
 	</script>
 <!--===============================================================================================-->
 	<script th:src="@{/js/main.js}"></script>
+	<script>
+		// Cancel order confirmation
+		function confirmCancelOrder(orderId, orderNumber) {
+			console.log('confirmCancelOrder called with orderId:', orderId, 'orderNumber:', orderNumber);
+
+			const reason = prompt(`Are you sure you want to cancel order ${orderNumber}?\n\nPlease enter cancellation reason (optional):`);
+			console.log('User entered reason:', reason);
+
+			if (reason !== null) { // User clicked OK (even if empty)
+				// Create form and submit
+				const form = document.createElement('form');
+				form.method = 'POST';
+				form.action = `/user/orders/${orderId}/cancel`;
+
+				const reasonInput = document.createElement('input');
+				reasonInput.type = 'hidden';
+				reasonInput.name = 'reason';
+				reasonInput.value = reason || 'Cancelled by customer';
+
+				form.appendChild(reasonInput);
+				document.body.appendChild(form);
+
+				console.log('Submitting form to:', form.action);
+				form.submit();
+			} else {
+				console.log('User cancelled the prompt');
+			}
+		}
+
+		// Filter button styling (keep for compatibility with existing CSS)
+		document.querySelectorAll('.filter-btn').forEach(btn => {
+			btn.addEventListener('click', function() {
+				document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+				this.classList.add('active');
+			});
+		});
+
+		console.log('Order history page JavaScript loaded');
+	</script>
 
 </body>
 </html>

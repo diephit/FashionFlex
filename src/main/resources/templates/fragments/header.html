@@ -114,7 +114,7 @@
 						</li>
 
 						<li th:classappend="${activeMenu == 'cart'} ? 'active-menu' : ''" class="label1" data-label1="hot">
-							<a th:href="@{/shoping-cart}">Cart</a>
+							<a th:href="@{/shopping-cart}">Cart</a>
 						</li>
 
 						<li th:classappend="${activeMenu == 'blog'} ? 'active-menu' : ''">
@@ -137,11 +137,12 @@
 						<i class="zmdi zmdi-search"></i>
 					</div>
 
-					<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="2">
+					<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart"
+					     th:attr="data-notify=${cartItemCount != null && cartItemCount > 0 ? cartItemCount : null}">
 						<i class="zmdi zmdi-shopping-cart"></i>
 					</div>
 
-					<a th:href="@{/user/wishlist}" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti" data-notify="0">
+					<a th:href="@{/user/wishlist}" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti wishlist-icon" data-notify="0">
 						<i class="zmdi zmdi-favorite-outline"></i>
 					</a>
 				</div>
@@ -162,11 +163,12 @@
 				<i class="zmdi zmdi-search"></i>
 			</div>
 
-			<div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart" data-notify="2">
+			<div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart"
+			     th:attr="data-notify=${cartItemCount != null && cartItemCount > 0 ? cartItemCount : null}">
 				<i class="zmdi zmdi-shopping-cart"></i>
 			</div>
 
-			<a th:href="@{/user/wishlist}" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti" data-notify="0">
+			<a th:href="@{/user/wishlist}" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti wishlist-icon" data-notify="0">
 				<i class="zmdi zmdi-favorite-outline"></i>
 			</a>
 		</div>
@@ -283,71 +285,82 @@
 		</div>
 
 		<div class="header-cart-content flex-w js-pscroll">
-			<ul class="header-cart-wrapitem w-full">
-				<!-- Cart items will be loaded here dynamically -->
-				<li class="header-cart-item flex-w flex-t m-b-12">
-					<div class="header-cart-item-img">
-						<img th:src="@{/images/item-cart-01.jpg}" alt="IMG">
-					</div>
+			<!-- Guest user / Not logged in message -->
+			<div th:if="${headerCart == null}" class="w-full p-t-20 p-b-20 text-center">
+				<p class="stext-102 cl6 p-b-20">Please login to view your cart</p>
+				<a th:href="@{/login}" class="flex-c-m stext-101 cl0 size-107 bg1 bor2 hov-btn1 p-lr-15 trans-04">
+					Login
+				</a>
+			</div>
 
-					<div class="header-cart-item-txt p-t-8">
-						<a href="#" class="header-cart-item-name m-b-18 hov-cl1 trans-04">
-							White Shirt Pleat
+			<!-- Logged in user with items -->
+			<div th:if="${headerCart != null && headerCart.totalItems > 0}" class="w-full">
+				<ul class="header-cart-wrapitem w-full">
+					<!-- Display up to 5 most recent cart items -->
+					<li th:each="item : ${headerCart.items}" class="header-cart-item flex-w flex-t m-b-12">
+						<div class="header-cart-item-img">
+							<img th:src="${item.productImageUrl != null && !item.productImageUrl.isEmpty() ? item.productImageUrl : '/images/product-placeholder.jpg'}"
+							     th:alt="${item.productName}"
+							     onerror="this.onerror=null; this.src='/images/product-placeholder.jpg'">
+						</div>
+
+						<div class="header-cart-item-txt p-t-8">
+							<a th:href="@{/product/{id}(id=${item.productId})}"
+							   class="header-cart-item-name m-b-18 hov-cl1 trans-04"
+							   th:text="${item.productName}">
+								Product Name
+							</a>
+
+							<span class="header-cart-item-info">
+								<span th:text="${item.quantity}">1</span> x
+								<span th:if="${item.discountPrice != null && item.discountPrice.compareTo(item.price) < 0}"
+								      th:text="'$' + ${#numbers.formatDecimal(item.discountPrice, 1, 2)}">$19.00</span>
+								<span th:unless="${item.discountPrice != null && item.discountPrice.compareTo(item.price) < 0}"
+								      th:text="'$' + ${#numbers.formatDecimal(item.price, 1, 2)}">$19.00</span>
+							</span>
+
+							<!-- Show size and color if available -->
+							<div th:if="${item.size != null || item.color != null}" class="stext-107 cl6" style="font-size: 12px;">
+								<span th:if="${item.size != null}" th:text="'Size: ' + ${item.size}"></span>
+								<span th:if="${item.size != null && item.color != null}"> | </span>
+								<span th:if="${item.color != null}" th:text="'Color: ' + ${item.color}"></span>
+							</div>
+						</div>
+					</li>
+				</ul>
+
+				<!-- "View more items" message if cart has more than 5 items -->
+				<div th:if="${headerCart.hasMoreItems}" class="w-full text-center p-t-10 p-b-10">
+					<p class="stext-107 cl6">
+						<a th:href="@{/shopping-cart}" class="hov-cl1">
+							View all <span th:text="${headerCart.totalItems}">10</span> items in cart
 						</a>
-
-						<span class="header-cart-item-info">
-							1 x $19.00
-						</span>
-					</div>
-				</li>
-
-				<li class="header-cart-item flex-w flex-t m-b-12">
-					<div class="header-cart-item-img">
-						<img th:src="@{/images/item-cart-02.jpg}" alt="IMG">
-					</div>
-
-					<div class="header-cart-item-txt p-t-8">
-						<a href="#" class="header-cart-item-name m-b-18 hov-cl1 trans-04">
-							Converse All Star
-						</a>
-
-						<span class="header-cart-item-info">
-							1 x $39.00
-						</span>
-					</div>
-				</li>
-
-				<li class="header-cart-item flex-w flex-t m-b-12">
-					<div class="header-cart-item-img">
-						<img th:src="@{/images/item-cart-03.jpg}" alt="IMG">
-					</div>
-
-					<div class="header-cart-item-txt p-t-8">
-						<a href="#" class="header-cart-item-name m-b-18 hov-cl1 trans-04">
-							Nixon Porter Leather
-						</a>
-
-						<span class="header-cart-item-info">
-							1 x $17.00
-						</span>
-					</div>
-				</li>
-			</ul>
-
-			<div class="w-full">
-				<div class="header-cart-total w-full p-tb-40">
-					Total: $75.00
+					</p>
 				</div>
 
-				<div class="header-cart-buttons flex-w w-full">
-					<a th:href="@{/shoping-cart}" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-r-8 m-b-10">
-						View Cart
-					</a>
+				<div class="w-full">
+					<div class="header-cart-total w-full p-tb-40">
+						Subtotal: <span th:text="'$' + ${#numbers.formatDecimal(headerCart.subtotal, 1, 2)}">$75.00</span>
+					</div>
 
-					<a th:href="@{/checkout/checkout}" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-b-10">
-						Check Out
-					</a>
+					<div class="header-cart-buttons flex-w w-full">
+						<a th:href="@{/shopping-cart}" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-r-8 m-b-10">
+							View Cart
+						</a>
+
+						<a th:href="@{/checkout/checkout}" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-b-10">
+							Check Out
+						</a>
+					</div>
 				</div>
+			</div>
+
+			<!-- Logged in user with empty cart -->
+			<div th:if="${headerCart != null && headerCart.totalItems == 0}" class="w-full p-t-40 p-b-40 text-center">
+				<p class="stext-102 cl6 p-b-20">Your cart is empty</p>
+				<a th:href="@{/product}" class="flex-c-m stext-101 cl0 size-107 bg1 bor2 hov-btn1 p-lr-15 trans-04">
+					Continue Shopping
+				</a>
 			</div>
 		</div>
 	</div>
@@ -418,12 +431,8 @@
 			});
 		});
 
-		$('.js-addcart-detail').each(function(){
-			var nameProduct = $(this).parent().parent().parent().parent().find('.js-name-detail').html();
-			$(this).on('click', function(){
-				swal(nameProduct, "is added to cart !", "success");
-			});
-		});
+		// Add to cart functionality - moved to individual pages (product-detail.html)
+		// to allow for proper handling of size/color variants and AJAX requests
 	</script>
 	<script th:src="@{/vendor/perfect-scrollbar/perfect-scrollbar.min.js}"></script>
 	<script>

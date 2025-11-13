@@ -136,28 +136,34 @@
 
 				<!-- Main Content -->
 				<div class="col-md-9">
-					<!-- Tracking Form Section -->
-					<div class="tracking-form-section" id="trackingForm">
+					<!-- Error/Success Messages -->
+					<div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+						<i class="fa fa-exclamation-triangle"></i> <span th:text="${error}"></span>
+						<button type="button" class="close" data-dismiss="alert">&times;</button>
+					</div>
+
+					<!-- Tracking Form Section (Show if no tracking data) -->
+					<div class="tracking-form-section" id="trackingForm" th:style="${tracking != null ? 'display:none;' : ''}">
 						<h3>Track Your Order</h3>
 						<p>Enter your order number and email address to track your order</p>
 
-						<form class="tracking-form" th:action="@{/user/track-order}" method="post">
+						<form class="tracking-form" th:action="@{/user/orders/track}" method="post">
 							<div class="user-form-group" style="text-align: left;">
 								<label>Order Number</label>
-								<input type="text" class="user-form-control" name="orderNumber" placeholder="e.g., ORD-2024-001" value="ORD-2024-001">
+								<input type="text" class="user-form-control" name="orderNumber" placeholder="e.g., ORD-2024-001" required>
 							</div>
 							<div class="user-form-group" style="text-align: left;">
 								<label>Email Address</label>
-								<input type="email" class="user-form-control" name="email" placeholder="john.doe@example.com" th:value="${user != null ? user.email : 'john.doe@example.com'}">
+								<input type="email" class="user-form-control" name="email" placeholder="john.doe@example.com" th:value="${user != null ? user.email : ''}" required>
 							</div>
-							<button type="button" class="btn-user-primary" onclick="showTracking()">
+							<button type="submit" class="btn-user-primary">
 								<i class="fa fa-search"></i> Track Order
 							</button>
 						</form>
 					</div>
 
-					<!-- Tracking Result Section (Initially Hidden) -->
-					<div class="tracking-result-section" id="trackingResult" style="display: block;">
+					<!-- Tracking Result Section (Show if tracking data exists) -->
+					<div class="tracking-result-section" id="trackingResult" th:if="${tracking != null}" th:style="${tracking != null ? 'display:block;' : 'display:none;'}">
 						<div class="user-account-header">
 							<h2>Order Tracking</h2>
 							<p>Track the status of your order</p>
@@ -165,92 +171,50 @@
 
 						<!-- Order Info -->
 						<div class="tracking-order-info">
-							<h4>Order #ORD-2024-001</h4>
-							<div class="tracking-info-row">
-								<span class="tracking-info-label">Order Date:</span>
-								<span class="tracking-info-value">January 15, 2024</span>
-							</div>
-							<div class="tracking-info-row">
+							<h4>Order #<span th:text="${tracking.orderNumber}">ORD-2024-001</span></h4>
+							<div class="tracking-info-row" th:if="${tracking.estimatedDelivery != null}">
 								<span class="tracking-info-label">Expected Delivery:</span>
-								<span class="tracking-info-value">January 22, 2024</span>
+								<span class="tracking-info-value" th:text="${tracking.estimatedDelivery}">January 22, 2024</span>
 							</div>
-							<div class="tracking-info-row">
+							<div class="tracking-info-row" th:if="${tracking.shippingMethod != null}">
 								<span class="tracking-info-label">Shipping Method:</span>
-								<span class="tracking-info-value">Standard Shipping</span>
+								<span class="tracking-info-value" th:text="${tracking.shippingMethod}">Standard Shipping</span>
+							</div>
+							<div class="tracking-info-row" th:if="${tracking.trackingNumber != null}">
+								<span class="tracking-info-label">Tracking Number:</span>
+								<span class="tracking-info-value" th:text="${tracking.trackingNumber}">TRACK123456</span>
 							</div>
 							<div class="tracking-info-row">
-								<span class="tracking-info-label">Status:</span>
+								<span class="tracking-info-label">Current Status:</span>
 								<span class="tracking-info-value">
-									<span class="status-badge processing">Processing</span>
+									<span class="status-badge"
+									      th:classappend="${tracking.currentStatus.toLowerCase()}"
+									      th:text="${tracking.currentStatus}">Processing</span>
 								</span>
+							</div>
+							<div class="tracking-info-row" th:if="${tracking.shippingAddress != null}">
+								<span class="tracking-info-label">Shipping To:</span>
+								<span class="tracking-info-value" th:text="${tracking.shippingAddress}">123 Main St, City</span>
 							</div>
 						</div>
 
 						<!-- Tracking Timeline -->
-						<div class="tracking-timeline">
-							<!-- Step 1: Order Placed - Completed -->
-							<div class="tracking-step completed">
+						<div class="tracking-timeline" th:if="${tracking != null and tracking.timeline != null}">
+							<!-- Dynamic Timeline Steps -->
+							<div th:each="event : ${tracking.timeline}"
+							     class="tracking-step"
+							     th:classappend="${event.completed ? 'completed' : ''} + ' ' + ${event.active ? 'active' : ''}">
 								<div class="tracking-step-title">
-									<i class="fa fa-check-circle"></i> Order Placed
+									<i class="fa"
+									   th:classappend="${event.completed ? 'fa-check-circle' : (event.active ? 'fa-spinner' : 'fa-circle-o')}"></i>
+									<span th:text="${event.title}">Event Title</span>
 								</div>
-								<div class="tracking-step-time">January 15, 2024 - 10:30 AM</div>
-								<div class="tracking-step-description">
-									Your order has been successfully placed and we've received your payment.
+								<div class="tracking-step-time"
+								     th:text="${event.timestamp != null ? #temporals.format(event.timestamp, 'MMMM dd, yyyy - HH:mm a') : 'Pending'}">
+								     January 15, 2024 - 10:30 AM
 								</div>
-							</div>
-
-							<!-- Step 2: Order Confirmed - Completed -->
-							<div class="tracking-step completed">
-								<div class="tracking-step-title">
-									<i class="fa fa-check-circle"></i> Order Confirmed
-								</div>
-								<div class="tracking-step-time">January 15, 2024 - 11:45 AM</div>
-								<div class="tracking-step-description">
-									We've confirmed your order details and it's ready for processing.
-								</div>
-							</div>
-
-							<!-- Step 3: Processing - Active -->
-							<div class="tracking-step active">
-								<div class="tracking-step-title">
-									<i class="fa fa-spinner"></i> Processing
-								</div>
-								<div class="tracking-step-time">January 16, 2024 - 09:15 AM</div>
-								<div class="tracking-step-description">
-									Your order is currently being prepared for shipment. Our team is carefully packaging your items.
-								</div>
-							</div>
-
-							<!-- Step 4: Shipped - Pending -->
-							<div class="tracking-step">
-								<div class="tracking-step-title">
-									<i class="fa fa-truck"></i> Shipped
-								</div>
-								<div class="tracking-step-time">Pending</div>
-								<div class="tracking-step-description">
-									Your order will be shipped soon. You'll receive tracking information once it's on its way.
-								</div>
-							</div>
-
-							<!-- Step 5: Out for Delivery - Pending -->
-							<div class="tracking-step">
-								<div class="tracking-step-title">
-									<i class="fa fa-motorcycle"></i> Out for Delivery
-								</div>
-								<div class="tracking-step-time">Pending</div>
-								<div class="tracking-step-description">
-									Your order is out for delivery and will arrive soon.
-								</div>
-							</div>
-
-							<!-- Step 6: Delivered - Pending -->
-							<div class="tracking-step">
-								<div class="tracking-step-title">
-									<i class="fa fa-gift"></i> Delivered
-								</div>
-								<div class="tracking-step-time">Pending</div>
-								<div class="tracking-step-description">
-									Your order has been delivered successfully.
+								<div class="tracking-step-description" th:text="${event.description}">
+									Event description text
 								</div>
 							</div>
 						</div>
@@ -284,10 +248,10 @@
 
 						<!-- Action Buttons -->
 						<div style="margin-top: 30px; text-align: center;">
-							<button class="btn-user-outline" style="margin-right: 10px;" onclick="hideTracking()">
+							<a th:href="@{/user/orders/track}" class="btn-user-outline" style="margin-right: 10px;">
 								<i class="fa fa-search"></i> Track Another Order
-							</button>
-							<a th:href="@{/user/order-history}" class="btn-user-primary">
+							</a>
+							<a th:href="@{/user/orders}" class="btn-user-primary">
 								<i class="fa fa-list"></i> View All Orders
 							</a>
 						</div>
@@ -328,17 +292,6 @@
 				ps.update();
 			})
 		});
-
-		// Toggle tracking views
-		function showTracking() {
-			document.getElementById('trackingForm').style.display = 'none';
-			document.getElementById('trackingResult').style.display = 'block';
-		}
-
-		function hideTracking() {
-			document.getElementById('trackingForm').style.display = 'block';
-			document.getElementById('trackingResult').style.display = 'none';
-		}
 	</script>
 	<script th:src="@{/js/main.js}"></script>
 

@@ -5,7 +5,13 @@
       "Bash(nul)",
       "Bash(mvn spring-boot:run:*)",
       "Bash(mvn clean compile:*)",
-      "Bash(copy \"src\\main\\resources\\static\\images\\product-01.jpg\" \"src\\main\\resources\\static\\images\\product-placeholder.jpg\")"
+      "Bash(copy \"src\\main\\resources\\static\\images\\product-01.jpg\" \"src\\main\\resources\\static\\images\\product-placeholder.jpg\")",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(mvn clean spring-boot:run:*)",
+      "Bash(timeout /t 3 /nobreak)",
+      "Bash(exit 0)"
     ],
     "deny": [],
     "ask": []
