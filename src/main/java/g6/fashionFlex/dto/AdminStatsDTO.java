@@ -14,6 +14,7 @@ public class AdminStatsDTO {
     private Long totalProducts;
     private Long totalOrders;
     private Long totalCategories;
+    private Long totalBrands;
     private BigDecimal totalRevenue;
     private BigDecimal todayRevenue;
     private BigDecimal monthRevenue;

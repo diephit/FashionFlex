@@ -32,6 +32,9 @@ public class AdminStatsService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private g6.fashionFlex.repository.BrandRepository brandRepository;
+
     public AdminStatsDTO getAdminStatistics() {
         AdminStatsDTO stats = new AdminStatsDTO();
 
@@ -40,6 +43,7 @@ public class AdminStatsService {
         stats.setTotalProducts(productRepository.count());
         stats.setTotalOrders(orderRepository.count());
         stats.setTotalCategories(categoryRepository.count());
+        stats.setTotalBrands(brandRepository.count());
 
         // Revenue calculations
         BigDecimal totalRevenue = orderRepository.getTotalRevenue();
@@ -107,5 +111,9 @@ public class AdminStatsService {
 
     public long getTotalCategories() {
         return categoryRepository.count();
+    }
+
+    public long getTotalBrands() {
+        return brandRepository.count();
     }
 }

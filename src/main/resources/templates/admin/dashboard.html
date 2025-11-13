@@ -62,6 +62,7 @@
                 <a href="/admin" class="active"><i class="fa fa-dashboard"></i> Dashboard</a>
                 <a href="/admin/products"><i class="fa fa-shopping-bag"></i> Products</a>
                 <a href="/admin/categories"><i class="fa fa-list"></i> Categories</a>
+                <a href="/admin/brands"><i class="fa fa-tag"></i> Brands</a>
                 <a href="/admin/orders"><i class="fa fa-shopping-cart"></i> Orders</a>
                 <a href="/admin/users"><i class="fa fa-users"></i> Users</a>
                 <hr style="border-color: #495057;">
@@ -111,6 +112,17 @@
                             <h3 th:text="${stats?.totalCategories ?: 0}">0</h3>
                             <p>Total Categories</p>
                             <i class="fa fa-list fa-2x text-info"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Second Row of Stats -->
+                <div class="row mt-3">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <h3 th:text="${stats?.totalBrands ?: 0}">0</h3>
+                            <p>Total Brands</p>
+                            <i class="fa fa-tag fa-2x text-danger"></i>
                         </div>
                     </div>
                 </div>

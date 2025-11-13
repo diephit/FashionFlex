@@ -75,6 +75,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("SELECT COUNT(p) FROM Product p WHERE p.category.id = :categoryId AND p.active = true")
     long countByCategoryId(@Param("categoryId") Long categoryId);
 
+    // Count by brand
+    @Query("SELECT COUNT(p) FROM Product p WHERE p.brand.id = :brandId")
+    long countByBrandId(@Param("brandId") Long brandId);
+
     // Admin queries - include inactive products
     @Query("SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     Page<Product> adminSearchByName(@Param("keyword") String keyword, Pageable pageable);
