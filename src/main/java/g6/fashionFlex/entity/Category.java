@@ -25,6 +25,10 @@ public class Category {
     @OneToMany(mappedBy = "category")
     private List<Product> products;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", columnDefinition = "ENUM('active', 'inactive') DEFAULT 'active'")
+    private CategoryStatus status;
+
     public Category() {
     }
 
@@ -66,5 +70,17 @@ public class Category {
 
     public void setProducts(List<Product> products) {
         this.products = products;
+    }
+
+    public CategoryStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(CategoryStatus status) {
+        this.status = status;
+    }
+
+    public enum CategoryStatus {
+        active, inactive
     }
 }

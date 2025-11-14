@@ -30,6 +30,9 @@ public class Product {
     @JoinColumn(name = "updatedByAdminID")
     private Admin updatedByAdmin;
 
+    @Column(name = "mainImage")
+    private String mainImage;
+
     @Column(name = "createdAt")
     private LocalDateTime createdAt;
 
@@ -39,10 +42,17 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<ProductVariant> variants;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", columnDefinition = "ENUM('active', 'inactive') DEFAULT 'active'")
+    private ProductStatus status;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
+        if (status == null) {
+            status = ProductStatus.active;
+        }
     }
 
     @PreUpdate
@@ -123,5 +133,25 @@ public class Product {
 
     public void setUpdatedByAdmin(Admin updatedByAdmin) {
         this.updatedByAdmin = updatedByAdmin;
+    }
+
+    public String getMainImage() {
+        return mainImage;
+    }
+
+    public void setMainImage(String mainImage) {
+        this.mainImage = mainImage;
+    }
+
+    public ProductStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ProductStatus status) {
+        this.status = status;
+    }
+
+    public enum ProductStatus {
+        active, inactive
     }
 }

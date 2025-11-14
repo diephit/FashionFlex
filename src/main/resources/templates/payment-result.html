@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Payment Result - FashionFlex</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" href="images/icons/favicon.png"/>
+	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="css/util.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<style>
+		.payment-result {
+			min-height: 60vh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.result-card {
+			background: #fff;
+			border-radius: 10px;
+			box-shadow: 0 0 20px rgba(0,0,0,0.1);
+			padding: 50px;
+			text-align: center;
+			max-width: 600px;
+			width: 100%;
+		}
+		.result-icon {
+			font-size: 80px;
+			margin-bottom: 20px;
+		}
+		.result-icon.success {
+			color: #28a745;
+		}
+		.result-icon.failed {
+			color: #dc3545;
+		}
+		.result-icon.invalid {
+			color: #ffc107;
+		}
+		.result-title {
+			font-size: 28px;
+			font-weight: bold;
+			margin-bottom: 15px;
+		}
+		.result-info {
+			background: #f8f9fa;
+			border-radius: 8px;
+			padding: 20px;
+			margin: 30px 0;
+			text-align: left;
+		}
+		.info-row {
+			display: flex;
+			justify-content: space-between;
+			padding: 10px 0;
+			border-bottom: 1px solid #dee2e6;
+		}
+		.info-row:last-child {
+			border-bottom: none;
+		}
+		.info-label {
+			font-weight: 600;
+			color: #666;
+		}
+		.info-value {
+			color: #333;
+		}
+	</style>
+</head>
+<body>
+	
+	<section class="payment-result">
+		<div class="container">
+			<div class="result-card">
+				<div th:if="${status == 'success'}">
+					<div class="result-icon success">
+						<i class="fa fa-check-circle"></i>
+					</div>
+					<h2 class="result-title" th:text="${message}">Payment Successful</h2>
+					<p class="stext-107 cl6">Thank you for your purchase. Your order has been confirmed.</p>
+				</div>
+
+				<div th:if="${status == 'failed'}">
+					<div class="result-icon failed">
+						<i class="fa fa-times-circle"></i>
+					</div>
+					<h2 class="result-title" th:text="${message}">Payment Failed</h2>
+					<p class="stext-107 cl6">Transaction was not successful. Please try again.</p>
+				</div>
+
+				<div th:if="${status == 'invalid'}">
+					<div class="result-icon invalid">
+						<i class="fa fa-exclamation-triangle"></i>
+					</div>
+					<h2 class="result-title" th:text="${message}">Invalid Signature</h2>
+					<p class="stext-107 cl6">An error occurred during transaction verification.</p>
+				</div>
+
+				<div class="result-info" th:if="${orderId != null}">
+					<div class="info-row">
+						<span class="info-label">Order ID:</span>
+						<span class="info-value" th:text="${orderId}">-</span>
+					</div>
+					<div class="info-row">
+						<span class="info-label">Amount:</span>
+						<span class="info-value" th:text="'$' + ${totalPrice}">-</span>
+					</div>
+					<div class="info-row" th:if="${transactionId != null}">
+						<span class="info-label">Transaction ID:</span>
+						<span class="info-value" th:text="${transactionId}">-</span>
+					</div>
+					<div class="info-row" th:if="${paymentTime != null}">
+						<span class="info-label">Payment Time:</span>
+						<span class="info-value" th:text="${paymentTime}">-</span>
+					</div>
+				</div>
+
+				<div class="p-t-20">
+					<a th:href="@{/index}" 
+					   class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer m-r-10"
+					   style="display: inline-flex; margin-bottom: 10px;">
+						Home
+					</a>
+					
+					<a th:if="${status == 'failed' || status == 'invalid'}" 
+					   th:href="@{/shopping-cart}" 
+					   class="flex-c-m stext-101 cl2 size-116 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer"
+					   style="display: inline-flex; margin-bottom: 10px;">
+						Back to Cart
+					</a>
+					
+					<a th:if="${status == 'success'}" 
+					   th:href="@{/product}" 
+					   class="flex-c-m stext-101 cl2 size-116 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer"
+					   style="display: inline-flex; margin-bottom: 10px;">
+						Continue Shopping
+					</a>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+	<script src="vendor/bootstrap/js/popper.js"></script>
+	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Admin Login - Fashion Flex</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--===============================================================================================-->
+	<link rel="icon" type="image/png" href="images/icons/favicon.png"/>
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="fonts/iconic/css/material-design-iconic-font.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="fonts/linearicons-v1.0.0/icon-font.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/css-hamburgers/hamburgers.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/animsition/css/animsition.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/daterangepicker/daterangepicker.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/slick/slick.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/MagnificPopup/magnific-popup.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/perfect-scrollbar/perfect-scrollbar.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="css/util.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+<!--===============================================================================================-->
+	<style>
+		/* Custom styles for admin login page */
+		.auth-container {
+			min-height: calc(100vh - 300px);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 80px 15px 80px 15px;
+		}
+
+		.auth-box {
+			background: #fff;
+			border-radius: 10px;
+			box-shadow: 0 0 30px rgba(0,0,0,0.1);
+			max-width: 500px;
+			width: 100%;
+			overflow: hidden;
+		}
+
+		.auth-header {
+			background: #717fe0;
+			padding: 30px;
+			text-align: center;
+			color: #fff;
+		}
+
+		.auth-header h2 {
+			margin: 0;
+			font-family: Poppins-Medium;
+			font-size: 24px;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+		}
+
+		.auth-form-container {
+			padding: 40px 40px 30px 40px;
+		}
+
+		.form-group {
+			margin-bottom: 25px;
+		}
+
+		.form-input {
+			width: 100%;
+			height: 50px;
+			border: 1px solid #e6e6e6;
+			border-radius: 5px;
+			padding: 0 20px;
+			font-family: Poppins-Regular;
+			font-size: 15px;
+			color: #333;
+			transition: all 0.3s;
+		}
+
+		.form-input:focus {
+			outline: none;
+			border-color: #717fe0;
+			box-shadow: 0 0 5px rgba(113, 127, 224, 0.3);
+		}
+
+		.form-input::placeholder {
+			color: #999;
+		}
+
+		.btn-submit {
+			width: 100%;
+			height: 50px;
+			background: #717fe0;
+			border: none;
+			border-radius: 5px;
+			font-family: Poppins-Medium;
+			font-size: 15px;
+			color: #fff;
+			cursor: pointer;
+			transition: all 0.3s;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+		}
+
+		.btn-submit:hover {
+			background: #333;
+			transform: translateY(-2px);
+			box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+		}
+
+		.form-link {
+			text-align: center;
+			margin-top: 20px;
+			font-family: Poppins-Regular;
+			font-size: 14px;
+			color: #666;
+		}
+
+		.form-link a {
+			color: #717fe0;
+			text-decoration: none;
+			font-family: Poppins-Medium;
+		}
+
+		.form-link a:hover {
+			text-decoration: underline;
+		}
+
+		.checkbox-container {
+			display: flex;
+			align-items: center;
+			margin-bottom: 20px;
+		}
+
+		.checkbox-container input[type="checkbox"] {
+			width: 18px;
+			height: 18px;
+			margin-right: 8px;
+			cursor: pointer;
+		}
+
+		.checkbox-container label {
+			font-family: Poppins-Regular;
+			font-size: 14px;
+			color: #666;
+			cursor: pointer;
+			margin: 0;
+		}
+
+		.alert {
+			padding: 12px 20px;
+			margin-bottom: 20px;
+			border-radius: 5px;
+			font-family: Poppins-Regular;
+			font-size: 14px;
+		}
+
+		.alert-error {
+			background: #fee;
+			color: #c33;
+			border: 1px solid #fcc;
+		}
+
+		.alert-success {
+			background: #efe;
+			color: #3c3;
+			border: 1px solid #cfc;
+		}
+
+		@media (max-width: 576px) {
+			.auth-form-container {
+				padding: 30px 20px;
+			}
+		}
+	</style>
+</head>
+<body>
+
+	<!-- Header -->
+	<header>
+		<!-- Header desktop -->
+		<div class="container-menu-desktop">
+			<!-- Topbar -->
+			<div class="top-bar">
+				<div class="content-topbar flex-sb-m h-full container">
+					<div class="left-top-bar">
+						FashionFlex Admin Panel
+					</div>
+
+					<div class="right-top-bar flex-w h-full">
+						<a href="/" class="flex-c-m trans-04 p-lr-25">
+							Back to Store
+						</a>
+					</div>
+				</div>
+			</div>
+
+			<div class="wrap-menu-desktop">
+				<nav class="limiter-menu-desktop container">
+					<!-- Logo desktop -->
+					<!-- Logo desktop -->		
+					<a href="/index" class="logo" style="font-family: Poppins-Bold; font-size: 2rem; color: #333;">
+    Fashion Flex
+</a>
+				</nav>
+			</div>
+		</div>
+	</header>
+
+	<!-- Admin Login Section -->
+	<div class="auth-container">
+		<div class="auth-box">
+			<div class="auth-header">
+				<h2>Admin Login</h2>
+			</div>
+
+			<div class="auth-form-container">
+				<!-- Error/Success Messages -->
+				<div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+				<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+				<div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+
+				<!-- Login Form -->
+				<form th:action="@{/admin-login}" method="post">
+					<div class="form-group">
+						<input type="email" name="email" class="form-input" placeholder="Email Address" required>
+					</div>
+
+					<div class="form-group">
+						<input type="password" name="password" class="form-input" placeholder="Password" required>
+					</div>
+
+					<div class="checkbox-container">
+						<input type="checkbox" id="remember" name="remember">
+						<label for="remember">Remember Me</label>
+					</div>
+
+					<button type="submit" class="btn-submit">
+						Sign In as Admin
+					</button>
+
+					<div class="form-link">
+						<a href="/login">Regular User Login</a>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<!-- Footer -->
+	<footer class="bg3 p-t-75 p-b-32">
+		<div class="container">
+			<div class="p-t-40">
+				<p class="stext-107 cl6 txt-center">
+					Copyright &copy;<script>document.write(new Date().getFullYear());</script> FashionFlex Admin Panel
+				</p>
+			</div>
+		</div>
+	</footer>
+
+	<!-- Back to top -->
+	<div class="btn-back-to-top" id="myBtn">
+		<span class="symbol-btn-back-to-top">
+			<i class="zmdi zmdi-chevron-up"></i>
+		</span>
+	</div>
+
+<!--===============================================================================================-->
+	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+<!--===============================================================================================-->
+	<script src="vendor/animsition/js/animsition.min.js"></script>
+<!--===============================================================================================-->
+	<script src="vendor/bootstrap/js/popper.js"></script>
+	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+<!--===============================================================================================-->
+	<script src="js/main.js"></script>
+
+</body>
+</html>
+

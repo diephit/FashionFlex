@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Products Management - Admin</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" th:href="@{/images/icons/favicon.png}"/>
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/bootstrap/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/font-awesome-4.7.0/css/font-awesome.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/iconic/css/material-design-iconic-font.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/util.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/admin-styles.css}">
+</head>
+<body>
+
+	<div class="admin-wrapper">
+		<!-- Sidebar -->
+		<aside class="admin-sidebar">
+			<div class="admin-sidebar-header">
+				<h3><i class="zmdi zmdi-shield-security"></i> Admin Panel</h3>
+			</div>
+			<ul class="admin-sidebar-menu">
+				<li><a th:href="@{/admin/dashboard}"><i class="fa fa-tachometer"></i> Dashboard</a></li>
+				<li><a th:href="@{/admin/products}" class="active"><i class="fa fa-shopping-bag"></i> Products</a></li>
+				<li><a th:href="@{/admin/orders}"><i class="fa fa-shopping-cart"></i> Orders</a></li>
+				<li><a th:href="@{/admin/customers}"><i class="fa fa-users"></i> Customers</a></li>
+				<li><a th:href="@{/admin/categories}"><i class="fa fa-folder"></i> Categories</a></li>
+				<li><a th:href="@{/admin/coupons}"><i class="fa fa-tag"></i> Coupons</a></li>
+				<li><a th:href="@{/admin/reviews}"><i class="fa fa-star"></i> Reviews</a></li>
+				<li><a th:href="@{/admin/settings}"><i class="fa fa-cog"></i> Settings</a></li>
+				<li><a th:href="@{/}"><i class="fa fa-sign-out"></i> Back to Store</a></li>
+			</ul>
+		</aside>
+
+		<!-- Main Content -->
+		<main class="admin-main">
+			<div class="admin-topbar">
+				<h2>Products Management</h2>
+				<div class="admin-user-info">
+					<span>Admin User</span>
+					<img src="https://ui-avatars.com/api/?name=Admin+User&size=40&background=667eea&color=fff" alt="Admin">
+				</div>
+			</div>
+
+			<div class="admin-content">
+				<!-- Actions Bar -->
+				<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+					<div style="display: flex; gap: 10px;">
+						<input type="text" id="tableSearch" placeholder="Search products..." style="padding: 10px 15px; border: 1px solid #ddd; border-radius: 4px; width: 300px;">
+						<select style="padding: 10px 15px; border: 1px solid #ddd; border-radius: 4px;">
+							<option>All Categories</option>
+							<option>Women</option>
+							<option>Men</option>
+							<option>Bags</option>
+							<option>Shoes</option>
+						</select>
+					</div>
+					<button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
+						<i class="fa fa-plus"></i> Add New Product
+					</button>
+				</div>
+
+				<!-- Products Table -->
+				<div class="admin-table-wrapper">
+					<div class="admin-table-header">
+						<h3>All Products (16)</h3>
+						<div style="display: flex; gap: 10px;">
+							<button style="padding: 8px 15px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer;">
+								<i class="fa fa-download"></i> Export
+							</button>
+							<button style="padding: 8px 15px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer;">
+								<i class="fa fa-upload"></i> Import
+							</button>
+						</div>
+					</div>
+
+					<table class="admin-table">
+						<thead>
+							<tr>
+								<th><input type="checkbox" id="selectAll"></th>
+								<th>Image</th>
+								<th>Product Name</th>
+								<th>SKU</th>
+								<th>Category</th>
+								<th>Price</th>
+								<th>Stock</th>
+								<th>Status</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><input type="checkbox" class="item-checkbox"></td>
+								<td><img th:src="@{/images/product-01.jpg}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;"></td>
+								<td>Esprit Ruffle Shirt</td>
+								<td>PRD-001</td>
+								<td>Women</td>
+								<td>$45.00</td>
+								<td><span style="color: #e74c3c; font-weight: 600;">5</span></td>
+								<td><span class="status-badge completed">Active</span></td>
+								<td>
+									<button class="action-btn view"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit"><i class="fa fa-edit"></i></button>
+									<button class="action-btn delete" data-item="Esprit Ruffle Shirt"><i class="fa fa-trash"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox" class="item-checkbox"></td>
+								<td><img th:src="@{/images/product-02.jpg}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;"></td>
+								<td>Herschel supply</td>
+								<td>PRD-002</td>
+								<td>Bags</td>
+								<td>$75.00</td>
+								<td>45</td>
+								<td><span class="status-badge completed">Active</span></td>
+								<td>
+									<button class="action-btn view"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit"><i class="fa fa-edit"></i></button>
+									<button class="action-btn delete" data-item="Herschel supply"><i class="fa fa-trash"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox" class="item-checkbox"></td>
+								<td><img th:src="@{/images/product-03.jpg}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;"></td>
+								<td>Only Check Trouser</td>
+								<td>PRD-003</td>
+								<td>Women</td>
+								<td>$36.00</td>
+								<td>28</td>
+								<td><span class="status-badge completed">Active</span></td>
+								<td>
+									<button class="action-btn view"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit"><i class="fa fa-edit"></i></button>
+									<button class="action-btn delete" data-item="Only Check Trouser"><i class="fa fa-trash"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox" class="item-checkbox"></td>
+								<td><img th:src="@{/images/product-04.jpg}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;"></td>
+								<td>Classic Trench Coat</td>
+								<td>PRD-004</td>
+								<td>Men</td>
+								<td>$125.00</td>
+								<td>12</td>
+								<td><span class="status-badge completed">Active</span></td>
+								<td>
+									<button class="action-btn view"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit"><i class="fa fa-edit"></i></button>
+									<button class="action-btn delete" data-item="Classic Trench Coat"><i class="fa fa-trash"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox" class="item-checkbox"></td>
+								<td><img th:src="@{/images/product-05.jpg}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;"></td>
+								<td>Front Pocket Jumper</td>
+								<td>PRD-005</td>
+								<td>Men</td>
+								<td>$58.00</td>
+								<td>0</td>
+								<td><span class="status-badge cancelled">Out of Stock</span></td>
+								<td>
+									<button class="action-btn view"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit"><i class="fa fa-edit"></i></button>
+									<button class="action-btn delete" data-item="Front Pocket Jumper"><i class="fa fa-trash"></i></button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+					<!-- Pagination -->
+					<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+						<div style="font-size: 14px; color: #666;">Showing 1 to 5 of 16 entries</div>
+						<div style="display: flex; gap: 5px;">
+							<button style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer;">Previous</button>
+							<button style="padding: 8px 12px; border: 1px solid #717fe0; border-radius: 4px; background: #717fe0; color: white; cursor: pointer;">1</button>
+							<button style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer;">2</button>
+							<button style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer;">3</button>
+							<button style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer;">Next</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<button class="admin-mobile-toggle"><i class="fa fa-bars"></i></button>
+
+	<script th:src="@{/vendor/jquery/jquery-3.2.1.min.js}"></script>
+	<script th:src="@{/vendor/bootstrap/js/popper.js}"></script>
+	<script th:src="@{/vendor/bootstrap/js/bootstrap.min.js}"></script>
+	<script th:src="@{/vendor/sweetalert/sweetalert.min.js}"></script>
+	<script th:src="@{/js/admin.js}"></script>
+
+</body>
+</html>

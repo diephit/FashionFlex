@@ -16,7 +16,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -63,21 +62,89 @@ public class AuthController {
 
     // Handle registration from form submission
     @PostMapping("/api/auth/register")
-    public String registerUser(@Valid @ModelAttribute("user") RegisterRequest registerRequest,
-                               BindingResult bindingResult,
+    public String registerUser(@RequestParam(required = false) String fullName,
+                               @RequestParam(required = false) String email,
+                               @RequestParam(required = false) String password,
                                RedirectAttributes redirectAttributes,
                                Model model) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("registerError", "Please fix the errors in the form");
+        // Create RegisterRequest from form parameters
+        RegisterRequest registerRequest = new RegisterRequest();
+        if (fullName != null) {
+            registerRequest.setFullName(fullName.trim());
+        }
+        if (email != null) {
+            registerRequest.setEmail(email.trim().toLowerCase());
+        }
+        if (password != null) {
+            registerRequest.setPassword(password);
+        }
+        
+        // Always add user object back to model for form binding
+        model.addAttribute("user", registerRequest);
+        model.addAttribute("showRegister", true);
+        
+        // Validate required fields
+        if (registerRequest.getFullName() == null || registerRequest.getFullName().trim().isEmpty()) {
+            model.addAttribute("registerError", "Full name is required");
+            return "login";
+        }
+        
+        if (registerRequest.getEmail() == null || registerRequest.getEmail().trim().isEmpty()) {
+            model.addAttribute("registerError", "Email is required");
+            return "login";
+        }
+        
+        if (registerRequest.getPassword() == null || registerRequest.getPassword().trim().isEmpty()) {
+            model.addAttribute("registerError", "Password is required");
+            return "login";
+        }
+        
+        if (registerRequest.getPassword().length() < 6) {
+            model.addAttribute("registerError", "Password must be at least 6 characters");
             return "login";
         }
 
         try {
+            // Normalize email to lowercase for consistency
+            String emailInput = registerRequest.getEmail();
+            if (emailInput == null || emailInput.trim().isEmpty()) {
+                model.addAttribute("registerError", "Email is required");
+                model.addAttribute("showRegister", true);
+                return "login";
+            }
+            
+            String normalizedEmail = emailInput.trim().toLowerCase();
+            registerRequest.setEmail(normalizedEmail);
+            
+            // Check if email already exists in database - query DB directly
+            boolean emailExists = userRepository.existsByEmail(normalizedEmail);
+            
+            // Also check with findByEmail to be absolutely sure
+            if (!emailExists) {
+                emailExists = userRepository.findByEmail(normalizedEmail).isPresent();
+            }
+            
+            if (emailExists) {
+                model.addAttribute("registerError", "This email has been used, please try another one");
+                model.addAttribute("showRegister", true);
+                model.addAttribute("user", registerRequest); // Keep form data
+                return "login";
+            }
+            
+            // Email is unique, proceed with registration
             UserDTO userDTO = userService.registerUser(registerRequest);
             redirectAttributes.addAttribute("registered", "true");
             return "redirect:/login";
         } catch (Exception e) {
-            model.addAttribute("registerError", e.getMessage());
+            String errorMessage = e.getMessage();
+            // Check if it's an email already exists error from service layer
+            if (errorMessage != null && errorMessage.contains("email has been used")) {
+                model.addAttribute("registerError", "This email has been used, please try another one");
+            } else {
+                model.addAttribute("registerError", errorMessage != null ? errorMessage : "Registration failed. Please try again.");
+            }
+            model.addAttribute("showRegister", true);
+            model.addAttribute("user", registerRequest); // Keep form data
             return "login";
         }
     }
@@ -125,17 +192,24 @@ public class AuthController {
     // Handle form-based login (traditional form submission)
     @PostMapping("/login")
     public String processLogin(@RequestParam String email,
-                              @RequestParam String password,
-                              @RequestParam(required = false) String remember,
-                              RedirectAttributes redirectAttributes) {
+                          @RequestParam String password,
+                          @RequestParam(required = false) String remember,
+                          RedirectAttributes redirectAttributes) {
         try {
+            // Normalize email to lowercase for consistency
+            String normalizedEmail = email.toLowerCase().trim();
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(email, password)
+                    new UsernamePasswordAuthenticationToken(normalizedEmail, password)
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
-
-            // Redirect to user home after successful login
-            return "redirect:/user/home";
+            
+            // Get user details and add to redirect attributes
+            UserDTO user = userService.getUserByEmail(normalizedEmail);
+            redirectAttributes.addFlashAttribute("displayName", user.getFullName());
+            redirectAttributes.addFlashAttribute("isAuthenticated", true);
+            
+            // Redirect to index instead of user/home
+            return "redirect:/";
         } catch (Exception e) {
             redirectAttributes.addAttribute("error", "true");
             return "redirect:/login";

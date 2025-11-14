@@ -1,36 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
 	<title>Blog</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-<!--===============================================================================================-->	
-	<link rel="icon" type="image/png" href="images/icons/favicon.png"/>
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
+	<link rel="icon" type="image/png" href="images/icons/favicon.png" />
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="fonts/iconic/css/material-design-iconic-font.min.css">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="fonts/linearicons-v1.0.0/icon-font.min.css">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
-<!--===============================================================================================-->	
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="vendor/css-hamburgers/hamburgers.min.css">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="vendor/animsition/css/animsition.min.css">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="vendor/perfect-scrollbar/perfect-scrollbar.css">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="css/util.css">
 	<link rel="stylesheet" type="text/css" href="css/main.css">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 </head>
+
 <body class="animsition">
-	
+
 	<!-- Header -->
 	<header class="header-v4">
 		<!-- Header desktop -->
@@ -43,19 +45,19 @@
 					</div>
 
 					<div class="right-top-bar flex-w h-full">
-						<a href="login.html" class="flex-c-m trans-04 p-lr-25">
+						<a href="/login" class="flex-c-m trans-04 p-lr-25">
 							Help & FAQs
 						</a>
 
-						<a href="login.html" class="flex-c-m trans-04 p-lr-25">
+						<a href="/login" class="flex-c-m trans-04 p-lr-25">
 							My Account
 						</a>
 
-						<a href="login.html" class="flex-c-m trans-04 p-lr-25">
+						<a href="/login" class="flex-c-m trans-04 p-lr-25">
 							EN
 						</a>
 
-						<a href="login.html" class="flex-c-m trans-04 p-lr-25">
+						<a href="/login" class="flex-c-m trans-04 p-lr-25">
 							USD
 						</a>
 					</div>
@@ -64,45 +66,38 @@
 
 			<div class="wrap-menu-desktop how-shadow1">
 				<nav class="limiter-menu-desktop container">
-					
-					<!-- Logo desktop -->		
-					<a href="#" class="logo">
-						<img src="images/icons/logo-01.png" alt="IMG-LOGO">
+
+					<!-- Logo desktop -->
+					<a href="/index" class="logo" style="font-family: Poppins-Bold; font-size: 2rem; color: #333;">
+						Fashion Flex
 					</a>
 
 					<!-- Menu desktop -->
 					<div class="menu-desktop">
 						<ul class="main-menu">
-							<li>
-								<a href="index.html">Home</a>
-								<ul class="sub-menu">
-									<li><a href="index.html">Homepage 1</a></li>
-									<li><a href="home-02.html">Homepage 2</a></li>
-									<li><a href="home-03.html">Homepage 3</a></li>
-								</ul>
-							</li>
+
 
 							<li>
-								<a href="product.html">Shop</a>
+								<a th:href="@{/product}">Shop</a>
 							</li>
 
 							<li class="label1" data-label1="hot">
-								<a href="shoping-cart.html">Features</a>
+								<a href="/shopping-cart">Features</a>
 							</li>
 
 							<li class="active-menu">
-								<a href="blog.html">Blog</a>
+								<a th:href="@{/blog}">Blog</a>
 							</li>
 
 							<li>
-								<a href="about.html">About</a>
+								<a th:href="@{/about}">About</a>
 							</li>
 
 							<li>
-								<a href="contact.html">Contact</a>
+								<a th:href="@{/contact}">Contact</a>
 							</li>
 						</ul>
-					</div>	
+					</div>
 
 					<!-- Icon header -->
 					<div class="wrap-icon-header flex-w flex-r-m">
@@ -110,23 +105,25 @@
 							<i class="zmdi zmdi-search"></i>
 						</div>
 
-						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="2">
+						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart"
+							data-notify="2">
 							<i class="zmdi zmdi-shopping-cart"></i>
 						</div>
 
-						<a href="#" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti" data-notify="0">
+						<a href="#" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti"
+							data-notify="0">
 							<i class="zmdi zmdi-favorite-outline"></i>
 						</a>
 					</div>
 				</nav>
-			</div>	
+			</div>
 		</div>
 
 		<!-- Header Mobile -->
 		<div class="wrap-header-mobile">
-			<!-- Logo moblie -->		
+			<!-- Logo moblie -->
 			<div class="logo-mobile">
-				<a href="index.html"><img src="images/icons/logo-01.png" alt="IMG-LOGO"></a>
+				<a th:href="@{/}"><img src="images/icons/logo-01.png" alt="IMG-LOGO"></a>
 			</div>
 
 			<!-- Icon header -->
@@ -135,11 +132,13 @@
 					<i class="zmdi zmdi-search"></i>
 				</div>
 
-				<div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart" data-notify="2">
+				<div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart"
+					data-notify="2">
 					<i class="zmdi zmdi-shopping-cart"></i>
 				</div>
 
-				<a href="#" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti" data-notify="0">
+				<a href="#" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti"
+					data-notify="0">
 					<i class="zmdi zmdi-favorite-outline"></i>
 				</a>
 			</div>
@@ -164,19 +163,19 @@
 
 				<li>
 					<div class="right-top-bar flex-w h-full">
-						<a href="login.html" class="flex-c-m p-lr-10 trans-04">
+						<a href="/login" class="flex-c-m p-lr-10 trans-04">
 							Help & FAQs
 						</a>
 
-						<a href="login.html" class="flex-c-m p-lr-10 trans-04">
+						<a href="/login" class="flex-c-m p-lr-10 trans-04">
 							My Account
 						</a>
 
-						<a href="login.html" class="flex-c-m p-lr-10 trans-04">
+						<a href="/login" class="flex-c-m p-lr-10 trans-04">
 							EN
 						</a>
 
-						<a href="login.html" class="flex-c-m p-lr-10 trans-04">
+						<a href="/login" class="flex-c-m p-lr-10 trans-04">
 							USD
 						</a>
 					</div>
@@ -185,11 +184,11 @@
 
 			<ul class="main-menu-m">
 				<li>
-					<a href="index.html">Home</a>
+					<a th:href="@{/}">Home</a>
 					<ul class="sub-menu-m">
-						<li><a href="index.html">Homepage 1</a></li>
-						<li><a href="home-02.html">Homepage 2</a></li>
-						<li><a href="home-03.html">Homepage 3</a></li>
+						<li><a th:href="@{/}">Homepage 1</a></li>
+						<li><a th:href="@{/home-02}">Homepage 2</a></li>
+						<li><a th:href="@{/home-03}">Homepage 3</a></li>
 					</ul>
 					<span class="arrow-main-menu-m">
 						<i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -197,23 +196,23 @@
 				</li>
 
 				<li>
-					<a href="product.html">Shop</a>
+					<a th:href="@{/product}">Shop</a>
 				</li>
 
 				<li>
-					<a href="shoping-cart.html" class="label1 rs1" data-label1="hot">Features</a>
+					<a href="/shopping-cart" class="label1 rs1" data-label1="hot">Features</a>
 				</li>
 
 				<li>
-					<a href="blog.html">Blog</a>
+					<a th:href="@{/blog}">Blog</a>
 				</li>
 
 				<li>
-					<a href="about.html">About</a>
+					<a th:href="@{/about}">About</a>
 				</li>
 
 				<li>
-					<a href="contact.html">Contact</a>
+					<a th:href="@{/contact}">Contact</a>
 				</li>
 			</ul>
 		</div>
@@ -249,7 +248,7 @@
 					<i class="zmdi zmdi-close"></i>
 				</div>
 			</div>
-			
+
 			<div class="header-cart-content flex-w js-pscroll">
 				<ul class="header-cart-wrapitem w-full">
 					<li class="header-cart-item flex-w flex-t m-b-12">
@@ -300,18 +299,20 @@
 						</div>
 					</li>
 				</ul>
-				
+
 				<div class="w-full">
 					<div class="header-cart-total w-full p-tb-40">
 						Total: $75.00
 					</div>
 
 					<div class="header-cart-buttons flex-w w-full">
-						<a href="shoping-cart.html" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-r-8 m-b-10">
+						<a href="/shopping-cart"
+							class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-r-8 m-b-10">
 							View Cart
 						</a>
 
-						<a href="shoping-cart.html" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-b-10">
+						<a href="/shopping-cart"
+							class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-b-10">
 							Check Out
 						</a>
 					</div>
@@ -326,7 +327,7 @@
 		<h2 class="ltext-105 cl0 txt-center">
 			Blog
 		</h2>
-	</section>	
+	</section>
 
 
 	<!-- Content page -->
@@ -337,7 +338,7 @@
 					<div class="p-r-45 p-r-0-lg">
 						<!-- item blog -->
 						<div class="p-b-63">
-							<a href="blog-detail.html" class="hov-img0 how-pos5-parent">
+							<a th:href="@{/blog-detail}" class="hov-img0 how-pos5-parent">
 								<img src="images/blog-04.jpg" alt="IMG-BLOG">
 
 								<div class="flex-col-c-m size-123 bg9 how-pos5">
@@ -353,24 +354,25 @@
 
 							<div class="p-t-32">
 								<h4 class="p-b-15">
-									<a href="blog-detail.html" class="ltext-108 cl2 hov-cl1 trans-04">
+									<a th:href="@{/blog-detail}" class="ltext-108 cl2 hov-cl1 trans-04">
 										8 Inspiring Ways to Wear Dresses in the Winter
 									</a>
 								</h4>
 
 								<p class="stext-117 cl6">
-									Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce eget dictum tortor. Donec dictum vitae sapien eu varius
+									Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos
+									himenaeos. Fusce eget dictum tortor. Donec dictum vitae sapien eu varius
 								</p>
 
 								<div class="flex-w flex-sb-m p-t-18">
 									<span class="flex-w flex-m stext-111 cl2 p-r-30 m-tb-10">
 										<span>
-											<span class="cl4">By</span> Admin  
+											<span class="cl4">By</span> Admin
 											<span class="cl12 m-l-4 m-r-6">|</span>
 										</span>
 
 										<span>
-											StreetStyle, Fashion, Couple  
+											StreetStyle, Fashion, Couple
 											<span class="cl12 m-l-4 m-r-6">|</span>
 										</span>
 
@@ -379,7 +381,7 @@
 										</span>
 									</span>
 
-									<a href="blog-detail.html" class="stext-101 cl2 hov-cl1 trans-04 m-tb-10">
+									<a th:href="@{/blog-detail}" class="stext-101 cl2 hov-cl1 trans-04 m-tb-10">
 										Continue Reading
 
 										<i class="fa fa-long-arrow-right m-l-9"></i>
@@ -390,7 +392,7 @@
 
 						<!-- item blog -->
 						<div class="p-b-63">
-							<a href="blog-detail.html" class="hov-img0 how-pos5-parent">
+							<a th:href="@{/blog-detail}" class="hov-img0 how-pos5-parent">
 								<img src="images/blog-05.jpg" alt="IMG-BLOG">
 
 								<div class="flex-col-c-m size-123 bg9 how-pos5">
@@ -406,24 +408,25 @@
 
 							<div class="p-t-32">
 								<h4 class="p-b-15">
-									<a href="blog-detail.html" class="ltext-108 cl2 hov-cl1 trans-04">
-										The Great Big List of Men’s Gifts for the Holidays 
+									<a th:href="@{/blog-detail}" class="ltext-108 cl2 hov-cl1 trans-04">
+										The Great Big List of Men’s Gifts for the Holidays
 									</a>
 								</h4>
 
 								<p class="stext-117 cl6">
-									Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce eget dictum tortor. Donec dictum vitae sapien eu varius
+									Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos
+									himenaeos. Fusce eget dictum tortor. Donec dictum vitae sapien eu varius
 								</p>
 
 								<div class="flex-w flex-sb-m p-t-18">
 									<span class="flex-w flex-m stext-111 cl2 p-r-30 m-tb-10">
 										<span>
-											<span class="cl4">By</span> Admin  
+											<span class="cl4">By</span> Admin
 											<span class="cl12 m-l-4 m-r-6">|</span>
 										</span>
 
 										<span>
-											StreetStyle, Fashion, Couple  
+											StreetStyle, Fashion, Couple
 											<span class="cl12 m-l-4 m-r-6">|</span>
 										</span>
 
@@ -432,7 +435,7 @@
 										</span>
 									</span>
 
-									<a href="blog-detail.html" class="stext-101 cl2 hov-cl1 trans-04 m-tb-10">
+									<a th:href="@{/blog-detail}" class="stext-101 cl2 hov-cl1 trans-04 m-tb-10">
 										Continue Reading
 
 										<i class="fa fa-long-arrow-right m-l-9"></i>
@@ -443,7 +446,7 @@
 
 						<!-- item blog -->
 						<div class="p-b-63">
-							<a href="blog-detail.html" class="hov-img0 how-pos5-parent">
+							<a th:href="@{/blog-detail}" class="hov-img0 how-pos5-parent">
 								<img src="images/blog-06.jpg" alt="IMG-BLOG">
 
 								<div class="flex-col-c-m size-123 bg9 how-pos5">
@@ -459,24 +462,25 @@
 
 							<div class="p-t-32">
 								<h4 class="p-b-15">
-									<a href="blog-detail.html" class="ltext-108 cl2 hov-cl1 trans-04">
+									<a th:href="@{/blog-detail}" class="ltext-108 cl2 hov-cl1 trans-04">
 										5 Winter-to-Spring Fashion Trends to Try Now
 									</a>
 								</h4>
 
 								<p class="stext-117 cl6">
-									Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce eget dictum tortor. Donec dictum vitae sapien eu varius
+									Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos
+									himenaeos. Fusce eget dictum tortor. Donec dictum vitae sapien eu varius
 								</p>
 
 								<div class="flex-w flex-sb-m p-t-18">
 									<span class="flex-w flex-m stext-111 cl2 p-r-30 m-tb-10">
 										<span>
-											<span class="cl4">By</span> Admin  
+											<span class="cl4">By</span> Admin
 											<span class="cl12 m-l-4 m-r-6">|</span>
 										</span>
 
 										<span>
-											StreetStyle, Fashion, Couple  
+											StreetStyle, Fashion, Couple
 											<span class="cl12 m-l-4 m-r-6">|</span>
 										</span>
 
@@ -485,7 +489,7 @@
 										</span>
 									</span>
 
-									<a href="blog-detail.html" class="stext-101 cl2 hov-cl1 trans-04 m-tb-10">
+									<a th:href="@{/blog-detail}" class="stext-101 cl2 hov-cl1 trans-04 m-tb-10">
 										Continue Reading
 
 										<i class="fa fa-long-arrow-right m-l-9"></i>
@@ -510,7 +514,8 @@
 				<div class="col-md-4 col-lg-3 p-b-80">
 					<div class="side-menu">
 						<div class="bor17 of-hidden pos-relative">
-							<input class="stext-103 cl2 plh4 size-116 p-l-28 p-r-55" type="text" name="search" placeholder="Search">
+							<input class="stext-103 cl2 plh4 size-116 p-l-28 p-r-55" type="text" name="search"
+								placeholder="Search">
 
 							<button class="flex-c-m size-122 ab-t-r fs-18 cl4 hov-cl1 trans-04">
 								<i class="zmdi zmdi-search"></i>
@@ -656,7 +661,7 @@
 								<li class="p-b-7">
 									<a href="#" class="flex-w flex-sb-m stext-115 cl6 hov-cl1 trans-04 p-tb-2">
 										<span>
-											April  2018
+											April 2018
 										</span>
 
 										<span>
@@ -721,23 +726,28 @@
 							</h4>
 
 							<div class="flex-w m-r--5">
-								<a href="#" class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
+								<a href="#"
+									class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
 									Fashion
 								</a>
 
-								<a href="#" class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
+								<a href="#"
+									class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
 									Lifestyle
 								</a>
 
-								<a href="#" class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
+								<a href="#"
+									class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
 									Denim
 								</a>
 
-								<a href="#" class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
+								<a href="#"
+									class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
 									Streetstyle
 								</a>
 
-								<a href="#" class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
+								<a href="#"
+									class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
 									Crafts
 								</a>
 							</div>
@@ -746,9 +756,9 @@
 				</div>
 			</div>
 		</div>
-	</section>	
-	
-		
+	</section>
+
+
 
 	<!-- Footer -->
 	<footer class="bg3 p-t-75 p-b-32">
@@ -800,7 +810,7 @@
 
 						<li class="p-b-10">
 							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-								Returns 
+								Returns
 							</a>
 						</li>
 
@@ -824,7 +834,8 @@
 					</h4>
 
 					<p class="stext-107 cl7 size-201">
-						Any questions? Let us know in store at 8th floor, 379 Hudson St, New York, NY 10018 or call us on (+1) 96 716 6879
+						Any questions? Let us know in store at 8th floor, 379 Hudson St, New York, NY 10018 or call us
+						on (+1) 96 716 6879
 					</p>
 
 					<div class="p-t-27">
@@ -849,7 +860,8 @@
 
 					<form>
 						<div class="wrap-input1 w-full p-b-4">
-							<input class="input1 bg-none plh1 stext-107 cl7" type="text" name="email" placeholder="email@example.com">
+							<input class="input1 bg-none plh1 stext-107 cl7" type="text" name="email"
+								placeholder="email@example.com">
 							<div class="focus-input1 trans-04"></div>
 						</div>
 
@@ -887,8 +899,12 @@
 
 				<p class="stext-107 cl6 txt-center">
 					<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | Made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a> &amp; distributed by <a href="https://themewagon.com" target="_blank">ThemeWagon</a>
-<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+					Copyright &copy;
+					<script>document.write(new Date().getFullYear());</script> All rights reserved | Made with <i
+						class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com"
+						target="_blank">Colorlib</a> &amp; distributed by <a href="https://themewagon.com"
+						target="_blank">ThemeWagon</a>
+					<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
 
 				</p>
 			</div>
@@ -903,44 +919,45 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 		</span>
 	</div>
 
-<!--===============================================================================================-->	
+	<!--===============================================================================================-->
 	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<script src="vendor/animsition/js/animsition.min.js"></script>
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<script src="vendor/bootstrap/js/popper.js"></script>
 	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<script src="vendor/select2/select2.min.js"></script>
 	<script>
-		$(".js-select2").each(function(){
+		$(".js-select2").each(function () {
 			$(this).select2({
 				minimumResultsForSearch: 20,
 				dropdownParent: $(this).next('.dropDownSelect2')
 			});
 		})
 	</script>
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<script src="vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<script src="vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 	<script>
-		$('.js-pscroll').each(function(){
-			$(this).css('position','relative');
-			$(this).css('overflow','hidden');
+		$('.js-pscroll').each(function () {
+			$(this).css('position', 'relative');
+			$(this).css('overflow', 'hidden');
 			var ps = new PerfectScrollbar(this, {
 				wheelSpeed: 1,
 				scrollingThreshold: 1000,
 				wheelPropagation: false,
 			});
 
-			$(window).on('resize', function(){
+			$(window).on('resize', function () {
 				ps.update();
 			})
 		});
 	</script>
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<script src="js/main.js"></script>
 
 </body>
+
 </html>

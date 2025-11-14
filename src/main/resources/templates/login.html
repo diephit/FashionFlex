@@ -1,38 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-	<title>Login - Cozastore</title>
+	<title>Login - Fashion Flex</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->
-	<link rel="icon" type="image/png" href="images/icons/favicon.png"/>
+	<link rel="icon" type="image/png" th:href="@{/images/icons/favicon.png}"/>
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/bootstrap/css/bootstrap.min.css}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/font-awesome-4.7.0/css/font-awesome.min.css}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="fonts/iconic/css/material-design-iconic-font.min.css">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/iconic/css/material-design-iconic-font.min.css}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="fonts/linearicons-v1.0.0/icon-font.min.css">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/linearicons-v1.0.0/icon-font.min.css}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/animate/animate.css}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/css-hamburgers/hamburgers.min.css">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/css-hamburgers/hamburgers.min.css}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/animsition/css/animsition.min.css">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/animsition/css/animsition.min.css}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/select2/select2.min.css}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/daterangepicker/daterangepicker.css">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/daterangepicker/daterangepicker.css}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/slick/slick.css">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/slick/slick.css}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/MagnificPopup/magnific-popup.css">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/MagnificPopup/magnific-popup.css}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/perfect-scrollbar/perfect-scrollbar.css">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/perfect-scrollbar/perfect-scrollbar.css}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="css/util.css">
-	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/util.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
 <!--===============================================================================================-->
 	<style>
 		/* Custom styles for login/register page */
@@ -255,11 +255,7 @@
 		}
 	</style>
 </head>
-<body class="animsition">
-	<!-- Flash message -->
-	<div th:if="${message} != null or ${param.message} != null" class="alert alert-warning text-center" style="margin: 10px auto; max-width: 800px;">
-		<span th:text="${message != null ? message : (param.message != null ? param.message : '')}"></span>
-	</div>
+<body>
 
 	<!-- Header -->
 	<header>
@@ -277,7 +273,7 @@
 							Help & FAQs
 						</a>
 
-						<a th:href="@{/login(message='You must sign in first to view your profile')}" class="flex-c-m trans-04 p-lr-25">
+						<a href="/login" class="flex-c-m trans-04 p-lr-25">
 							My Account
 						</a>
 
@@ -296,40 +292,40 @@
 				<nav class="limiter-menu-desktop container">
 
 					<!-- Logo desktop -->
-					<a href="index.html" class="logo">
-						<img src="images/icons/logo-01.png" alt="IMG-LOGO">
-					</a>
+					<a href="/index" class="logo" style="font-family: Poppins-Bold; font-size: 2rem; color: #333;">
+    Fashion Flex
+</a>
 
 					<!-- Menu desktop -->
 					<div class="menu-desktop">
 						<ul class="main-menu">
 							<li>
-								<a href="index.html">Home</a>
+								<a th:href="@{/}">Home</a>
 								<ul class="sub-menu">
-									<li><a href="index.html">Homepage 1</a></li>
-									<li><a href="home-02.html">Homepage 2</a></li>
-									<li><a href="home-03.html">Homepage 3</a></li>
+									<li><a th:href="@{/}">Homepage 1</a></li>
+									<li><a th:href="@{/home-02}">Homepage 2</a></li>
+									<li><a th:href="@{/home-03}">Homepage 3</a></li>
 								</ul>
 							</li>
 
 							<li>
-								<a href="product.html">Shop</a>
+								<a th:href="@{/product}">Shop</a>
 							</li>
 
 							<li class="label1" data-label1="hot">
-								<a href="shoping-cart.html">Features</a>
+								<a href="/shopping-cart">Features</a>
 							</li>
 
 							<li>
-								<a href="blog.html">Blog</a>
+								<a th:href="@{/blog}">Blog</a>
 							</li>
 
 							<li>
-								<a href="about.html">About</a>
+								<a th:href="@{/about}">About</a>
 							</li>
 
 							<li>
-								<a href="contact.html">Contact</a>
+								<a th:href="@{/contact}">Contact</a>
 							</li>
 						</ul>
 					</div>
@@ -356,7 +352,7 @@
 		<div class="wrap-header-mobile">
 			<!-- Logo moblie -->
 			<div class="logo-mobile">
-				<a href="index.html"><img src="images/icons/logo-01.png" alt="IMG-LOGO"></a>
+				<a th:href="@{/}"><img th:src="@{/images/icons/logo-01.png}" alt="IMG-LOGO"></a>
 			</div>
 
 			<!-- Icon header -->
@@ -398,7 +394,7 @@
 							Help & FAQs
 						</a>
 
-						<a th:href="@{/login(message='You must sign in first to view your profile')}" class="flex-c-m p-lr-10 trans-04">
+						<a href="/login" class="flex-c-m p-lr-10 trans-04">
 							My Account
 						</a>
 
@@ -415,11 +411,11 @@
 
 			<ul class="main-menu-m">
 				<li>
-					<a href="index.html">Home</a>
+					<a th:href="@{/}">Home</a>
 					<ul class="sub-menu-m">
-						<li><a href="index.html">Homepage 1</a></li>
-						<li><a href="home-02.html">Homepage 2</a></li>
-						<li><a href="home-03.html">Homepage 3</a></li>
+						<li><a th:href="@{/}">Homepage 1</a></li>
+						<li><a th:href="@{/home-02}">Homepage 2</a></li>
+						<li><a th:href="@{/home-03}">Homepage 3</a></li>
 					</ul>
 					<span class="arrow-main-menu-m">
 						<i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -427,23 +423,23 @@
 				</li>
 
 				<li>
-					<a href="product.html">Shop</a>
+					<a th:href="@{/product}">Shop</a>
 				</li>
 
 				<li>
-					<a href="shoping-cart.html" class="label1 rs1" data-label1="hot">Features</a>
+					<a href="/shopping-cart" class="label1 rs1" data-label1="hot">Features</a>
 				</li>
 
 				<li>
-					<a href="blog.html">Blog</a>
+					<a th:href="@{/blog}">Blog</a>
 				</li>
 
 				<li>
-					<a href="about.html">About</a>
+					<a th:href="@{/about}">About</a>
 				</li>
 
 				<li>
-					<a href="contact.html">Contact</a>
+					<a th:href="@{/contact}">Contact</a>
 				</li>
 			</ul>
 		</div>
@@ -452,7 +448,7 @@
 		<div class="modal-search-header flex-c-m trans-04 js-hide-modal-search">
 			<div class="container-search-header">
 				<button class="flex-c-m btn-hide-modal-search trans-04 js-hide-modal-search">
-					<img src="images/icons/icon-close2.png" alt="CLOSE">
+					<img th:src="@{/images/icons/icon-close2.png}" alt="CLOSE">
 				</button>
 
 				<form class="wrap-search-header flex-w p-l-15">
@@ -484,7 +480,7 @@
 				<ul class="header-cart-wrapitem w-full">
 					<li class="header-cart-item flex-w flex-t m-b-12">
 						<div class="header-cart-item-img">
-							<img src="images/item-cart-01.jpg" alt="IMG">
+							<img th:src="@{/images/item-cart-01.jpg}" alt="IMG">
 						</div>
 
 						<div class="header-cart-item-txt p-t-8">
@@ -500,7 +496,7 @@
 
 					<li class="header-cart-item flex-w flex-t m-b-12">
 						<div class="header-cart-item-img">
-							<img src="images/item-cart-02.jpg" alt="IMG">
+							<img th:src="@{/images/item-cart-02.jpg}" alt="IMG">
 						</div>
 
 						<div class="header-cart-item-txt p-t-8">
@@ -516,7 +512,7 @@
 
 					<li class="header-cart-item flex-w flex-t m-b-12">
 						<div class="header-cart-item-img">
-							<img src="images/item-cart-03.jpg" alt="IMG">
+							<img th:src="@{/images/item-cart-03.jpg}" alt="IMG">
 						</div>
 
 						<div class="header-cart-item-txt p-t-8">
@@ -537,11 +533,11 @@
 					</div>
 
 					<div class="header-cart-buttons flex-w w-full">
-						<a href="shoping-cart.html" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-r-8 m-b-10">
+						<a href="/shopping-cart" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-r-8 m-b-10">
 							View Cart
 						</a>
 
-						<a href="shoping-cart.html" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-b-10">
+						<a href="/shopping-cart" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-b-10">
 							Check Out
 						</a>
 					</div>
@@ -554,86 +550,83 @@
 	<div class="auth-container">
 		<div class="auth-box">
 			<div class="auth-tabs">
-				<button class="auth-tab active" onclick="switchTab('login')">
+				<button type="button" class="auth-tab" th:classappend="${showRegister == null || !showRegister ? 'active' : ''}" onclick="switchTab('login')">
 					LOGIN
 				</button>
-				<button class="auth-tab" onclick="switchTab('register')">
+				<button type="button" class="auth-tab" th:classappend="${showRegister != null && showRegister ? 'active' : ''}" onclick="switchTab('register')">
 					REGISTER
 				</button>
 			</div>
 
 			<div class="auth-form-container">
 				<!-- Login Form -->
-				<div class="auth-form active" id="login-form">
-					<form class="login100-form validate-form" method="post" th:action="@{/login}">
-						<div th:if="${param.error}" style="padding: 10px; background: #f8d7da; color: #721c24; border-radius: 5px; margin-bottom: 15px; font-size: 14px;">
-							<span th:text="${error != null ? error : 'Invalid email or password'}"></span>
-						</div>
-						<div th:if="${param.logout}" style="padding: 10px; background: #d4edda; color: #155724; border-radius: 5px; margin-bottom: 15px; font-size: 14px;">
-							<span th:text="${logout != null ? logout : 'You have been logged out successfully'}"></span>
-						</div>
-						<div th:if="${param.registered}" style="padding: 10px; background: #d4edda; color: #155724; border-radius: 5px; margin-bottom: 15px; font-size: 14px;">
-							Registration successful! Please log in.
-						</div>
-						<div class="form-group">
-							<input type="email" name="email" class="form-input" placeholder="Email Address" required>
-						</div>
-
-						<div class="form-group">
-							<input type="password" name="password" class="form-input" placeholder="Password" required>
-						</div>
-
-						<div class="checkbox-container">
-							<input type="checkbox" name="remember" id="remember">
-							<label for="remember">Remember Me</label>
-						</div>
-
-						<button type="submit" class="btn-submit">
-							Sign In
-						</button>
-
-						<div class="form-link">
-							<a href="#">Forgot Password?</a>
-						</div>
-
-						<div class="divider">
-							<span>OR</span>
-						</div>
-
-						<div class="social-login">
-							<button type="button" class="btn-social" onclick="alert('Facebook login not implemented yet')">
-								<i class="fa fa-facebook"></i>
-								Facebook
-							</button>
-							<button type="button" class="btn-social" onclick="alert('Google login not implemented yet')">
-								<i class="fa fa-google"></i>
-								Google
-							</button>
-						</div>
-					</form>
-					<div style="margin-top:16px;">
-						<form th:action="@{/forgot}" method="post" style="display:flex;gap:8px;align-items:center;">
-							<input type="email" name="email" placeholder="Enter your email for reset" required class="form-input" style="flex:1;" />
-							<button type="submit" class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer">Forgot password</button>
-						</form>
+				<form id="loginForm" class="auth-form" th:classappend="${showRegister == null || !showRegister ? 'active' : ''}" th:action="@{/login}" method="post">
+					<!-- Error Messages -->
+					<div th:if="${error}" class="alert alert-danger" style="padding: 12px 20px; margin-bottom: 20px; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 4px;" th:text="${error}"></div>
+					<div th:if="${logout}" class="alert alert-success" style="padding: 12px 20px; margin-bottom: 20px; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 4px;" th:text="${logout}"></div>
+					<div th:if="${success}" class="alert alert-success" style="padding: 12px 20px; margin-bottom: 20px; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 4px;" th:text="${success}"></div>
+					<div th:if="${message}" class="alert alert-info" style="padding: 12px 20px; margin-bottom: 20px; background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; border-radius: 4px;" th:text="${message}"></div>
+					
+					<div class="form-group">
+						<input type="email" name="email" class="form-input" placeholder="Email Address" required>
 					</div>
-				</div>
+
+					<div class="form-group">
+						<input type="password" name="password" class="form-input" placeholder="Password" required>
+					</div>
+
+					<div class="checkbox-container">
+						<input type="checkbox" id="remember" name="remember">
+						<label for="remember">Remember Me</label>
+					</div>
+
+					<button type="submit" class="btn-submit">
+						Sign In
+					</button>
+
+					<div class="form-link">
+						<a th:href="@{/forgot-password}">Forgot Password?</a>
+					</div>
+
+					<div class="divider">
+						<span>OR</span>
+					</div>
+
+					<div class="social-login">
+						<button type="button" class="btn-social" onclick="alert('Facebook login not implemented yet')">
+							<i class="fa fa-facebook"></i>
+							Facebook
+						</button>
+						<button type="button" class="btn-social" onclick="alert('Google login not implemented yet')">
+							<i class="fa fa-google"></i>
+							Google
+						</button>
+					</div>
+				</form>
 
 				<!-- Register Form -->
-				<form id="registerForm" class="auth-form" th:action="@{/api/auth/register}" th:object="${user}" method="post">
-					<div th:if="${registerError}" style="padding: 10px; background: #f8d7da; color: #721c24; border-radius: 5px; margin-bottom: 15px; font-size: 14px;">
-						<span th:text="${registerError}"></span>
-					</div>
+				<form id="registerForm" class="auth-form" th:classappend="${showRegister != null && showRegister ? 'active' : ''}" th:action="@{/api/auth/register}" method="post" th:object="${user}" onsubmit="return validateRegisterForm(event)">
+					<!-- Error Messages -->
+					<div th:if="${registerError}" class="alert alert-danger" style="padding: 12px 20px; margin-bottom: 20px; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 4px;" th:text="${registerError}"></div>
+					
 					<div class="form-group">
-						<input type="text" th:field="*{fullName}" class="form-input" placeholder="Full Name" required>
-					</div>
-
-					<div class="form-group">
-						<input type="email" th:field="*{email}" class="form-input" placeholder="Email Address" required>
+						<input type="text" name="fullName" th:field="*{fullName}" class="form-input" placeholder="Full Name" required>
+						<div th:if="${#fields.hasErrors('fullName')}" class="error-message" style="color: #721c24; font-size: 12px; margin-top: 5px;" th:errors="*{fullName}"></div>
 					</div>
 
 					<div class="form-group">
-						<input type="password" th:field="*{password}" class="form-input" placeholder="Password" required minlength="6">
+						<input type="email" name="email" th:field="*{email}" class="form-input" placeholder="Email Address" required>
+						<div th:if="${#fields.hasErrors('email')}" class="error-message" style="color: #721c24; font-size: 12px; margin-top: 5px;" th:errors="*{email}"></div>
+					</div>
+
+					<div class="form-group">
+						<input type="password" name="password" th:field="*{password}" id="registerPassword" class="form-input" placeholder="Password" required minlength="6">
+						<div th:if="${#fields.hasErrors('password')}" class="error-message" style="color: #721c24; font-size: 12px; margin-top: 5px;" th:errors="*{password}"></div>
+					</div>
+
+					<div class="form-group">
+						<input type="password" id="confirmPassword" class="form-input" placeholder="Confirm Password" required minlength="6">
+						<div id="passwordMatchError" class="error-message" style="color: #721c24; font-size: 12px; margin-top: 5px; display: none;">Passwords do not match</div>
 					</div>
 
 					<div class="checkbox-container">
@@ -779,23 +772,23 @@
 			<div class="p-t-40">
 				<div class="flex-c-m flex-w p-b-18">
 					<a href="#" class="m-all-1">
-						<img src="images/icons/icon-pay-01.png" alt="ICON-PAY">
+						<img th:src="@{/images/icons/icon-pay-01.png}" alt="ICON-PAY">
 					</a>
 
 					<a href="#" class="m-all-1">
-						<img src="images/icons/icon-pay-02.png" alt="ICON-PAY">
+						<img th:src="@{/images/icons/icon-pay-02.png}" alt="ICON-PAY">
 					</a>
 
 					<a href="#" class="m-all-1">
-						<img src="images/icons/icon-pay-03.png" alt="ICON-PAY">
+						<img th:src="@{/images/icons/icon-pay-03.png}" alt="ICON-PAY">
 					</a>
 
 					<a href="#" class="m-all-1">
-						<img src="images/icons/icon-pay-04.png" alt="ICON-PAY">
+						<img th:src="@{/images/icons/icon-pay-04.png}" alt="ICON-PAY">
 					</a>
 
 					<a href="#" class="m-all-1">
-						<img src="images/icons/icon-pay-05.png" alt="ICON-PAY">
+						<img th:src="@{/images/icons/icon-pay-05.png}" alt="ICON-PAY">
 					</a>
 				</div>
 
@@ -815,18 +808,18 @@
 	</div>
 
 <!--===============================================================================================-->
-	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+	<script th:src="@{/vendor/jquery/jquery-3.2.1.min.js}"></script>
 <!--===============================================================================================-->
-	<script src="vendor/animsition/js/animsition.min.js"></script>
+	<script th:src="@{/vendor/animsition/js/animsition.min.js}"></script>
 <!--===============================================================================================-->
-	<script src="vendor/bootstrap/js/popper.js"></script>
-	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script th:src="@{/vendor/bootstrap/js/popper.js}"></script>
+	<script th:src="@{/vendor/bootstrap/js/bootstrap.min.js}"></script>
 <!--===============================================================================================-->
-	<script src="vendor/select2/select2.min.js"></script>
+	<script th:src="@{/vendor/select2/select2.min.js}"></script>
 <!--===============================================================================================-->
-	<script src="vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
+	<script th:src="@{/vendor/MagnificPopup/jquery.magnific-popup.min.js}"></script>
 <!--===============================================================================================-->
-	<script src="vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+	<script th:src="@{/vendor/perfect-scrollbar/perfect-scrollbar.min.js}"></script>
 	<script>
 		$('.js-pscroll').each(function(){
 			$(this).css('position','relative');
@@ -843,9 +836,9 @@
 		});
 	</script>
 <!--===============================================================================================-->
-	<script src="vendor/sweetalert/sweetalert.min.js"></script>
+	<script th:src="@{/vendor/sweetalert/sweetalert.min.js}"></script>
 <!--===============================================================================================-->
-	<script src="js/main.js"></script>
+	<script th:src="@{/js/main.js}"></script>
 
 	<!-- Custom Auth Script -->
 	<script>
@@ -868,6 +861,28 @@
 			}
 		}
 
+		// Handle Login Form Submission - Form now submits directly to /login
+		// No need for JavaScript handling, Spring Security handles it
+
+		// Validate Register Form before submission
+		function validateRegisterForm(event) {
+			const password = document.getElementById('registerPassword').value;
+			const confirmPassword = document.getElementById('confirmPassword').value;
+			const passwordMatchError = document.getElementById('passwordMatchError');
+
+			// Validate password match
+			if (password !== confirmPassword) {
+				event.preventDefault();
+				passwordMatchError.style.display = 'block';
+				passwordMatchError.textContent = 'Passwords do not match';
+				return false;
+			} else {
+				passwordMatchError.style.display = 'none';
+			}
+
+			// Form will submit to /api/auth/register if validation passes
+			return true;
+		}
 	</script>
 
 </body>

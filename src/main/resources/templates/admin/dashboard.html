@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Admin Dashboard - FashionFlex</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" th:href="@{/images/icons/favicon.png}"/>
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/bootstrap/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/font-awesome-4.7.0/css/font-awesome.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/iconic/css/material-design-iconic-font.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/util.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/admin-styles.css}">
+</head>
+<body>
+
+	<div class="admin-wrapper">
+		<!-- Sidebar -->
+		<aside class="admin-sidebar">
+			<div class="admin-sidebar-header">
+				<h3><i class="zmdi zmdi-shield-security"></i> Admin Panel</h3>
+			</div>
+
+			<ul class="admin-sidebar-menu">
+				<li>
+					<a th:href="@{/admin/dashboard}" class="active">
+						<i class="fa fa-tachometer"></i>
+						Dashboard
+					</a>
+				</li>
+				<li>
+					<a th:href="@{/admin/products}">
+						<i class="fa fa-shopping-bag"></i>
+						Products
+					</a>
+				</li>
+				<li>
+					<a th:href="@{/admin/orders}">
+						<i class="fa fa-shopping-cart"></i>
+						Orders
+					</a>
+				</li>
+				<li>
+					<a th:href="@{/admin/customers}">
+						<i class="fa fa-users"></i>
+						Customers
+					</a>
+				</li>
+				<li>
+					<a th:href="@{/admin/categories}">
+						<i class="fa fa-folder"></i>
+						Categories
+					</a>
+				</li>
+				<li>
+					<a th:href="@{/admin/coupons}">
+						<i class="fa fa-tag"></i>
+						Coupons
+					</a>
+				</li>
+				<li>
+					<a th:href="@{/admin/reviews}">
+						<i class="fa fa-star"></i>
+						Reviews
+					</a>
+				</li>
+				<li>
+					<a th:href="@{/admin/settings}">
+						<i class="fa fa-cog"></i>
+						Settings
+					</a>
+				</li>
+				<li>
+					<a th:href="@{/}">
+						<i class="fa fa-sign-out"></i>
+						Back to Store
+					</a>
+				</li>
+			</ul>
+		</aside>
+
+		<!-- Main Content -->
+		<main class="admin-main">
+			<!-- Topbar -->
+			<div class="admin-topbar">
+				<h2>Dashboard</h2>
+				<div class="admin-user-info">
+					<span>Admin User</span>
+					<img src="https://ui-avatars.com/api/?name=Admin+User&size=40&background=667eea&color=fff" alt="Admin">
+				</div>
+			</div>
+
+			<!-- Content -->
+			<div class="admin-content">
+				<!-- Dashboard Cards -->
+				<div class="dashboard-cards">
+					<div class="dashboard-card">
+						<div class="dashboard-card-icon primary">
+							<i class="fa fa-dollar"></i>
+						</div>
+						<h4>Total Revenue</h4>
+						<p class="value" th:text="${totalRevenue != null ? '$' + #numbers.formatDecimal(totalRevenue, 0, 'COMMA', 0, 'POINT') : '$0'}">$0</p>
+						<p class="change positive">
+							<i class="fa fa-arrow-up"></i> Revenue from all orders
+						</p>
+					</div>
+
+					<div class="dashboard-card">
+						<div class="dashboard-card-icon success">
+							<i class="fa fa-shopping-cart"></i>
+						</div>
+						<h4>Total Orders</h4>
+						<p class="value" th:text="${totalOrders != null ? totalOrders : 0}">0</p>
+						<p class="change positive">
+							<i class="fa fa-arrow-up"></i> All time orders
+						</p>
+					</div>
+
+					<div class="dashboard-card">
+						<div class="dashboard-card-icon warning">
+							<i class="fa fa-users"></i>
+						</div>
+						<h4>Total Customers</h4>
+						<p class="value" th:text="${totalUsers != null ? totalUsers : 0}">0</p>
+						<p class="change positive">
+							<i class="fa fa-arrow-up"></i> Registered users
+						</p>
+					</div>
+
+					<div class="dashboard-card">
+						<div class="dashboard-card-icon info">
+							<i class="fa fa-shopping-bag"></i>
+						</div>
+						<h4>Total Products</h4>
+						<p class="value" th:text="${totalProducts != null ? totalProducts : 0}">0</p>
+						<p class="change positive">
+							<i class="fa fa-arrow-up"></i> Active products
+						</p>
+					</div>
+				</div>
+
+				<!-- Recent Orders Table -->
+				<div class="admin-table-wrapper">
+					<div class="admin-table-header">
+						<h3>Recent Orders</h3>
+						<a th:href="@{/admin/orders}" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
+							View All
+						</a>
+					</div>
+
+					<table class="admin-table">
+						<thead>
+							<tr>
+								<th>Order ID</th>
+								<th>Customer</th>
+								<th>Date</th>
+								<th>Total</th>
+								<th>Status</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>#ORD-2025-001</td>
+								<td>John Doe</td>
+								<td>Jan 15, 2025</td>
+								<td>$156.40</td>
+								<td><span class="status-badge processing">Processing</span></td>
+								<td>
+									<button class="action-btn view"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit"><i class="fa fa-edit"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td>#ORD-2025-002</td>
+								<td>Jane Smith</td>
+								<td>Jan 14, 2025</td>
+								<td>$89.50</td>
+								<td><span class="status-badge completed">Completed</span></td>
+								<td>
+									<button class="action-btn view"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit"><i class="fa fa-edit"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td>#ORD-2025-003</td>
+								<td>Mike Johnson</td>
+								<td>Jan 14, 2025</td>
+								<td>$234.00</td>
+								<td><span class="status-badge pending">Pending</span></td>
+								<td>
+									<button class="action-btn view"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit"><i class="fa fa-edit"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td>#ORD-2025-004</td>
+								<td>Sarah Williams</td>
+								<td>Jan 13, 2025</td>
+								<td>$445.80</td>
+								<td><span class="status-badge processing">Processing</span></td>
+								<td>
+									<button class="action-btn view"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit"><i class="fa fa-edit"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td>#ORD-2025-005</td>
+								<td>Robert Brown</td>
+								<td>Jan 13, 2025</td>
+								<td>$67.20</td>
+								<td><span class="status-badge cancelled">Cancelled</span></td>
+								<td>
+									<button class="action-btn view"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit"><i class="fa fa-edit"></i></button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<!-- Low Stock Products -->
+				<div class="admin-table-wrapper" style="margin-top: 30px;">
+					<div class="admin-table-header">
+						<h3>Low Stock Products</h3>
+						<a th:href="@{/admin/products}" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
+							Manage Products
+						</a>
+					</div>
+
+					<table class="admin-table">
+						<thead>
+							<tr>
+								<th>Product</th>
+								<th>SKU</th>
+								<th>Category</th>
+								<th>Price</th>
+								<th>Stock</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Esprit Ruffle Shirt</td>
+								<td>PRD-001</td>
+								<td>Women</td>
+								<td>$45.00</td>
+								<td><span style="color: #e74c3c; font-weight: 600;">5 items</span></td>
+								<td>
+									<button class="action-btn edit"><i class="fa fa-edit"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td>Herschel supply</td>
+								<td>PRD-002</td>
+								<td>Bags</td>
+								<td>$75.00</td>
+								<td><span style="color: #f39c12; font-weight: 600;">8 items</span></td>
+								<td>
+									<button class="action-btn edit"><i class="fa fa-edit"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td>Classic Trench Coat</td>
+								<td>PRD-015</td>
+								<td>Men</td>
+								<td>$125.00</td>
+								<td><span style="color: #e74c3c; font-weight: 600;">3 items</span></td>
+								<td>
+									<button class="action-btn edit"><i class="fa fa-edit"></i></button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<!-- Mobile Toggle -->
+	<button class="admin-mobile-toggle">
+		<i class="fa fa-bars"></i>
+	</button>
+
+	<script th:src="@{/vendor/jquery/jquery-3.2.1.min.js}"></script>
+	<script th:src="@{/vendor/bootstrap/js/popper.js}"></script>
+	<script th:src="@{/vendor/bootstrap/js/bootstrap.min.js}"></script>
+	<script th:src="@{/vendor/sweetalert/sweetalert.min.js}"></script>
+	<script th:src="@{/js/admin.js}"></script>
+
+</body>
+</html>

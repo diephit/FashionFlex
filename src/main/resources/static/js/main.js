@@ -267,16 +267,379 @@
     });
     
     /*==================================================================
-    [ Show modal1 ]*/
+    [ Quick view modal ]*/
+    var quickViewModal = $('.js-modal1');
+    var quickViewName = quickViewModal.find('.js-name-detail');
+    var quickViewPrice = quickViewModal.find('.js-price-detail');
+    var quickViewDescription = quickViewModal.find('.js-description-detail');
+    var quickViewVariantList = quickViewModal.find('.js-variant-list');
+    var quickViewAddToCartForm = $('#quickViewAddToCartForm');
+    var quickViewDefaultImage = '/images/product-detail-01.jpg';
+    var quickViewCurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+
     $('.js-show-modal1').on('click',function(e){
         e.preventDefault();
-        $('.js-modal1').addClass('show-modal1');
+        var productId = $(this).data('product-id');
+        if (!productId) {
+            quickViewModal.addClass('show-modal1');
+            return;
+        }
+
+        fetch('/api/products/' + productId + '/quick-view')
+            .then(function(response) {
+                if (!response.ok) {
+                    throw new Error('Failed to load product quick view');
+                }
+                return response.json();
+            })
+            .then(function(data) {
+                renderQuickView(data);
+                quickViewModal.addClass('show-modal1');
+            })
+            .catch(function(error) {
+                console.error(error);
+                resetQuickView();
+                alert('Unable to load product information. Please try again later.');
+            });
     });
 
+    quickViewVariantList.on('click', '.variant-option', function(){
+        selectVariantButton($(this), false);
+    });
+
+    quickViewAddToCartForm.on('submit', function(e){
+        e.preventDefault();
+        var selectedVariant = $(this).find('input[name="variantId"]').val();
+        if (!selectedVariant) {
+            alert('Please choose a SKU before adding to cart.');
+            return;
+        }
+        submitAddToCart($(this));
+    });
     $('.js-hide-modal1').on('click',function(){
-        $('.js-modal1').removeClass('show-modal1');
+        quickViewModal.removeClass('show-modal1');
+        resetQuickView();
     });
 
+    function renderQuickView(product) {
+        resetQuickView();
+        quickViewName.text(product.name || '');
+        quickViewDescription.text(product.description || '');
 
+        var variants = Array.isArray(product.variants) ? product.variants : [];
+        if (variants.length === 0) {
+            quickViewPrice.text('Contact for price');
+            initQuickViewSlider([resolveImagePath(product.mainImage)]);
+            quickViewVariantList.append('<span class="stext-109 cl3 m-b-10">Out of stock</span>');
+            return;
+        }
+
+        quickViewPrice.text(formatPriceRange(variants));
+
+        var sliderImages = variants.map(function(variant){
+            return resolveImagePath(variant.variantImage, product.mainImage);
+        });
+
+        initQuickViewSlider(sliderImages);
+        populateVariantButtons(variants);
+    }
+
+    function populateVariantButtons(variants) {
+        quickViewVariantList.empty();
+        variants.forEach(function(variant, index){
+            var button = $('<button type="button"></button>')
+                .addClass('variant-option flex-c-m stext-104 cl6 size-104 bor2 hov-btn1 trans-04 m-r-8 m-b-8')
+                .text(variant.sku || ('Variant ' + (index + 1)))
+                .data('variant', variant)
+                .data('slide-index', index);
+
+            quickViewVariantList.append(button);
+        });
+
+        selectVariantButton(quickViewVariantList.find('.variant-option').first(), true);
+    }
+
+    function selectVariantButton($button, initializing) {
+        if (!$button || $button.length === 0) {
+            return;
+        }
+
+        quickViewVariantList.find('.variant-option').removeClass('how-active1 variant-option-active');
+        $button.addClass('how-active1 variant-option-active');
+
+        var variant = $button.data('variant');
+        if (variant && variant.price !== undefined && variant.price !== null) {
+            quickViewPrice.text(formatCurrency(variant.price));
+        }
+        quickViewAddToCartForm.find('input[name="variantId"]').val(variant ? variant.variantId : '');
+
+        var slideIndex = $button.data('slide-index');
+        var slick3 = quickViewModal.find('.wrap-slick3 .slick3');
+        if (!initializing && slick3.hasClass('slick-initialized') && typeof slideIndex === 'number') {
+            slick3.slick('slickGoTo', slideIndex);
+        }
+    }
+
+    function resetQuickView() {
+        quickViewVariantList.empty();
+        quickViewName.text('');
+        quickViewPrice.text('');
+        quickViewDescription.text('');
+        quickViewAddToCartForm.find('input[name="variantId"]').val('');
+        quickViewAddToCartForm.find('input[name="quantity"]').val(1);
+
+        var slick3 = quickViewModal.find('.wrap-slick3 .slick3');
+        if (slick3.hasClass('slick-initialized')) {
+            slick3.slick('unslick');
+        }
+        slick3.empty();
+        quickViewModal.find('.wrap-slick3-dots').empty();
+        quickViewModal.find('.wrap-slick3-arrows').empty();
+    }
+
+    function initQuickViewSlider(images) {
+        var slick3 = quickViewModal.find('.wrap-slick3 .slick3');
+        var arrowsContainer = quickViewModal.find('.wrap-slick3-arrows');
+        var dotsContainer = quickViewModal.find('.wrap-slick3-dots');
+
+        if (slick3.hasClass('slick-initialized')) {
+            slick3.slick('unslick');
+        }
+
+        slick3.empty();
+        arrowsContainer.empty();
+        dotsContainer.empty();
+
+        var slides = images && images.length ? images : [quickViewDefaultImage];
+        slides.forEach(function(image, index){
+            var resolved = resolveImagePath(image);
+            var slide = $('<div></div>')
+                .addClass('item-slick3')
+                .attr('data-thumb', resolved)
+                .attr('data-variant-index', index);
+
+            var wrapPic = $('<div></div>').addClass('wrap-pic-w pos-relative');
+            wrapPic.append($('<img>').attr('src', resolved).attr('alt', 'IMG-PRODUCT'));
+            wrapPic.append(
+                $('<a></a>')
+                    .addClass('flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04')
+                    .attr('href', resolved)
+                    .append('<i class="fa fa-expand"></i>')
+            );
+            slide.append(wrapPic);
+            slick3.append(slide);
+        });
+
+        slick3.slick({
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            fade: true,
+            infinite: true,
+            autoplay: false,
+            autoplaySpeed: 6000,
+            arrows: true,
+            appendArrows: arrowsContainer,
+            prevArrow:'<button class="arrow-slick3 prev-slick3"><i class="fa fa-angle-left" aria-hidden="true"></i></button>',
+            nextArrow:'<button class="arrow-slick3 next-slick3"><i class="fa fa-angle-right" aria-hidden="true"></i></button>',
+            dots: true,
+            appendDots: dotsContainer,
+            dotsClass:'slick3-dots',
+            customPaging: function(slick, index) {
+                var portrait = $(slick.$slides[index]).data('thumb');
+                return '<img src="' + portrait + '"/><div class="slick3-dot-overlay"></div>';
+            }
+        });
+    }
+
+    function resolveImagePath(path, fallback) {
+        if (!path || path.length === 0) {
+            if (fallback && fallback.length) {
+                return resolveImagePath(fallback);
+            }
+            return quickViewDefaultImage;
+        }
+        if (path.charAt(0) === '/') {
+            return path;
+        }
+        if (path.indexOf('http://') === 0 || path.indexOf('https://') === 0) {
+            return path;
+        }
+        return '/' + path.replace(/^\/?static[\\/]/, '');
+    }
+
+    function formatCurrency(value) {
+        var numberValue = Number(value);
+        if (!isFinite(numberValue)) {
+            return 'Contact for price';
+        }
+        return quickViewCurrencyFormatter.format(numberValue);
+    }
+
+    function formatPriceRange(variants) {
+        var prices = variants
+            .map(function(v){ return Number(v.price); })
+            .filter(function(price){ return isFinite(price); });
+
+        if (prices.length === 0) {
+            return 'Contact for price';
+        }
+
+        var min = Math.min.apply(null, prices);
+        var max = Math.max.apply(null, prices);
+
+        if (min === max) {
+            return quickViewCurrencyFormatter.format(min);
+        }
+        return quickViewCurrencyFormatter.format(min) + ' - ' + quickViewCurrencyFormatter.format(max);
+    }
+
+    /*==================================================================
+    [ Product detail variant selection ]*/
+    var productDetailSection = $('.js-product-detail');
+    if (productDetailSection.length) {
+        var detailVariantButtons = productDetailSection.find('.variant-option-detail');
+        var detailVariantList = productDetailSection.find('.js-variant-list-detail');
+        var detailPriceElement = productDetailSection.find('.js-price-detail');
+        var detailAddToCartForm = $('#productDetailAddToCartForm');
+        var detailSlick = productDetailSection.find('.wrap-slick3 .slick3');
+
+        detailVariantButtons.on('click', function(){
+            var $button = $(this);
+            detailVariantButtons.removeClass('how-active1 variant-option-active');
+            $button.addClass('how-active1 variant-option-active');
+
+            var price = $button.data('price');
+            if (price !== undefined && price !== null && price !== '') {
+                detailPriceElement.text(formatCurrency(price));
+            }
+
+            detailAddToCartForm.find('input[name="variantId"]').val($button.data('variant-id'));
+
+            var slideIndex = $button.data('slide-index');
+            if (detailSlick.hasClass('slick-initialized') && typeof slideIndex === 'number') {
+                detailSlick.slick('slickGoTo', slideIndex);
+            }
+        });
+
+        detailVariantList.on('keydown', '.variant-option-detail', function(event){
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                $(this).trigger('click');
+            }
+        });
+
+    detailAddToCartForm.on('submit', function(e){
+        e.preventDefault();
+        var selectedVariant = $(this).find('input[name="variantId"]').val();
+        if (!selectedVariant) {
+            alert('Please choose a SKU before adding to cart.');
+            return;
+        }
+        submitAddToCart($(this));
+    });
+        if (detailVariantButtons.length > 0) {
+            detailVariantButtons.first().trigger('click');
+        }
+    }
+
+    loadCartSummary();
+
+    function submitAddToCart($form) {
+        var formElement = $form.get(0);
+        if (!formElement) {
+            return;
+        }
+
+        var formData = new FormData(formElement);
+        fetch($form.attr('action') || '/cart/add', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+            .then(function(response){
+                if (!response.ok) {
+                    throw new Error('Unable to add product to cart');
+                }
+                return response.json();
+            })
+            .then(function(summary){
+                updateHeaderCart(summary);
+                $form.find('input[name="quantity"]').val(1);
+                $('.js-panel-cart').addClass('show-header-cart');
+            })
+            .catch(function(error){
+                console.error(error);
+                alert('Unable to add product to cart. Please try again later.');
+            });
+    }
+
+    function loadCartSummary() {
+        fetch('/cart/summary', {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+            .then(function(response){
+                if (!response.ok) {
+                    throw new Error('Unable to load cart summary');
+                }
+                return response.json();
+            })
+            .then(function(summary){
+                updateHeaderCart(summary);
+            })
+            .catch(function(error){
+                console.error(error);
+            });
+    }
+
+    function updateHeaderCart(summary) {
+        summary = summary || {};
+        var items = Array.isArray(summary.items) ? summary.items : [];
+        var listContainer = $('.header-cart-wrapitem.w-full');
+        var totalElement = $('.header-cart-total');
+        var cartNoti = $('.icon-header-noti.js-show-cart');
+
+        if (!listContainer.length) {
+            return;
+        }
+
+        listContainer.empty();
+
+        if (items.length === 0) {
+            listContainer.append('<li class="header-cart-item flex-w flex-t m-b-12"><div class="header-cart-item-txt p-t-8"><span class="stext-109 cl3">Your cart is empty</span></div></li>');
+        } else {
+            items.forEach(function(item){
+                var resolvedImage = resolveImagePath(item.image);
+                var line = $('<li class="header-cart-item flex-w flex-t m-b-12"></li>');
+                var imgWrapper = $('<div class="header-cart-item-img"></div>');
+                imgWrapper.append($('<img>').attr('src', resolvedImage).attr('alt', item.productName || 'Product'));
+                var textWrapper = $('<div class="header-cart-item-txt p-t-8"></div>');
+                textWrapper.append(
+                    $('<a class="header-cart-item-name m-b-18 hov-cl1 trans-04"></a>').text(item.productName || '')
+                );
+                var sku = item.sku ? ' (' + item.sku + ')' : '';
+                textWrapper.append(
+                    $('<span class="header-cart-item-info"></span>').text(item.quantity + ' x ' + formatCurrency(item.price) + sku)
+                );
+
+                line.append(imgWrapper);
+                line.append(textWrapper);
+                listContainer.append(line);
+            });
+        }
+
+        if (totalElement.length) {
+            var totalText = 'Total: ' + formatCurrency(summary.totalAmount || 0);
+            totalElement.text(totalText);
+        }
+
+        if (cartNoti.length) {
+            cartNoti.attr('data-notify', summary.totalQuantity || 0);
+        }
+    }
 
 })(jQuery);

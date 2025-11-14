@@ -23,14 +23,24 @@ public class ProductVariant {
     @Column(name = "price", nullable = false, precision = 12, scale = 2)
     private BigDecimal price;
 
-    @Column(name = "size", length = 50)
+    @Column(name = "variantImage")
+    private String variantImage;
+
+    @Transient
     private String size;
 
-    @Column(name = "color", length = 50)
+    @Transient
     private String color;
+
+    @Column(name = "status", columnDefinition = "ENUM('active','inactive') DEFAULT 'active'")
+    @Enumerated(EnumType.STRING)
+    private VariantStatus status;
 
     @Column(name = "createdAt")
     private LocalDateTime createdAt;
+
+    @Column(name = "updatedAt")
+    private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "variant")
     private List<Stock> stocks;
@@ -44,6 +54,15 @@ public class ProductVariant {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+        if (status == null) {
+            status = VariantStatus.active;
+        }
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
     }
 
     public ProductVariant() {
@@ -81,6 +100,14 @@ public class ProductVariant {
         this.price = price;
     }
 
+    public String getVariantImage() {
+        return variantImage;
+    }
+
+    public void setVariantImage(String variantImage) {
+        this.variantImage = variantImage;
+    }
+
     public String getSize() {
         return size;
     }
@@ -95,6 +122,14 @@ public class ProductVariant {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public VariantStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(VariantStatus status) {
+        this.status = status;
     }
 
     public List<Stock> getStocks() {
@@ -127,5 +162,17 @@ public class ProductVariant {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public enum VariantStatus {
+        active, inactive
     }
 }

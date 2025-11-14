@@ -36,7 +36,6 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // Supports {bcrypt}, {noop}, ... depending on prefix
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
@@ -56,15 +55,28 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            String requestURI = request.getRequestURI();
+                            if (requestURI != null && requestURI.startsWith("/admin")) {
+                                response.sendRedirect("/admin-login");
+                            } else {
+                                unauthorizedHandler.commence(request, response, authException);
+                            }
+                        }))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/index", "/home", "/about", "/contact", "/blog", "/blog-detail").permitAll()
+                        .requestMatchers("/", "/index", "/home", "/about", "/contact", "/blog", "/blog-detail", "/blog-detail/**").permitAll()
                         .requestMatchers("/product", "/product-detail/**").permitAll()
-                        .requestMatchers("/login", "/api/auth/**").permitAll()
+                        .requestMatchers("/shopping-cart", "/cart/**").permitAll()
+                        .requestMatchers("/checkout", "/submitOrder", "/vnpay-payment-return").permitAll()
+                        .requestMatchers("/login", "/admin-login", "/api/auth/**").permitAll()
+                        .requestMatchers("/api/products/**").permitAll()
+                        .requestMatchers("/forgot-password", "/forgot-password/**", "/verify-code", "/verify-code/**", "/reset-password", "/reset-password/**").permitAll()
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/fonts/**", "/vendor/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -86,7 +98,6 @@ public class SecurityConfig {
 
         http.authenticationProvider(authenticationProvider());
 
-        // For H2 Console (development only)
         http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));
 
         return http.build();

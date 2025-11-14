@@ -1,6 +1,8 @@
 package g6.fashionFlex.service;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +12,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import g6.fashionFlex.dto.RegisterRequest;
 import g6.fashionFlex.dto.UserDTO;
+import g6.fashionFlex.entity.Customer;
+import g6.fashionFlex.entity.MembershipLevel;
 import g6.fashionFlex.entity.Role;
 import g6.fashionFlex.entity.Role.RoleName;
 import g6.fashionFlex.entity.User;
 import g6.fashionFlex.exception.ResourceNotFoundException;
 import g6.fashionFlex.exception.UserAlreadyExistsException;
+import g6.fashionFlex.repository.CustomerRepository;
+import g6.fashionFlex.repository.MembershipLevelRepository;
 import g6.fashionFlex.repository.RoleRepository;
 import g6.fashionFlex.repository.UserRepository;
 
@@ -30,17 +36,39 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private CustomerRepository customerRepository;
+
+    @Autowired
+    private MembershipLevelRepository membershipLevelRepository;
+
     @Transactional
     public UserDTO registerUser(RegisterRequest registerRequest) {
-        // Check if email already exists
-        if (userRepository.existsByEmail(registerRequest.getEmail())) {
-            throw new UserAlreadyExistsException("Email already registered: " + registerRequest.getEmail());
+        // Normalize email to lowercase for consistency
+        String normalizedEmail = registerRequest.getEmail() != null ? 
+                                 registerRequest.getEmail().toLowerCase().trim() : "";
+        
+        if (normalizedEmail.isEmpty()) {
+            throw new IllegalArgumentException("Email cannot be empty");
+        }
+        
+        // Double check: Check if email already exists in database
+        // This is a safety check even though controller already checked
+        boolean emailExists = userRepository.existsByEmail(normalizedEmail);
+        
+        if (!emailExists) {
+            // Also check with findByEmail to be absolutely sure
+            emailExists = userRepository.findByEmail(normalizedEmail).isPresent();
+        }
+        
+        if (emailExists) {
+            throw new UserAlreadyExistsException("This email has been used, please try another one");
         }
 
         // Create new user
         User user = new User();
         user.setName(registerRequest.getFullName());
-        user.setEmail(registerRequest.getEmail());
+        user.setEmail(normalizedEmail);
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setStatus(User.UserStatus.active);
 
@@ -57,6 +85,21 @@ public class UserService {
         // Save user
         User savedUser = userRepository.save(user);
 
+        // Ensure customer profile is created for the new user
+        Customer customer = new Customer();
+        customer.setUser(savedUser);
+        customer.setLoyaltyPoints(0);
+        customer.setTotalSpent(BigDecimal.ZERO);
+
+        // Assign default membership level (Bronze / lowest minSpent)
+        Optional<MembershipLevel> defaultLevel = membershipLevelRepository.findByLevelName("Bronze");
+        if (defaultLevel.isEmpty()) {
+            defaultLevel = membershipLevelRepository.findAllOrderByMinSpentAsc().stream().findFirst();
+        }
+        defaultLevel.ifPresent(customer::setLevel);
+
+        customerRepository.save(customer);
+
         // Convert to DTO and return
         return convertToDTO(savedUser);
     }
@@ -70,8 +113,13 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserDTO getUserByEmail(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
+        // Normalize email to lowercase for case-insensitive lookup
+        String normalizedEmail = email.toLowerCase().trim();
+        
+        // Try normalized email first, then fallback to original
+        User user = userRepository.findByEmail(normalizedEmail)
+                .orElseGet(() -> userRepository.findByEmail(email)
+                        .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email)));
         return convertToDTO(user);
     }
 

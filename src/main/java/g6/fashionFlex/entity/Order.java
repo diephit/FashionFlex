@@ -42,6 +42,9 @@ public class Order {
     @Column(name = "totalAmount", precision = 12, scale = 2)
     private BigDecimal totalAmount;
 
+    @Column(name = "trackingNumber", length = 100)
+    private String trackingNumber;
+
     @Column(name = "createdAt")
     private LocalDateTime createdAt;
 
@@ -125,6 +128,14 @@ public class Order {
 
     public void setPayments(List<Payment> payments) {
         this.payments = payments;
+    }
+
+    public String getTrackingNumber() {
+        return trackingNumber;
+    }
+
+    public void setTrackingNumber(String trackingNumber) {
+        this.trackingNumber = trackingNumber;
     }
 
     public enum OrderStatus {

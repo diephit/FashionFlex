@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Settings - FashionFlex Admin</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" th:href="@{/images/icons/favicon.png}"/>
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/bootstrap/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/font-awesome-4.7.0/css/font-awesome.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/iconic/css/material-design-iconic-font.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/util.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/admin-styles.css}">
+</head>
+<body>
+
+	<div class="admin-wrapper">
+		<!-- Sidebar -->
+		<aside class="admin-sidebar">
+			<div class="admin-sidebar-header">
+				<h3><i class="zmdi zmdi-shield-security"></i> Admin Panel</h3>
+			</div>
+
+			<ul class="admin-sidebar-menu">
+				<li><a th:href="@{/admin/dashboard}"><i class="fa fa-tachometer"></i> Dashboard</a></li>
+				<li><a th:href="@{/admin/products}"><i class="fa fa-shopping-bag"></i> Products</a></li>
+				<li><a th:href="@{/admin/orders}"><i class="fa fa-shopping-cart"></i> Orders</a></li>
+				<li><a th:href="@{/admin/customers}"><i class="fa fa-users"></i> Customers</a></li>
+				<li><a th:href="@{/admin/categories}"><i class="fa fa-folder"></i> Categories</a></li>
+				<li><a th:href="@{/admin/coupons}"><i class="fa fa-tag"></i> Coupons</a></li>
+				<li><a th:href="@{/admin/reviews}"><i class="fa fa-star"></i> Reviews</a></li>
+				<li><a th:href="@{/admin/settings}" class="active"><i class="fa fa-cog"></i> Settings</a></li>
+				<li><a th:href="@{/}"><i class="fa fa-sign-out"></i> Back to Store</a></li>
+			</ul>
+		</aside>
+
+		<!-- Main Content -->
+		<main class="admin-main">
+			<!-- Topbar -->
+			<div class="admin-topbar">
+				<h2>Settings</h2>
+				<div class="admin-user-info">
+					<img th:src="@{/images/avatar-01.jpg}" alt="Admin">
+					<span>Admin User</span>
+				</div>
+			</div>
+
+			<!-- Content -->
+			<div class="admin-content">
+				<div class="row">
+					<!-- General Settings -->
+					<div class="col-lg-6">
+						<div class="admin-table-wrapper" style="margin-bottom: 30px;">
+							<div class="admin-table-header">
+								<h3><i class="fa fa-cog"></i> General Settings</h3>
+							</div>
+							<div style="padding: 20px;">
+								<div class="admin-form-group">
+									<label>Store Name</label>
+									<input type="text" class="admin-form-control" value="FashionFlex" placeholder="Enter store name">
+								</div>
+								<div class="admin-form-group">
+									<label>Store Email</label>
+									<input type="email" class="admin-form-control" value="support@fashionflex.com" placeholder="Enter store email">
+								</div>
+								<div class="admin-form-group">
+									<label>Store Phone</label>
+									<input type="text" class="admin-form-control" value="+1 234 567 8900" placeholder="Enter store phone">
+								</div>
+								<div class="admin-form-group">
+									<label>Store Address</label>
+									<input type="text" class="admin-form-control" value="123 Fashion Street, NY 10001" placeholder="Enter store address">
+								</div>
+								<div class="admin-form-group">
+									<label>Currency</label>
+									<select class="admin-form-control">
+										<option selected>USD ($)</option>
+										<option>EUR (€)</option>
+										<option>GBP (£)</option>
+										<option>JPY (¥)</option>
+									</select>
+								</div>
+								<button class="btn-user-primary" style="width: 100%;">Save Changes</button>
+							</div>
+						</div>
+
+						<!-- Payment Settings -->
+						<div class="admin-table-wrapper" style="margin-bottom: 30px;">
+							<div class="admin-table-header">
+								<h3><i class="fa fa-credit-card"></i> Payment Settings</h3>
+							</div>
+							<div style="padding: 20px;">
+								<div class="admin-form-group">
+									<label style="display: flex; align-items: center; gap: 10px;">
+										<input type="checkbox" checked>
+										Enable Credit Card Payments
+									</label>
+								</div>
+								<div class="admin-form-group">
+									<label style="display: flex; align-items: center; gap: 10px;">
+										<input type="checkbox" checked>
+										Enable PayPal
+									</label>
+								</div>
+								<div class="admin-form-group">
+									<label style="display: flex; align-items: center; gap: 10px;">
+										<input type="checkbox">
+										Enable Cash on Delivery
+									</label>
+								</div>
+								<div class="admin-form-group">
+									<label>Stripe API Key</label>
+									<input type="text" class="admin-form-control" value="pk_live_***************" placeholder="Enter Stripe API key">
+								</div>
+								<div class="admin-form-group">
+									<label>PayPal Client ID</label>
+									<input type="text" class="admin-form-control" value="AXYz***************" placeholder="Enter PayPal Client ID">
+								</div>
+								<button class="btn-user-primary" style="width: 100%;">Save Changes</button>
+							</div>
+						</div>
+					</div>
+
+					<!-- Shipping Settings -->
+					<div class="col-lg-6">
+						<div class="admin-table-wrapper" style="margin-bottom: 30px;">
+							<div class="admin-table-header">
+								<h3><i class="fa fa-truck"></i> Shipping Settings</h3>
+							</div>
+							<div style="padding: 20px;">
+								<div class="admin-form-group">
+									<label>Free Shipping Minimum</label>
+									<input type="number" class="admin-form-control" value="100" placeholder="Minimum order for free shipping">
+								</div>
+								<div class="admin-form-group">
+									<label>Standard Shipping Cost</label>
+									<input type="number" class="admin-form-control" value="5.99" placeholder="Standard shipping cost">
+								</div>
+								<div class="admin-form-group">
+									<label>Express Shipping Cost</label>
+									<input type="number" class="admin-form-control" value="12.99" placeholder="Express shipping cost">
+								</div>
+								<div class="admin-form-group">
+									<label>Overnight Shipping Cost</label>
+									<input type="number" class="admin-form-control" value="24.99" placeholder="Overnight shipping cost">
+								</div>
+								<div class="admin-form-group">
+									<label style="display: flex; align-items: center; gap: 10px;">
+										<input type="checkbox" checked>
+										Enable International Shipping
+									</label>
+								</div>
+								<button class="btn-user-primary" style="width: 100%;">Save Changes</button>
+							</div>
+						</div>
+
+						<!-- Email Settings -->
+						<div class="admin-table-wrapper" style="margin-bottom: 30px;">
+							<div class="admin-table-header">
+								<h3><i class="fa fa-envelope"></i> Email Settings</h3>
+							</div>
+							<div style="padding: 20px;">
+								<div class="admin-form-group">
+									<label>SMTP Host</label>
+									<input type="text" class="admin-form-control" value="smtp.gmail.com" placeholder="SMTP server">
+								</div>
+								<div class="admin-form-group">
+									<label>SMTP Port</label>
+									<input type="number" class="admin-form-control" value="587" placeholder="Port">
+								</div>
+								<div class="admin-form-group">
+									<label>SMTP Username</label>
+									<input type="text" class="admin-form-control" value="noreply@fashionflex.com" placeholder="Username">
+								</div>
+								<div class="admin-form-group">
+									<label>SMTP Password</label>
+									<input type="password" class="admin-form-control" value="**********" placeholder="Password">
+								</div>
+								<div class="admin-form-group">
+									<label style="display: flex; align-items: center; gap: 10px;">
+										<input type="checkbox" checked>
+										Send Order Confirmation Emails
+									</label>
+								</div>
+								<div class="admin-form-group">
+									<label style="display: flex; align-items: center; gap: 10px;">
+										<input type="checkbox" checked>
+										Send Shipping Notification Emails
+									</label>
+								</div>
+								<button class="btn-user-primary" style="width: 100%;">Save Changes</button>
+							</div>
+						</div>
+
+						<!-- Tax Settings -->
+						<div class="admin-table-wrapper" style="margin-bottom: 30px;">
+							<div class="admin-table-header">
+								<h3><i class="fa fa-calculator"></i> Tax Settings</h3>
+							</div>
+							<div style="padding: 20px;">
+								<div class="admin-form-group">
+									<label style="display: flex; align-items: center; gap: 10px;">
+										<input type="checkbox" checked>
+										Enable Tax Calculation
+									</label>
+								</div>
+								<div class="admin-form-group">
+									<label>Default Tax Rate (%)</label>
+									<input type="number" class="admin-form-control" value="8.5" placeholder="Tax rate percentage" step="0.01">
+								</div>
+								<div class="admin-form-group">
+									<label>Tax Label</label>
+									<input type="text" class="admin-form-control" value="Sales Tax" placeholder="Tax label">
+								</div>
+								<div class="admin-form-group">
+									<label style="display: flex; align-items: center; gap: 10px;">
+										<input type="checkbox" checked>
+										Display Prices Including Tax
+									</label>
+								</div>
+								<button class="btn-user-primary" style="width: 100%;">Save Changes</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- SEO Settings -->
+				<div class="admin-table-wrapper">
+					<div class="admin-table-header">
+						<h3><i class="fa fa-search"></i> SEO Settings</h3>
+					</div>
+					<div style="padding: 20px;">
+						<div class="row">
+							<div class="col-md-6">
+								<div class="admin-form-group">
+									<label>Meta Title</label>
+									<input type="text" class="admin-form-control" value="FashionFlex - Modern Fashion Store" placeholder="Meta title">
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="admin-form-group">
+									<label>Meta Keywords</label>
+									<input type="text" class="admin-form-control" value="fashion, clothing, online store, apparel" placeholder="Meta keywords">
+								</div>
+							</div>
+							<div class="col-md-12">
+								<div class="admin-form-group">
+									<label>Meta Description</label>
+									<textarea class="admin-form-control" rows="3" placeholder="Meta description">Discover the latest fashion trends at FashionFlex. Shop high-quality clothing, shoes, and accessories for men and women.</textarea>
+								</div>
+							</div>
+							<div class="col-md-12">
+								<div class="admin-form-group">
+									<label>Google Analytics ID</label>
+									<input type="text" class="admin-form-control" value="UA-123456789-1" placeholder="GA tracking ID">
+								</div>
+							</div>
+							<div class="col-md-12">
+								<button class="btn-user-primary">Save Changes</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<!-- Mobile Toggle -->
+	<button class="admin-mobile-toggle">
+		<i class="fa fa-bars"></i>
+	</button>
+
+	<script th:src="@{/vendor/jquery/jquery-3.2.1.min.js}"></script>
+	<script th:src="@{/vendor/bootstrap/js/popper.js}"></script>
+	<script th:src="@{/vendor/bootstrap/js/bootstrap.min.js}"></script>
+	<script th:src="@{/js/admin.js}"></script>
+
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Checkout - FashionFlex</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" href="images/icons/favicon.png"/>
+	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="css/util.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+</head>
+<body class="animsition">
+	
+	<div class="container">
+		<div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+			<a href="/index" class="stext-109 cl8 hov-cl1 trans-04">
+				Home
+				<i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+			</a>
+			<a href="/shopping-cart" class="stext-109 cl8 hov-cl1 trans-04">
+				Shopping Cart
+				<i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+			</a>
+			<span class="stext-109 cl4">
+				Checkout
+			</span>
+		</div>
+	</div>
+
+	<section class="bg0 p-t-75 p-b-120">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-8 col-xl-8 m-lr-auto m-b-50">
+					<div class="m-l-25 m-r--38 m-lr-0-xl">
+						<div class="wrap-table-shopping-cart">
+							<h4 class="mtext-109 cl2 p-b-30">
+								Order Information
+							</h4>
+							
+							<table class="table-shopping-cart">
+								<tr class="table_head">
+									<th class="column-1">Product</th>
+									<th class="column-2"></th>
+									<th class="column-3">Price</th>
+									<th class="column-4">Quantity</th>
+									<th class="column-5">Total</th>
+								</tr>
+
+								<tr th:each="item : ${items}" class="table_row">
+									<td class="column-1">
+										<div class="how-itemcart1">
+											<img th:if="${item.variant.variantImage != null}" 
+											     th:src="@{/{file}(file=${#strings.replace(item.variant.variantImage,'static/','')})}" 
+											     alt="IMG">
+											<img th:if="${item.variant.variantImage == null && item.variant.product.mainImage != null}" 
+											     th:src="@{/{file}(file=${#strings.replace(item.variant.product.mainImage,'static/','')})}" 
+											     alt="IMG">
+										</div>
+									</td>
+									<td class="column-2">
+										<span class="stext-110 cl2" th:text="${item.variant.product.name}">Product Name</span>
+										<br>
+										<span class="stext-111 cl8" th:text="'SKU: ' + ${item.variant.sku}">SKU</span>
+									</td>
+									<td class="column-3">
+										<span class="stext-110 cl2" th:text="'$' + ${#numbers.formatDecimal(item.variant.price, 1, 2)}">$0.00</span>
+									</td>
+									<td class="column-4">
+										<span class="stext-110 cl2" th:text="${item.quantity}">1</span>
+									</td>
+									<td class="column-5">
+										<span class="stext-110 cl2" 
+										      th:text="'$' + ${#numbers.formatDecimal(item.variant.price * item.quantity, 1, 2)}">$0.00</span>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-sm-10 col-lg-4 col-xl-4 m-lr-auto m-b-50">
+					<div class="bor10 p-lr-40 p-t-30 p-b-40 m-l-63 m-r-40 m-lr-0-xl p-lr-15-sm">
+						<h4 class="mtext-109 cl2 p-b-30">
+							Payment
+						</h4>
+
+						<div class="flex-w flex-t bor12 p-b-13">
+							<div class="size-208">
+								<span class="stext-110 cl2">
+									Subtotal:
+								</span>
+							</div>
+							<div class="size-209">
+								<span class="mtext-110 cl2">
+									<span th:text="${subtotalUSD != null ? '$' + #numbers.formatDecimal(subtotalUSD, 1, 2) : '$0.00'}">$0.00</span>
+								</span>
+							</div>
+						</div>
+
+						<div class="flex-w flex-t bor12 p-t-15 p-b-13">
+							<div class="size-208">
+								<span class="stext-110 cl2">
+									Shipping:
+								</span>
+							</div>
+							<div class="size-209">
+								<span class="mtext-110 cl2">
+									$0.00
+								</span>
+							</div>
+						</div>
+
+						<div class="flex-w flex-t p-t-27 p-b-33">
+							<div class="size-208">
+								<span class="mtext-101 cl2">
+									Total:
+								</span>
+							</div>
+							<div class="size-209 p-t-1">
+								<span class="mtext-110 cl2" id="total-amount">
+									<span th:text="${totalUSD != null ? '$' + #numbers.formatDecimal(totalUSD, 1, 2) : '$0.00'}">$0.00</span>
+								</span>
+							</div>
+						</div>
+
+						<form th:action="@{/submitOrder}" method="post">
+							<input type="hidden" name="amount" th:value="${totalVND != null ? totalVND : 0}">
+							<input type="hidden" name="orderInfo" 
+							       th:value="'Order payment ' + ${#temporals.format(#temporals.createNow(), 'yyyyMMddHHmmss')}">
+							
+							<button type="submit" 
+							        class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer"
+							        th:disabled="${items == null || #lists.isEmpty(items)}">
+								Pay with VNPay
+							</button>
+						</form>
+
+						<div class="p-t-15">
+							<a th:href="@{/shopping-cart}" 
+							   class="flex-c-m stext-101 cl2 size-116 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer">
+								Back to Cart
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+	<script src="vendor/bootstrap/js/popper.js"></script>
+	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>
