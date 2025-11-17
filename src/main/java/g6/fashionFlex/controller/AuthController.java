@@ -7,6 +7,8 @@ import g6.fashionFlex.dto.UserDTO;
 import g6.fashionFlex.security.JwtTokenProvider;
 import g6.fashionFlex.service.UserService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +22,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Map;
+
 @Controller
 public class AuthController {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -47,13 +53,13 @@ public class AuthController {
         if (registered != null) {
             model.addAttribute("success", "Registration successful! Please login.");
         }
-        model.addAttribute("user", new RegisterRequest());
+        model.addAttribute("registerRequest", new RegisterRequest());
         return "auth/login";  // Updated path
     }
 
     // Handle registration from form submission
     @PostMapping("/api/auth/register")
-    public String registerUser(@Valid @ModelAttribute("user") RegisterRequest registerRequest,
+    public String registerUser(@Valid @ModelAttribute("registerRequest") RegisterRequest registerRequest,
                                BindingResult bindingResult,
                                RedirectAttributes redirectAttributes,
                                Model model) {
@@ -67,6 +73,7 @@ public class AuthController {
             redirectAttributes.addAttribute("registered", "true");
             return "redirect:/login";
         } catch (Exception e) {
+            logger.error("Error during user registration:", e);
             model.addAttribute("registerError", e.getMessage());
             return "auth/login";  // Updated path
         }
@@ -84,6 +91,7 @@ public class AuthController {
                     "user", userDTO
             ));
         } catch (Exception e) {
+            logger.error("Error during JSON user registration:", e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
                     "success", false,
                     "message", e.getMessage()
@@ -154,25 +162,5 @@ public class AuthController {
         SecurityContextHolder.clearContext();
         redirectAttributes.addAttribute("logout", "true");
         return "redirect:/login";
-    }
-
-    // Helper method to create response map
-    private static class Map<K, V> {
-        private final java.util.Map<K, V> map = new java.util.HashMap<>();
-
-        public static <K, V> java.util.Map<K, V> of(K k1, V v1, K k2, V v2) {
-            java.util.Map<K, V> map = new java.util.HashMap<>();
-            map.put(k1, v1);
-            map.put(k2, v2);
-            return map;
-        }
-
-        public static <K, V> java.util.Map<K, V> of(K k1, V v1, K k2, V v2, K k3, V v3) {
-            java.util.Map<K, V> map = new java.util.HashMap<>();
-            map.put(k1, v1);
-            map.put(k2, v2);
-            map.put(k3, v3);
-            return map;
-        }
     }
 }

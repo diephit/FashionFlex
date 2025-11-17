@@ -45,7 +45,7 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setEnabled(true);
         user.setProvider("local");
-        user.setHasSetPassword(true); // Local users register with a password
+        user.setHasSetPassword(true); 
 
         // Assign default role
         Role userRole = roleRepository.findByName("ROLE_USER")

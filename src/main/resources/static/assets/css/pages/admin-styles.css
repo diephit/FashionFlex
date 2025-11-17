@@ -284,7 +284,7 @@
     text-align: left;
     font-family: Poppins-Medium;
     font-size: 13px;
-    color: #666666;
+    color: #000000;
     border-bottom: 2px solid #e6e6e6;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -294,7 +294,7 @@
     padding: 15px;
     font-family: Poppins-Regular;
     font-size: 14px;
-    color: #333333;
+    color: #000000;
     border-bottom: 1px solid #f0f0f0;
     vertical-align: middle;
 }
