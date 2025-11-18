@@ -292,7 +292,6 @@
                             <!-- Selected Shipping Method -->
                             <div id="shippingSelectedSection"
                                  th:if="${cart.hasShippingMethod != null and cart.hasShippingMethod}"
-                                 style="display: none;"
                                  class="flex-w flex-t bor12 p-t-15 p-b-13">
                                 <div class="size-208">
                                     <span class="stext-110 cl2">Shipping:</span>
@@ -310,7 +309,6 @@
                             <!-- Tax -->
                             <div id="taxSection"
                                  th:if="${cart.taxAmount != null and cart.taxAmount > 0}"
-                                 style="display: none;"
                                  class="flex-w flex-t bor12 p-t-15 p-b-13">
                                 <div class="size-208">
                                     <span class="stext-110 cl2">Tax:</span>
@@ -430,6 +428,12 @@
         .shipping-rate-option.selected {
             border-color: #717fe0;
             background-color: #e8eaf6;
+        }
+        /* Hide dynamic sections by default - will be shown by JavaScript */
+        #shippingSelectedSection,
+        #taxSection,
+        #discountSection {
+            display: none !important;
         }
     </style>
 </body>

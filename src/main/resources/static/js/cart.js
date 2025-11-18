@@ -368,7 +368,7 @@ function updateCartDisplay(cart) {
     // Update discount if applied
     if (cart.discountAmount && cart.discountAmount > 0) {
         $('#discountAmount').text(cart.discountAmount.toFixed(2));
-        $('#discountSection').show();
+        $('#discountSection').css('display', 'flex').show();
     } else {
         $('#discountSection').hide();
     }
@@ -377,7 +377,7 @@ function updateCartDisplay(cart) {
     if (cart.hasShippingMethod && cart.shippingCost && cart.shippingCost > 0) {
         $('#shippingAmount').text(cart.shippingCost.toFixed(2));
         $('#selectedShippingMethod').text(cart.selectedShippingMethod || 'Shipping');
-        $('#shippingSelectedSection').show();
+        $('#shippingSelectedSection').css('display', 'flex').show();
     } else {
         $('#shippingSelectedSection').hide();
     }
@@ -385,7 +385,7 @@ function updateCartDisplay(cart) {
     // Update tax
     if (cart.taxAmount && cart.taxAmount > 0) {
         $('#taxAmount').text(cart.taxAmount.toFixed(2));
-        $('#taxSection').show();
+        $('#taxSection').css('display', 'flex').show();
         calculatedTax = cart.taxAmount;
     } else {
         $('#taxSection').hide();
@@ -399,6 +399,38 @@ function updateCartDisplay(cart) {
     if ($('.js-show-cart').length) {
         $('.js-show-cart').attr('data-notify', cart.totalItems || 0);
     }
+
+    // Update checkout button state
+    updateCheckoutButton(cart);
+}
+
+/**
+ * Update checkout button state and text based on cart status
+ */
+function updateCheckoutButton(cart) {
+    const checkoutBtn = $('button:contains("Proceed to Checkout"), button:contains("Cannot Checkout"), button:contains("Select Shipping")').first();
+
+    if (!checkoutBtn.length) {
+        return; // Button not found on page
+    }
+
+    // Check for out of stock items
+    if (cart.hasOutOfStockItems) {
+        checkoutBtn.prop('disabled', true);
+        checkoutBtn.html('<span>Cannot Checkout - Out of Stock Items</span>');
+        return;
+    }
+
+    // Check for shipping method
+    if (!cart.hasShippingMethod) {
+        checkoutBtn.prop('disabled', true);
+        checkoutBtn.html('<span>Select Shipping Method First</span>');
+        return;
+    }
+
+    // All good - enable checkout
+    checkoutBtn.prop('disabled', false);
+    checkoutBtn.html('<span>Proceed to Checkout</span>');
 }
 
 /**
