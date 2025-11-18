@@ -250,4 +250,145 @@ public class AdminProductService {
         String timestamp = String.valueOf(System.currentTimeMillis()).substring(8);
         return base + "-" + timestamp;
     }
+
+    /**
+     * Advanced search with multiple filters
+     */
+    public Page<ProductDTO> searchProductsAdvanced(String keyword, Long categoryId, Long brandId,
+                                                    Boolean active, Boolean featured, Pageable pageable) {
+        Page<Product> products;
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            products = productRepository.adminSearchByName(keyword, pageable);
+        } else {
+            products = productRepository.findAll(pageable);
+        }
+
+        // Apply filters
+        return products.map(this::convertToDTO)
+                .map(dto -> {
+                    // Filter by category
+                    if (categoryId != null && !categoryId.equals(dto.getCategoryId())) {
+                        return null;
+                    }
+                    // Filter by brand
+                    if (brandId != null && !brandId.equals(dto.getBrandId())) {
+                        return null;
+                    }
+                    // Filter by active status
+                    if (active != null && !active.equals(dto.getActive())) {
+                        return null;
+                    }
+                    // Filter by featured status
+                    if (featured != null && !featured.equals(dto.getFeatured())) {
+                        return null;
+                    }
+                    return dto;
+                });
+    }
+
+    /**
+     * Get product statistics for dashboard
+     */
+    public ProductStatistics getStatistics() {
+        List<Product> allProducts = productRepository.findAll();
+
+        long totalProducts = allProducts.size();
+        long activeProducts = allProducts.stream().filter(Product::getActive).count();
+        long featuredProducts = allProducts.stream().filter(Product::getFeatured).count();
+        long outOfStock = allProducts.stream().filter(p -> p.getStock() == 0).count();
+        long lowStock = allProducts.stream().filter(p -> p.getStock() > 0 && p.getStock() <= 10).count();
+        long withDiscount = allProducts.stream()
+                .filter(p -> p.getDiscountPrice() != null && p.getDiscountPrice().compareTo(p.getPrice()) < 0)
+                .count();
+
+        return new ProductStatistics(totalProducts, activeProducts, featuredProducts,
+                                     outOfStock, lowStock, withDiscount);
+    }
+
+    /**
+     * Bulk activate products
+     */
+    public int bulkActivate(List<Long> productIds) {
+        int count = 0;
+        for (Long id : productIds) {
+            try {
+                Product product = productRepository.findById(id).orElse(null);
+                if (product != null && !product.getActive()) {
+                    product.setActive(true);
+                    productRepository.save(product);
+                    count++;
+                }
+            } catch (Exception e) {
+                log.error("Error activating product {}: {}", id, e.getMessage());
+            }
+        }
+        log.info("Bulk activated {} products", count);
+        return count;
+    }
+
+    /**
+     * Bulk deactivate products
+     */
+    public int bulkDeactivate(List<Long> productIds) {
+        int count = 0;
+        for (Long id : productIds) {
+            try {
+                Product product = productRepository.findById(id).orElse(null);
+                if (product != null && product.getActive()) {
+                    product.setActive(false);
+                    productRepository.save(product);
+                    count++;
+                }
+            } catch (Exception e) {
+                log.error("Error deactivating product {}: {}", id, e.getMessage());
+            }
+        }
+        log.info("Bulk deactivated {} products", count);
+        return count;
+    }
+
+    /**
+     * Bulk delete products
+     */
+    public int bulkDelete(List<Long> productIds) {
+        int count = 0;
+        for (Long id : productIds) {
+            try {
+                productRepository.deleteById(id);
+                count++;
+            } catch (Exception e) {
+                log.error("Error deleting product {}: {}", id, e.getMessage());
+            }
+        }
+        log.info("Bulk deleted {} products", count);
+        return count;
+    }
+
+    // Product Statistics DTO
+    public static class ProductStatistics {
+        private final long totalProducts;
+        private final long activeProducts;
+        private final long featuredProducts;
+        private final long outOfStock;
+        private final long lowStock;
+        private final long withDiscount;
+
+        public ProductStatistics(long totalProducts, long activeProducts, long featuredProducts,
+                                long outOfStock, long lowStock, long withDiscount) {
+            this.totalProducts = totalProducts;
+            this.activeProducts = activeProducts;
+            this.featuredProducts = featuredProducts;
+            this.outOfStock = outOfStock;
+            this.lowStock = lowStock;
+            this.withDiscount = withDiscount;
+        }
+
+        public long getTotalProducts() { return totalProducts; }
+        public long getActiveProducts() { return activeProducts; }
+        public long getFeaturedProducts() { return featuredProducts; }
+        public long getOutOfStock() { return outOfStock; }
+        public long getLowStock() { return lowStock; }
+        public long getWithDiscount() { return withDiscount; }
+    }
 }

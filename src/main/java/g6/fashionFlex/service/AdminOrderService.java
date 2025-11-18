@@ -5,18 +5,21 @@ import g6.fashionFlex.dto.OrderItemDTO;
 import g6.fashionFlex.entity.Order;
 import g6.fashionFlex.entity.OrderItem;
 import g6.fashionFlex.repository.OrderRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@Slf4j
 public class AdminOrderService {
 
     @Autowired
@@ -156,5 +159,191 @@ public class AdminOrderService {
         dto.setColor(item.getColor());
         dto.setSubtotal(item.getSubtotal());
         return dto;
+    }
+
+    /**
+     * Advanced search with multiple filters
+     */
+    public Page<OrderDTO> searchOrdersAdvanced(String keyword, Order.OrderStatus status,
+                                                Order.PaymentStatus paymentStatus,
+                                                LocalDateTime startDate, LocalDateTime endDate,
+                                                Pageable pageable) {
+        List<Order> allOrders = orderRepository.findAll();
+
+        // Apply filters
+        List<Order> filteredOrders = allOrders.stream()
+                .filter(order -> {
+                    // Keyword filter (order number, customer name, email)
+                    if (keyword != null && !keyword.trim().isEmpty()) {
+                        String lowerKeyword = keyword.toLowerCase();
+                        boolean matchesOrderNumber = order.getOrderNumber().toLowerCase().contains(lowerKeyword);
+                        boolean matchesName = order.getUser().getFullName().toLowerCase().contains(lowerKeyword);
+                        boolean matchesEmail = order.getUser().getEmail().toLowerCase().contains(lowerKeyword);
+                        if (!matchesOrderNumber && !matchesName && !matchesEmail) {
+                            return false;
+                        }
+                    }
+
+                    // Status filter
+                    if (status != null && !order.getStatus().equals(status)) {
+                        return false;
+                    }
+
+                    // Payment status filter
+                    if (paymentStatus != null && !order.getPaymentStatus().equals(paymentStatus)) {
+                        return false;
+                    }
+
+                    // Date range filter
+                    if (startDate != null && order.getCreatedAt().isBefore(startDate)) {
+                        return false;
+                    }
+                    if (endDate != null && order.getCreatedAt().isAfter(endDate)) {
+                        return false;
+                    }
+
+                    return true;
+                })
+                .collect(Collectors.toList());
+
+        // Convert to Page (simple implementation)
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), filteredOrders.size());
+        List<OrderDTO> pageContent = filteredOrders.subList(start, end).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+
+        return new org.springframework.data.domain.PageImpl<>(
+                pageContent, pageable, filteredOrders.size());
+    }
+
+    /**
+     * Get order statistics for dashboard
+     */
+    public OrderStatistics getStatistics() {
+        List<Order> allOrders = orderRepository.findAll();
+
+        long totalOrders = allOrders.size();
+        long pendingOrders = allOrders.stream()
+                .filter(o -> o.getStatus() == Order.OrderStatus.PENDING || o.getStatus() == Order.OrderStatus.CONFIRMED)
+                .count();
+        long shippedOrders = allOrders.stream()
+                .filter(o -> o.getStatus() == Order.OrderStatus.SHIPPED)
+                .count();
+        long deliveredOrders = allOrders.stream()
+                .filter(o -> o.getStatus() == Order.OrderStatus.DELIVERED)
+                .count();
+        long cancelledOrders = allOrders.stream()
+                .filter(o -> o.getStatus() == Order.OrderStatus.CANCELLED)
+                .count();
+
+        BigDecimal totalRevenue = allOrders.stream()
+                .filter(o -> o.getPaymentStatus() == Order.PaymentStatus.PAID)
+                .map(Order::getTotalAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return new OrderStatistics(totalOrders, pendingOrders, shippedOrders,
+                                   deliveredOrders, cancelledOrders, totalRevenue);
+    }
+
+    /**
+     * Bulk cancel orders
+     */
+    public int bulkCancel(List<Long> orderIds, String cancellationReason) {
+        int count = 0;
+        for (Long id : orderIds) {
+            try {
+                Order order = orderRepository.findById(id).orElse(null);
+                if (order != null && order.getStatus() != Order.OrderStatus.CANCELLED
+                        && order.getStatus() != Order.OrderStatus.DELIVERED) {
+                    order.setStatus(Order.OrderStatus.CANCELLED);
+                    order.setCancelledAt(LocalDateTime.now());
+                    order.setCancellationReason(cancellationReason != null ? cancellationReason : "Bulk cancellation");
+                    orderRepository.save(order);
+                    count++;
+                }
+            } catch (Exception e) {
+                log.error("Error cancelling order {}: {}", id, e.getMessage());
+            }
+        }
+        log.info("Bulk cancelled {} orders", count);
+        return count;
+    }
+
+    /**
+     * Bulk mark as shipped
+     */
+    public int bulkMarkShipped(List<Long> orderIds) {
+        int count = 0;
+        for (Long id : orderIds) {
+            try {
+                Order order = orderRepository.findById(id).orElse(null);
+                if (order != null && (order.getStatus() == Order.OrderStatus.PENDING
+                        || order.getStatus() == Order.OrderStatus.CONFIRMED
+                        || order.getStatus() == Order.OrderStatus.PROCESSING)) {
+                    order.setStatus(Order.OrderStatus.SHIPPED);
+                    if (order.getShippedAt() == null) {
+                        order.setShippedAt(LocalDateTime.now());
+                    }
+                    orderRepository.save(order);
+                    count++;
+                }
+            } catch (Exception e) {
+                log.error("Error marking order {} as shipped: {}", id, e.getMessage());
+            }
+        }
+        log.info("Bulk marked {} orders as shipped", count);
+        return count;
+    }
+
+    /**
+     * Bulk mark as delivered
+     */
+    public int bulkMarkDelivered(List<Long> orderIds) {
+        int count = 0;
+        for (Long id : orderIds) {
+            try {
+                Order order = orderRepository.findById(id).orElse(null);
+                if (order != null && order.getStatus() == Order.OrderStatus.SHIPPED) {
+                    order.setStatus(Order.OrderStatus.DELIVERED);
+                    if (order.getDeliveredAt() == null) {
+                        order.setDeliveredAt(LocalDateTime.now());
+                    }
+                    orderRepository.save(order);
+                    count++;
+                }
+            } catch (Exception e) {
+                log.error("Error marking order {} as delivered: {}", id, e.getMessage());
+            }
+        }
+        log.info("Bulk marked {} orders as delivered", count);
+        return count;
+    }
+
+    // Order Statistics DTO
+    public static class OrderStatistics {
+        private final long totalOrders;
+        private final long pendingOrders;
+        private final long shippedOrders;
+        private final long deliveredOrders;
+        private final long cancelledOrders;
+        private final BigDecimal totalRevenue;
+
+        public OrderStatistics(long totalOrders, long pendingOrders, long shippedOrders,
+                              long deliveredOrders, long cancelledOrders, BigDecimal totalRevenue) {
+            this.totalOrders = totalOrders;
+            this.pendingOrders = pendingOrders;
+            this.shippedOrders = shippedOrders;
+            this.deliveredOrders = deliveredOrders;
+            this.cancelledOrders = cancelledOrders;
+            this.totalRevenue = totalRevenue;
+        }
+
+        public long getTotalOrders() { return totalOrders; }
+        public long getPendingOrders() { return pendingOrders; }
+        public long getShippedOrders() { return shippedOrders; }
+        public long getDeliveredOrders() { return deliveredOrders; }
+        public long getCancelledOrders() { return cancelledOrders; }
+        public BigDecimal getTotalRevenue() { return totalRevenue; }
     }
 }

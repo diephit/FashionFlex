@@ -6,7 +6,10 @@ import g6.fashionFlex.entity.Product;
 import g6.fashionFlex.repository.BrandRepository;
 import g6.fashionFlex.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +21,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class AdminBrandService {
 
     private final BrandRepository brandRepository;
@@ -175,5 +179,175 @@ public class AdminBrandService {
         brand.setActive(dto.getActive() != null ? dto.getActive() : true);
 
         return brand;
+    }
+
+    /**
+     * Get paginated brands
+     */
+    public Page<BrandDTO> getAllBrands(Pageable pageable) {
+        return brandRepository.findAll(pageable).map(this::convertToDTO);
+    }
+
+    /**
+     * Search brands with filters
+     */
+    public Page<BrandDTO> searchBrands(String keyword, Boolean active, Pageable pageable) {
+        List<Brand> allBrands = brandRepository.findAll();
+
+        // Apply filters
+        List<Brand> filteredBrands = allBrands.stream()
+                .filter(brand -> {
+                    // Keyword filter
+                    if (keyword != null && !keyword.trim().isEmpty()) {
+                        String lowerKeyword = keyword.toLowerCase();
+                        boolean matchesName = brand.getName().toLowerCase().contains(lowerKeyword);
+                        boolean matchesDesc = brand.getDescription() != null &&
+                                             brand.getDescription().toLowerCase().contains(lowerKeyword);
+                        if (!matchesName && !matchesDesc) {
+                            return false;
+                        }
+                    }
+
+                    // Active status filter
+                    if (active != null && !brand.getActive().equals(active)) {
+                        return false;
+                    }
+
+                    return true;
+                })
+                .collect(Collectors.toList());
+
+        // Convert to Page
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), filteredBrands.size());
+        List<BrandDTO> pageContent = filteredBrands.subList(start, end).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+
+        return new org.springframework.data.domain.PageImpl<>(
+                pageContent, pageable, filteredBrands.size());
+    }
+
+    /**
+     * Get brand statistics
+     */
+    public BrandStatistics getStatistics() {
+        List<Brand> allBrands = brandRepository.findAll();
+
+        long totalBrands = allBrands.size();
+        long activeBrands = allBrands.stream().filter(Brand::getActive).count();
+        long inactiveBrands = allBrands.stream().filter(b -> !b.getActive()).count();
+
+        // Brands with products
+        long withProducts = allBrands.stream()
+                .filter(b -> productRepository.countByBrandId(b.getId()) > 0)
+                .count();
+
+        // Brands without logo
+        long withoutLogo = allBrands.stream()
+                .filter(b -> b.getLogoUrl() == null || b.getLogoUrl().trim().isEmpty())
+                .count();
+
+        return new BrandStatistics(totalBrands, activeBrands, inactiveBrands,
+                                   withProducts, withoutLogo);
+    }
+
+    /**
+     * Bulk activate brands
+     */
+    public int bulkActivate(List<Long> brandIds) {
+        int count = 0;
+        for (Long id : brandIds) {
+            try {
+                Brand brand = brandRepository.findById(id).orElse(null);
+                if (brand != null && !brand.getActive()) {
+                    brand.setActive(true);
+                    brandRepository.save(brand);
+                    count++;
+                }
+            } catch (Exception e) {
+                log.error("Error activating brand {}: {}", id, e.getMessage());
+            }
+        }
+        log.info("Bulk activated {} brands", count);
+        return count;
+    }
+
+    /**
+     * Bulk deactivate brands
+     */
+    public int bulkDeactivate(List<Long> brandIds) {
+        int count = 0;
+        for (Long id : brandIds) {
+            try {
+                Brand brand = brandRepository.findById(id).orElse(null);
+                if (brand != null && brand.getActive()) {
+                    brand.setActive(false);
+                    brandRepository.save(brand);
+                    count++;
+                }
+            } catch (Exception e) {
+                log.error("Error deactivating brand {}: {}", id, e.getMessage());
+            }
+        }
+        log.info("Bulk deactivated {} brands", count);
+        return count;
+    }
+
+    /**
+     * Bulk delete brands (only empty ones)
+     */
+    public int bulkDelete(List<Long> brandIds) {
+        int count = 0;
+        for (Long id : brandIds) {
+            try {
+                long productCount = productRepository.countByBrandId(id);
+                if (productCount == 0) {
+                    Brand brand = brandRepository.findById(id).orElse(null);
+                    if (brand != null) {
+                        // Delete logo if exists
+                        if (brand.getLogoUrl() != null && !brand.getLogoUrl().isEmpty() && fileUploadService != null) {
+                            try {
+                                fileUploadService.deleteFile(brand.getLogoUrl());
+                            } catch (Exception e) {
+                                log.warn("Failed to delete logo for brand {}: {}", id, e.getMessage());
+                            }
+                        }
+                        brandRepository.deleteById(id);
+                        count++;
+                    }
+                } else {
+                    log.warn("Cannot delete brand {} with {} products", id, productCount);
+                }
+            } catch (Exception e) {
+                log.error("Error deleting brand {}: {}", id, e.getMessage());
+            }
+        }
+        log.info("Bulk deleted {} brands", count);
+        return count;
+    }
+
+    // Brand Statistics DTO
+    public static class BrandStatistics {
+        private final long totalBrands;
+        private final long activeBrands;
+        private final long inactiveBrands;
+        private final long withProducts;
+        private final long withoutLogo;
+
+        public BrandStatistics(long totalBrands, long activeBrands, long inactiveBrands,
+                              long withProducts, long withoutLogo) {
+            this.totalBrands = totalBrands;
+            this.activeBrands = activeBrands;
+            this.inactiveBrands = inactiveBrands;
+            this.withProducts = withProducts;
+            this.withoutLogo = withoutLogo;
+        }
+
+        public long getTotalBrands() { return totalBrands; }
+        public long getActiveBrands() { return activeBrands; }
+        public long getInactiveBrands() { return inactiveBrands; }
+        public long getWithProducts() { return withProducts; }
+        public long getWithoutLogo() { return withoutLogo; }
     }
 }

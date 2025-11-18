@@ -18,8 +18,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/admin/products")
@@ -44,18 +46,38 @@ public class AdminProductController {
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "desc") String sortDir,
             @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) Long brandId,
+            @RequestParam(required = false) Boolean active,
+            @RequestParam(required = false) Boolean featured,
             Model model) {
 
         Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
         Page<ProductDTO> productPage;
-        if (keyword != null && !keyword.isEmpty()) {
-            productPage = productService.searchProducts(keyword, pageable);
-            model.addAttribute("keyword", keyword);
+
+        // Use advanced search if filters are provided
+        if (keyword != null || categoryId != null || brandId != null || active != null || featured != null) {
+            productPage = productService.searchProductsAdvanced(keyword, categoryId, brandId, active, featured, pageable);
         } else {
             productPage = productService.getAllProducts(pageable);
         }
+
+        // Add statistics
+        AdminProductService.ProductStatistics statistics = productService.getStatistics();
+        model.addAttribute("statistics", statistics);
+
+        // Add filter data
+        model.addAttribute("categories", categoryRepository.findAll());
+        model.addAttribute("brands", brandRepository.findAll());
+
+        // Add current filters to model
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("categoryId", categoryId);
+        model.addAttribute("brandId", brandId);
+        model.addAttribute("active", active);
+        model.addAttribute("featured", featured);
 
         model.addAttribute("products", productPage.getContent());
         model.addAttribute("currentPage", productPage.getNumber());
@@ -174,6 +196,43 @@ public class AdminProductController {
             redirectAttributes.addFlashAttribute("error", "Error updating product status: " + e.getMessage());
         }
         return "redirect:/admin/products";
+    }
+
+    // Bulk Actions
+    @PostMapping("/bulk/activate")
+    @ResponseBody
+    public ResponseEntity<?> bulkActivate(@RequestBody Map<String, List<Long>> payload) {
+        try {
+            List<Long> ids = payload.get("ids");
+            int count = productService.bulkActivate(ids);
+            return ResponseEntity.ok(Map.of("success", true, "message", count + " products activated"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/bulk/deactivate")
+    @ResponseBody
+    public ResponseEntity<?> bulkDeactivate(@RequestBody Map<String, List<Long>> payload) {
+        try {
+            List<Long> ids = payload.get("ids");
+            int count = productService.bulkDeactivate(ids);
+            return ResponseEntity.ok(Map.of("success", true, "message", count + " products deactivated"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/bulk/delete")
+    @ResponseBody
+    public ResponseEntity<?> bulkDelete(@RequestBody Map<String, List<Long>> payload) {
+        try {
+            List<Long> ids = payload.get("ids");
+            int count = productService.bulkDelete(ids);
+            return ResponseEntity.ok(Map.of("success", true, "message", count + " products deleted"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
+        }
     }
 
     // Helper method to load form data

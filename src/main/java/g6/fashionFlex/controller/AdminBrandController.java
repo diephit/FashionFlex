@@ -3,6 +3,11 @@ package g6.fashionFlex.controller;
 import g6.fashionFlex.dto.BrandDTO;
 import g6.fashionFlex.service.AdminBrandService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/admin/brands")
@@ -25,15 +31,43 @@ public class AdminBrandController {
      * Display list of all brands
      */
     @GetMapping
-    public String listBrands(Model model) {
-        try {
-            List<BrandDTO> brands = brandService.getAllBrands();
-            model.addAttribute("brands", brands);
-            return "admin/brands/list";
-        } catch (Exception e) {
-            model.addAttribute("error", "Error loading brands: " + e.getMessage());
-            return "admin/brands/list";
+    public String listBrands(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "15") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Boolean active,
+            Model model) {
+
+        Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<BrandDTO> brandPage;
+
+        // Use search if filters are provided
+        if (keyword != null || active != null) {
+            brandPage = brandService.searchBrands(keyword, active, pageable);
+        } else {
+            brandPage = brandService.getAllBrands(pageable);
         }
+
+        // Add statistics
+        AdminBrandService.BrandStatistics statistics = brandService.getStatistics();
+        model.addAttribute("statistics", statistics);
+
+        // Add current filters to model for persistence
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("active", active);
+
+        model.addAttribute("brands", brandPage.getContent());
+        model.addAttribute("currentPage", brandPage.getNumber());
+        model.addAttribute("totalItems", brandPage.getTotalElements());
+        model.addAttribute("totalPages", brandPage.getTotalPages());
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("sortDir", sortDir);
+
+        return "admin/brands/list";
     }
 
     /**
@@ -128,5 +162,42 @@ public class AdminBrandController {
             redirectAttributes.addFlashAttribute("error", "Error toggling brand status: " + e.getMessage());
         }
         return "redirect:/admin/brands";
+    }
+
+    // Bulk Actions
+    @PostMapping("/bulk/activate")
+    @ResponseBody
+    public ResponseEntity<?> bulkActivate(@RequestBody Map<String, List<Long>> payload) {
+        try {
+            List<Long> ids = payload.get("ids");
+            int count = brandService.bulkActivate(ids);
+            return ResponseEntity.ok(Map.of("success", true, "message", count + " brands activated"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/bulk/deactivate")
+    @ResponseBody
+    public ResponseEntity<?> bulkDeactivate(@RequestBody Map<String, List<Long>> payload) {
+        try {
+            List<Long> ids = payload.get("ids");
+            int count = brandService.bulkDeactivate(ids);
+            return ResponseEntity.ok(Map.of("success", true, "message", count + " brands deactivated"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/bulk/delete")
+    @ResponseBody
+    public ResponseEntity<?> bulkDelete(@RequestBody Map<String, List<Long>> payload) {
+        try {
+            List<Long> ids = payload.get("ids");
+            int count = brandService.bulkDelete(ids);
+            return ResponseEntity.ok(Map.of("success", true, "message", count + " brands deleted (empty only)"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
+        }
     }
 }

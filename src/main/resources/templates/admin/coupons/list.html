@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coupons Management - FashionFlex Admin</title>
+    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <style>
+        body { background-color: #f8f9fa; font-family: Arial, sans-serif; }
+        .sidebar { min-height: 100vh; background: #343a40; color: white; padding: 20px 0; }
+        .sidebar a { color: #fff; padding: 10px 20px; display: block; text-decoration: none; transition: background 0.3s; }
+        .sidebar a:hover, .sidebar a.active { background: #495057; }
+        .main-content { padding: 30px; }
+        .table-card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .badge-status { padding: 5px 10px; border-radius: 4px; font-size: 12px; }
+        .status-active { background: #28a745; color: white; }
+        .status-inactive { background: #6c757d; color: white; }
+        .status-expired { background: #dc3545; color: white; }
+        .status-scheduled { background: #17a2b8; color: white; }
+        .status-limit { background: #ffc107; color: black; }
+        .stats-card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .stats-card h5 { color: #6c757d; font-size: 14px; margin-bottom: 10px; }
+        .stats-card h2 { margin: 0; color: #343a40; }
+        .btn-sm { font-size: 12px; padding: 4px 8px; }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 sidebar">
+                <h4 class="text-center mb-4">FashionFlex Admin</h4>
+                <a href="/admin"><i class="fa fa-dashboard"></i> Dashboard</a>
+                <a href="/admin/products"><i class="fa fa-shopping-bag"></i> Products</a>
+                <a href="/admin/categories"><i class="fa fa-list"></i> Categories</a>
+                <a href="/admin/brands"><i class="fa fa-tag"></i> Brands</a>
+                <a href="/admin/orders"><i class="fa fa-shopping-cart"></i> Orders</a>
+                <a href="/admin/users"><i class="fa fa-users"></i> Users</a>
+                <a href="/admin/coupons" class="active"><i class="fa fa-ticket"></i> Coupons</a>
+                <hr style="border-color: #495057;">
+                <a href="/"><i class="fa fa-home"></i> Back to Site</a>
+                <a href="/logout"><i class="fa fa-sign-out"></i> Logout</a>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10 main-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>Coupons Management</h1>
+                    <div>
+                        <a href="/admin/coupons/new" class="btn btn-primary">
+                            <i class="fa fa-plus"></i> Add New Coupon
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="row mb-4" th:if="${statistics}">
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <h5>Total Coupons</h5>
+                            <h2 th:text="${statistics.totalCoupons}">0</h2>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <h5>Active Coupons</h5>
+                            <h2 th:text="${statistics.activeCoupons}" style="color: #28a745;">0</h2>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <h5>Expired Coupons</h5>
+                            <h2 th:text="${statistics.expiredCoupons}" style="color: #dc3545;">0</h2>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <h5>Limit Reached</h5>
+                            <h2 th:text="${statistics.limitReachedCoupons}" style="color: #ffc107;">0</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Messages -->
+                <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+                    <span th:text="${success}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+                    <span th:text="${error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <!-- Bulk Actions -->
+                <div class="table-card mb-3">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <form method="get" action="/admin/coupons" class="d-flex">
+                                <input type="text" name="keyword" class="form-control me-2"
+                                       placeholder="Search by code or description..." th:value="${keyword}">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa fa-search"></i> Search
+                                </button>
+                            </form>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <form method="post" action="/admin/coupons/deactivate-expired" class="d-inline">
+                                <button type="submit" class="btn btn-warning btn-sm">
+                                    <i class="fa fa-clock-o"></i> Deactivate Expired
+                                </button>
+                            </form>
+                            <form method="post" action="/admin/coupons/deactivate-limit-reached" class="d-inline">
+                                <button type="submit" class="btn btn-secondary btn-sm">
+                                    <i class="fa fa-ban"></i> Deactivate Limit Reached
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coupons Table -->
+                <div class="table-card">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Code</th>
+                                <th>Description</th>
+                                <th>Type</th>
+                                <th>Discount</th>
+                                <th>Min Order</th>
+                                <th>Usage</th>
+                                <th>Valid Period</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${#lists.isEmpty(coupons)}">
+                                <td colspan="10" class="text-center text-muted">No coupons found</td>
+                            </tr>
+                            <tr th:each="coupon : ${coupons}">
+                                <td th:text="${coupon.id}">1</td>
+                                <td>
+                                    <strong th:text="${coupon.code}">SAVE10</strong>
+                                </td>
+                                <td th:text="${coupon.description}">10% off all items</td>
+                                <td>
+                                    <span th:if="${coupon.discountType.name() == 'PERCENTAGE'}" class="badge bg-info">%</span>
+                                    <span th:if="${coupon.discountType.name() == 'FIXED_AMOUNT'}" class="badge bg-success">$</span>
+                                    <span th:text="${coupon.discountTypeDisplay}">Percentage</span>
+                                </td>
+                                <td>
+                                    <strong th:text="${coupon.discountValueDisplay}">10%</strong>
+                                    <span th:if="${coupon.maxDiscountAmount != null}" class="text-muted small">
+                                        (max: $<span th:text="${coupon.maxDiscountAmount}">50</span>)
+                                    </span>
+                                </td>
+                                <td>
+                                    <span th:if="${coupon.minOrderAmount != null}">
+                                        $<span th:text="${coupon.minOrderAmount}">100</span>
+                                    </span>
+                                    <span th:if="${coupon.minOrderAmount == null}" class="text-muted">-</span>
+                                </td>
+                                <td>
+                                    <span th:text="${coupon.usedCount}">5</span> /
+                                    <span th:if="${coupon.usageLimit != null}" th:text="${coupon.usageLimit}">100</span>
+                                    <span th:if="${coupon.usageLimit == null}">∞</span>
+                                </td>
+                                <td class="small">
+                                    <div th:text="${#temporals.format(coupon.startDate, 'yyyy-MM-dd')}">2024-01-01</div>
+                                    <div th:text="${#temporals.format(coupon.endDate, 'yyyy-MM-dd')}">2024-12-31</div>
+                                </td>
+                                <td>
+                                    <span th:class="'badge-status status-' + ${coupon.statusDisplay.toLowerCase().replace(' ', '-')}"
+                                          th:text="${coupon.statusDisplay}">Active</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a th:href="@{/admin/coupons/edit/{id}(id=${coupon.id})}"
+                                           class="btn btn-sm btn-primary" title="Edit">
+                                            <i class="fa fa-edit"></i>
+                                        </a>
+                                        <form method="post" th:action="@{/admin/coupons/toggle/{id}(id=${coupon.id})}"
+                                              class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-warning"
+                                                    th:title="${coupon.active ? 'Deactivate' : 'Activate'}">
+                                                <i th:class="${coupon.active ? 'fa fa-toggle-on' : 'fa fa-toggle-off'}"></i>
+                                            </button>
+                                        </form>
+                                        <form method="post" th:action="@{/admin/coupons/delete/{id}(id=${coupon.id})}"
+                                              class="d-inline"
+                                              onsubmit="return confirm('Are you sure you want to delete this coupon?');">
+                                            <button type="submit" class="btn btn-sm btn-danger" title="Delete">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Pagination -->
+                    <nav th:if="${totalPages > 1}">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                                <a class="page-link" th:href="@{/admin/coupons(page=${currentPage - 1}, sortBy=${sortBy}, sortDir=${sortDir})}">
+                                    Previous
+                                </a>
+                            </li>
+                            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                                th:classappend="${i == currentPage} ? 'active'">
+                                <a class="page-link" th:href="@{/admin/coupons(page=${i}, sortBy=${sortBy}, sortDir=${sortDir})}"
+                                   th:text="${i + 1}">1</a>
+                            </li>
+                            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                                <a class="page-link" th:href="@{/admin/coupons(page=${currentPage + 1}, sortBy=${sortBy}, sortDir=${sortDir})}">
+                                    Next
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

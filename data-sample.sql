@@ -130,8 +130,37 @@ INSERT INTO product_images (product_id, image_url) VALUES
 -- Product 13 additional images
 (13, '/images/product-detail-02.jpg');
 
+-- Insert Sample Coupons
+INSERT INTO coupons (id, code, description, discount_type, discount_value, min_order_amount, max_discount_amount, usage_limit, used_count, start_date, end_date, active, created_at, updated_at) VALUES
+-- Active percentage coupons
+(1, 'WELCOME10', '10% off for new customers', 'PERCENTAGE', 10.00, 50.00, 20.00, 100, 12, DATE_SUB(NOW(), INTERVAL 1 DAY), DATE_ADD(NOW(), INTERVAL 30 DAY), true, NOW(), NOW()),
+(2, 'SUMMER20', '20% off summer collection', 'PERCENTAGE', 20.00, 100.00, 50.00, 200, 45, DATE_SUB(NOW(), INTERVAL 5 DAY), DATE_ADD(NOW(), INTERVAL 60 DAY), true, NOW(), NOW()),
+(3, 'FLASH15', 'Flash sale - 15% off everything', 'PERCENTAGE', 15.00, NULL, 75.00, NULL, 89, DATE_SUB(NOW(), INTERVAL 2 DAY), DATE_ADD(NOW(), INTERVAL 7 DAY), true, NOW(), NOW()),
+
+-- Active fixed amount coupons
+(4, 'SAVE5', '$5 off your order', 'FIXED_AMOUNT', 5.00, 25.00, NULL, 500, 123, DATE_SUB(NOW(), INTERVAL 10 DAY), DATE_ADD(NOW(), INTERVAL 90 DAY), true, NOW(), NOW()),
+(5, 'FREESHIP', 'Free shipping - $10 off', 'FIXED_AMOUNT', 10.00, 50.00, NULL, NULL, 234, DATE_SUB(NOW(), INTERVAL 3 DAY), DATE_ADD(NOW(), INTERVAL 180 DAY), true, NOW(), NOW()),
+(6, 'VIP50', 'VIP members - $50 off', 'FIXED_AMOUNT', 50.00, 200.00, NULL, 50, 8, DATE_SUB(NOW(), INTERVAL 1 DAY), DATE_ADD(NOW(), INTERVAL 30 DAY), true, NOW(), NOW()),
+
+-- Scheduled coupon (not started yet)
+(7, 'NEWYEAR25', 'New Year special - 25% off', 'PERCENTAGE', 25.00, 80.00, 100.00, 300, 0, DATE_ADD(NOW(), INTERVAL 5 DAY), DATE_ADD(NOW(), INTERVAL 35 DAY), true, NOW(), NOW()),
+
+-- Expired coupon
+(8, 'EXPIRED30', 'Expired coupon - 30% off', 'PERCENTAGE', 30.00, 100.00, 50.00, 100, 67, DATE_SUB(NOW(), INTERVAL 90 DAY), DATE_SUB(NOW(), INTERVAL 10 DAY), false, DATE_SUB(NOW(), INTERVAL 90 DAY), NOW()),
+
+-- Limit reached coupon
+(9, 'LIMITED10', 'Limited offer - $10 off', 'FIXED_AMOUNT', 10.00, 30.00, NULL, 20, 20, DATE_SUB(NOW(), INTERVAL 15 DAY), DATE_ADD(NOW(), INTERVAL 15 DAY), false, DATE_SUB(NOW(), INTERVAL 15 DAY), NOW()),
+
+-- Inactive coupon
+(10, 'PAUSED20', 'Paused promotion - 20% off', 'PERCENTAGE', 20.00, 75.00, 40.00, 150, 25, DATE_SUB(NOW(), INTERVAL 5 DAY), DATE_ADD(NOW(), INTERVAL 45 DAY), false, NOW(), NOW()),
+
+-- High value coupons
+(11, 'BIGSPENDER100', '$100 off for big orders', 'FIXED_AMOUNT', 100.00, 500.00, NULL, 30, 3, DATE_SUB(NOW(), INTERVAL 2 DAY), DATE_ADD(NOW(), INTERVAL 60 DAY), true, NOW(), NOW()),
+(12, 'MEGA50', 'Mega sale - 50% off', 'PERCENTAGE', 50.00, 200.00, 150.00, 100, 42, DATE_SUB(NOW(), INTERVAL 7 DAY), DATE_ADD(NOW(), INTERVAL 14 DAY), true, NOW(), NOW());
+
 -- Reset sequences (if needed for PostgreSQL)
 -- For MySQL, auto_increment will handle this automatically
 -- SELECT setval('categories_id_seq', (SELECT MAX(id) FROM categories));
 -- SELECT setval('brands_id_seq', (SELECT MAX(id) FROM brands));
 -- SELECT setval('products_id_seq', (SELECT MAX(id) FROM products));
+-- SELECT setval('coupons_id_seq', (SELECT MAX(id) FROM coupons));

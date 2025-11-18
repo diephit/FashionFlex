@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${isEdit ? 'Edit Coupon' : 'Create Coupon'} + ' - FashionFlex Admin'">Coupon Form - FashionFlex Admin</title>
+    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <style>
+        body { background-color: #f8f9fa; font-family: Arial, sans-serif; }
+        .sidebar { min-height: 100vh; background: #343a40; color: white; padding: 20px 0; }
+        .sidebar a { color: #fff; padding: 10px 20px; display: block; text-decoration: none; transition: background 0.3s; }
+        .sidebar a:hover, .sidebar a.active { background: #495057; }
+        .main-content { padding: 30px; }
+        .form-card { background: white; border-radius: 8px; padding: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .section-title { border-bottom: 2px solid #343a40; padding-bottom: 10px; margin-bottom: 20px; }
+        .help-text { font-size: 12px; color: #6c757d; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 sidebar">
+                <h4 class="text-center mb-4">FashionFlex Admin</h4>
+                <a href="/admin"><i class="fa fa-dashboard"></i> Dashboard</a>
+                <a href="/admin/products"><i class="fa fa-shopping-bag"></i> Products</a>
+                <a href="/admin/categories"><i class="fa fa-list"></i> Categories</a>
+                <a href="/admin/brands"><i class="fa fa-tag"></i> Brands</a>
+                <a href="/admin/orders"><i class="fa fa-shopping-cart"></i> Orders</a>
+                <a href="/admin/users"><i class="fa fa-users"></i> Users</a>
+                <a href="/admin/coupons" class="active"><i class="fa fa-ticket"></i> Coupons</a>
+                <hr style="border-color: #495057;">
+                <a href="/"><i class="fa fa-home"></i> Back to Site</a>
+                <a href="/logout"><i class="fa fa-sign-out"></i> Logout</a>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10 main-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 th:text="${isEdit ? 'Edit Coupon' : 'Create New Coupon'}">Create New Coupon</h1>
+                    <a href="/admin/coupons" class="btn btn-secondary">
+                        <i class="fa fa-arrow-left"></i> Back to List
+                    </a>
+                </div>
+
+                <!-- Error Messages -->
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+                    <span th:text="${error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <!-- Form -->
+                <div class="form-card">
+                    <form method="post" th:action="@{/admin/coupons/save}" th:object="${coupon}">
+                        <input type="hidden" th:field="*{id}">
+                        <input type="hidden" th:field="*{usedCount}">
+
+                        <!-- Basic Information -->
+                        <h4 class="section-title">Basic Information</h4>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Coupon Code <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" th:field="*{code}"
+                                       th:classappend="${#fields.hasErrors('code')} ? 'is-invalid'"
+                                       placeholder="e.g., SUMMER20" style="text-transform: uppercase;">
+                                <div class="help-text">Use uppercase letters, numbers, hyphens, and underscores only</div>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('code')}" th:errors="*{code}"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Status</label>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" th:field="*{active}" id="activeSwitch">
+                                    <label class="form-check-label" for="activeSwitch">
+                                        Active (coupon can be used)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Description <span class="text-danger">*</span></label>
+                            <textarea class="form-control" th:field="*{description}" rows="2"
+                                      th:classappend="${#fields.hasErrors('description')} ? 'is-invalid'"
+                                      placeholder="Brief description of the coupon"></textarea>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                        </div>
+
+                        <!-- Discount Configuration -->
+                        <h4 class="section-title mt-4">Discount Configuration</h4>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Discount Type <span class="text-danger">*</span></label>
+                                <select class="form-select" th:field="*{discountType}"
+                                        th:classappend="${#fields.hasErrors('discountType')} ? 'is-invalid'"
+                                        onchange="updateDiscountLabel()">
+                                    <option value="PERCENTAGE">Percentage (%)</option>
+                                    <option value="FIXED_AMOUNT">Fixed Amount ($)</option>
+                                </select>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('discountType')}" th:errors="*{discountType}"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    Discount Value <span class="text-danger">*</span>
+                                    <span id="discountUnit">(in %)</span>
+                                </label>
+                                <input type="number" step="0.01" class="form-control" th:field="*{discountValue}"
+                                       th:classappend="${#fields.hasErrors('discountValue')} ? 'is-invalid'"
+                                       placeholder="e.g., 10 or 5.00">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('discountValue')}" th:errors="*{discountValue}"></div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Minimum Order Amount ($)</label>
+                                <input type="number" step="0.01" class="form-control" th:field="*{minOrderAmount}"
+                                       th:classappend="${#fields.hasErrors('minOrderAmount')} ? 'is-invalid'"
+                                       placeholder="Leave empty for no minimum">
+                                <div class="help-text">Order must meet this amount to use coupon</div>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('minOrderAmount')}" th:errors="*{minOrderAmount}"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Maximum Discount Amount ($)</label>
+                                <input type="number" step="0.01" class="form-control" th:field="*{maxDiscountAmount}"
+                                       th:classappend="${#fields.hasErrors('maxDiscountAmount')} ? 'is-invalid'"
+                                       placeholder="Leave empty for no cap">
+                                <div class="help-text">Cap the maximum discount (useful for percentage discounts)</div>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('maxDiscountAmount')}" th:errors="*{maxDiscountAmount}"></div>
+                            </div>
+                        </div>
+
+                        <!-- Usage Limits -->
+                        <h4 class="section-title mt-4">Usage Limits</h4>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Usage Limit (Total Uses)</label>
+                                <input type="number" class="form-control" th:field="*{usageLimit}"
+                                       th:classappend="${#fields.hasErrors('usageLimit')} ? 'is-invalid'"
+                                       placeholder="Leave empty for unlimited">
+                                <div class="help-text">Total number of times this coupon can be used</div>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('usageLimit')}" th:errors="*{usageLimit}"></div>
+                            </div>
+                            <div class="col-md-6" th:if="${isEdit}">
+                                <label class="form-label">Times Used</label>
+                                <input type="text" class="form-control" th:value="*{usedCount}" readonly>
+                                <div class="help-text">Current usage count (read-only)</div>
+                            </div>
+                        </div>
+
+                        <!-- Valid Period -->
+                        <h4 class="section-title mt-4">Valid Period</h4>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Start Date <span class="text-danger">*</span></label>
+                                <input type="datetime-local" class="form-control" th:field="*{startDate}"
+                                       th:classappend="${#fields.hasErrors('startDate')} ? 'is-invalid'">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">End Date <span class="text-danger">*</span></label>
+                                <input type="datetime-local" class="form-control" th:field="*{endDate}"
+                                       th:classappend="${#fields.hasErrors('endDate')} ? 'is-invalid'">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"></div>
+                            </div>
+                        </div>
+
+                        <!-- Global validation errors -->
+                        <div th:if="${#fields.hasErrors('global')}" class="alert alert-danger">
+                            <ul>
+                                <li th:each="err : ${#fields.errors('global')}" th:text="${err}"></li>
+                            </ul>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fa fa-save"></i>
+                                <span th:text="${isEdit ? 'Update Coupon' : 'Create Coupon'}">Create Coupon</span>
+                            </button>
+                            <a href="/admin/coupons" class="btn btn-secondary btn-lg">
+                                <i class="fa fa-times"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function updateDiscountLabel() {
+            const discountType = document.querySelector('select[name="discountType"]').value;
+            const unitLabel = document.getElementById('discountUnit');
+            if (discountType === 'PERCENTAGE') {
+                unitLabel.textContent = '(in %)';
+            } else {
+                unitLabel.textContent = '(in $)';
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDiscountLabel();
+        });
+
+        // Auto-uppercase coupon code
+        document.querySelector('input[name="code"]').addEventListener('input', function(e) {
+            this.value = this.value.toUpperCase();
+        });
+    </script>
+</body>
+</html>

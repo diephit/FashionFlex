@@ -8,11 +8,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/admin/orders")
@@ -26,33 +32,67 @@ public class AdminOrderController {
     public String listOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "15") int size,
-            @RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir,
             @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String paymentStatus,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
             Model model) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
 
         Page<OrderDTO> orderPage;
-        if (keyword != null && !keyword.isEmpty()) {
-            orderPage = orderService.searchOrders(keyword, pageable);
-            model.addAttribute("keyword", keyword);
-        } else if (status != null && !status.isEmpty()) {
+
+        // Parse enum values
+        Order.OrderStatus orderStatus = null;
+        if (status != null && !status.isEmpty()) {
             try {
-                Order.OrderStatus orderStatus = Order.OrderStatus.valueOf(status.toUpperCase());
-                orderPage = orderService.getOrdersByStatus(orderStatus, pageable);
-                model.addAttribute("filterStatus", status);
+                orderStatus = Order.OrderStatus.valueOf(status.toUpperCase());
             } catch (IllegalArgumentException e) {
-                orderPage = orderService.getAllOrders(pageable);
+                // Invalid status, ignore
             }
+        }
+
+        Order.PaymentStatus paymentStatusEnum = null;
+        if (paymentStatus != null && !paymentStatus.isEmpty()) {
+            try {
+                paymentStatusEnum = Order.PaymentStatus.valueOf(paymentStatus.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                // Invalid payment status, ignore
+            }
+        }
+
+        // Use advanced search if any filters are provided
+        if (keyword != null || orderStatus != null || paymentStatusEnum != null || startDate != null || endDate != null) {
+            orderPage = orderService.searchOrdersAdvanced(keyword, orderStatus, paymentStatusEnum, startDate, endDate, pageable);
         } else {
             orderPage = orderService.getAllOrders(pageable);
         }
+
+        // Add statistics
+        AdminOrderService.OrderStatistics statistics = orderService.getStatistics();
+        model.addAttribute("statistics", statistics);
+
+        // Add filter options
+        model.addAttribute("orderStatuses", Order.OrderStatus.values());
+        model.addAttribute("paymentStatuses", Order.PaymentStatus.values());
+
+        // Add current filters to model for persistence
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("status", status);
+        model.addAttribute("paymentStatus", paymentStatus);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
 
         model.addAttribute("orders", orderPage.getContent());
         model.addAttribute("currentPage", orderPage.getNumber());
         model.addAttribute("totalItems", orderPage.getTotalElements());
         model.addAttribute("totalPages", orderPage.getTotalPages());
-        model.addAttribute("orderStatuses", Order.OrderStatus.values());
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("sortDir", sortDir);
 
         return "admin/orders/list";
     }
@@ -117,5 +157,44 @@ public class AdminOrderController {
             redirectAttributes.addFlashAttribute("error", "Error updating tracking number: " + e.getMessage());
         }
         return "redirect:/admin/orders/form/" + id;
+    }
+
+    // Bulk Actions
+    @PostMapping("/bulk/cancel")
+    @ResponseBody
+    public ResponseEntity<?> bulkCancel(@RequestBody Map<String, Object> payload) {
+        try {
+            @SuppressWarnings("unchecked")
+            List<Long> ids = (List<Long>) payload.get("ids");
+            String reason = (String) payload.get("reason");
+            int count = orderService.bulkCancel(ids, reason);
+            return ResponseEntity.ok(Map.of("success", true, "message", count + " orders cancelled"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/bulk/mark-shipped")
+    @ResponseBody
+    public ResponseEntity<?> bulkMarkShipped(@RequestBody Map<String, List<Long>> payload) {
+        try {
+            List<Long> ids = payload.get("ids");
+            int count = orderService.bulkMarkShipped(ids);
+            return ResponseEntity.ok(Map.of("success", true, "message", count + " orders marked as shipped"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/bulk/mark-delivered")
+    @ResponseBody
+    public ResponseEntity<?> bulkMarkDelivered(@RequestBody Map<String, List<Long>> payload) {
+        try {
+            List<Long> ids = payload.get("ids");
+            int count = orderService.bulkMarkDelivered(ids);
+            return ResponseEntity.ok(Map.of("success", true, "message", count + " orders marked as delivered"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
+        }
     }
 }

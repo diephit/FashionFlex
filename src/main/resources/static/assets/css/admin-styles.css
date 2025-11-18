@@ -1,0 +1,265 @@
+/* ============================================
+   FashionFlex Admin Shared Styles
+   ============================================ */
+
+/* Base Styles */
+body {
+    background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    min-height: 100vh;
+    background: #343a40;
+    color: white;
+    padding: 20px 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.sidebar a {
+    color: #fff;
+    padding: 10px 20px;
+    display: block;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    background: #495057;
+}
+
+/* Main Content Area */
+.main-content {
+    padding: 30px;
+}
+
+/* Card Styles */
+.table-card,
+.form-card,
+.stats-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.stats-card {
+    text-align: center;
+}
+
+.stats-card h5 {
+    color: #6c757d;
+    font-size: 14px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.stats-card h2 {
+    margin: 0;
+    color: #343a40;
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.stats-card .icon {
+    font-size: 3rem;
+    opacity: 0.2;
+    margin-bottom: 10px;
+}
+
+/* Status Badges */
+.badge-status {
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-active { background: #28a745; color: white; }
+.status-inactive { background: #6c757d; color: white; }
+.status-expired { background: #dc3545; color: white; }
+.status-scheduled { background: #17a2b8; color: white; }
+.status-limit { background: #ffc107; color: black; }
+.status-limit-reached { background: #ffc107; color: black; }
+
+/* Order Status Badges */
+.badge.pending { background: #ffc107; }
+.badge.confirmed { background: #17a2b8; }
+.badge.processing { background: #007bff; }
+.badge.shipped { background: #6f42c1; }
+.badge.delivered { background: #28a745; }
+.badge.cancelled { background: #dc3545; }
+.badge.refunded { background: #6c757d; }
+
+/* Payment Status Badges */
+.badge.paid { background: #28a745; }
+.badge.failed { background: #dc3545; }
+
+/* Table Enhancements */
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.table thead th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    color: #495057;
+    border-bottom: 2px solid #dee2e6;
+}
+
+/* Button Enhancements */
+.btn-sm {
+    font-size: 12px;
+    padding: 4px 8px;
+}
+
+.btn-group .btn {
+    margin-right: 2px;
+}
+
+/* Filter Panel */
+.filter-panel {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-panel .form-control,
+.filter-panel .form-select {
+    font-size: 14px;
+}
+
+/* Pagination Improvements */
+.pagination {
+    margin-top: 20px;
+}
+
+.pagination .page-link {
+    color: #343a40;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #343a40;
+    border-color: #343a40;
+}
+
+/* Bulk Actions Bar */
+.bulk-actions-bar {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    display: none;
+}
+
+.bulk-actions-bar.show {
+    display: block;
+}
+
+/* Section Title */
+.section-title {
+    border-bottom: 2px solid #343a40;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+/* Help Text */
+.help-text {
+    font-size: 12px;
+    color: #6c757d;
+    margin-top: 5px;
+}
+
+/* Alert Improvements */
+.alert {
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+/* Form Improvements */
+.form-control:focus,
+.form-select:focus {
+    border-color: #343a40;
+    box-shadow: 0 0 0 0.2rem rgba(52, 58, 64, 0.25);
+}
+
+/* Loading Spinner */
+.spinner-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.spinner-overlay.show {
+    display: flex;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sidebar {
+        position: relative;
+        height: auto;
+    }
+
+    .main-content {
+        padding: 15px;
+    }
+
+    .stats-card h2 {
+        font-size: 2rem;
+    }
+
+    .table-responsive {
+        font-size: 0.85rem;
+    }
+}
+
+/* Custom Checkbox for Bulk Selection */
+.bulk-checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6c757d;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    opacity: 0.3;
+    margin-bottom: 20px;
+}
+
+.empty-state h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    font-size: 1rem;
+}
