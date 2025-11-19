@@ -1,7 +1,9 @@
 package g6.fashionFlex.controller;
 
+import g6.fashionFlex.dto.CategoryDTO;
 import g6.fashionFlex.dto.UserDTO;
 import g6.fashionFlex.entity.Product;
+import g6.fashionFlex.service.AdminCategoryService;
 import g6.fashionFlex.service.ProductService;
 import g6.fashionFlex.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,9 @@ public class HomeController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private AdminCategoryService adminCategoryService;
 
     @GetMapping("/")
     public String home(Model model) {
@@ -46,8 +51,12 @@ public class HomeController {
         List<Product> featuredProducts = productService.getFeaturedProducts();
         List<Product> latestProducts = productService.getLatestProducts(16);
 
+        // Get active categories
+        List<CategoryDTO> categories = adminCategoryService.findAllByActiveTrue();
+
         model.addAttribute("featuredProducts", featuredProducts);
         model.addAttribute("products", latestProducts);
+        model.addAttribute("categories", categories);
 
         return "index";
     }

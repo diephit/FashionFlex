@@ -31,6 +31,12 @@ public class AdminCategoryService {
                 .collect(Collectors.toList());
     }
 
+    public List<CategoryDTO> findAllByActiveTrue() {
+        return categoryRepository.findByActiveTrue().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
     public CategoryDTO getCategoryById(Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));

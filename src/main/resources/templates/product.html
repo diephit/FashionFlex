@@ -17,38 +17,16 @@
 				<div class="flex-w flex-l-m filter-tope-group m-tb-10">
 					<a th:href="@{/product}"
 					   class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5"
-					   th:classappend="${category == null} ? 'how-active1' : ''">
+					   th:classappend="${category == null or category.isEmpty()} ? 'how-active1' : ''">
 						All Products
 					</a>
 
-					<a th:href="@{/product(category='women')}"
+					<a th:each="cat : ${categories}"
+					   th:href="@{/product(category=${cat.name})}"
 					   class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5"
-					   th:classappend="${category == 'women'} ? 'how-active1' : ''">
-						Women
-					</a>
-
-					<a th:href="@{/product(category='men')}"
-					   class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5"
-					   th:classappend="${category == 'men'} ? 'how-active1' : ''">
-						Men
-					</a>
-
-					<a th:href="@{/product(category='bag')}"
-					   class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5"
-					   th:classappend="${category == 'bag'} ? 'how-active1' : ''">
-						Bag
-					</a>
-
-					<a th:href="@{/product(category='shoes')}"
-					   class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5"
-					   th:classappend="${category == 'shoes'} ? 'how-active1' : ''">
-						Shoes
-					</a>
-
-					<a th:href="@{/product(category='watches')}"
-					   class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5"
-					   th:classappend="${category == 'watches'} ? 'how-active1' : ''">
-						Watches
+					   th:classappend="${#strings.equalsIgnoreCase(category, cat.name)} ? 'how-active1' : ''"
+					   th:text="${cat.name}">
+						Category Name
 					</a>
 				</div>
 

@@ -1,7 +1,9 @@
 package g6.fashionFlex.controller;
 
+import g6.fashionFlex.dto.CategoryDTO;
 import g6.fashionFlex.dto.UserDTO;
 import g6.fashionFlex.entity.Product;
+import g6.fashionFlex.service.AdminCategoryService;
 import g6.fashionFlex.service.ProductService;
 import g6.fashionFlex.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Controller
 public class ProductController {
@@ -27,6 +30,9 @@ public class ProductController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AdminCategoryService adminCategoryService;
 
     @GetMapping("/product")
     public String listProducts(
@@ -40,6 +46,10 @@ public class ProductController {
 
         // Add authentication info
         addAuthenticationInfo(model);
+
+        // Add active categories to the model
+        List<CategoryDTO> categories = adminCategoryService.findAllByActiveTrue();
+        model.addAttribute("categories", categories);
 
         // Set page size
         int pageSize = 12;
@@ -94,6 +104,10 @@ public class ProductController {
     public String productDetail(@PathVariable Long id, Model model) {
         // Add authentication info
         addAuthenticationInfo(model);
+
+        // Add active categories to the model
+        List<CategoryDTO> categories = adminCategoryService.findAllByActiveTrue();
+        model.addAttribute("categories", categories);
 
         Product product = productService.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
