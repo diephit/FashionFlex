@@ -11,7 +11,9 @@
       "Bash(taskkill:*)",
       "Bash(mvn clean spring-boot:run:*)",
       "Bash(timeout /t 3 /nobreak)",
-      "Bash(exit 0)"
+      "Bash(exit 0)",
+      "mcp__ide__getDiagnostics",
+      "Bash(mysql:*)"
     ],
     "deny": [],
     "ask": []

@@ -56,7 +56,7 @@ public class Order {
     private OrderStatus status = OrderStatus.PENDING;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private PaymentMethod paymentMethod;
 
     @Enumerated(EnumType.STRING)
@@ -152,7 +152,8 @@ public class Order {
         CREDIT_CARD,
         DEBIT_CARD,
         PAYPAL,
-        BANK_TRANSFER
+        BANK_TRANSFER,
+        VNPAY
     }
 
     // Payment status enum

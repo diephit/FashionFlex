@@ -2,12 +2,13 @@ package g6.fashionFlex.controller;
 
 import g6.fashionFlex.dto.*;
 import g6.fashionFlex.entity.Order;
-import g6.fashionFlex.security.CustomUserDetails;
-import g6.fashionFlex.security.CustomOAuth2User;
+import g6.fashionFlex.repository.OrderRepository;
 import g6.fashionFlex.service.AddressService;
 import g6.fashionFlex.service.CartService;
 import g6.fashionFlex.service.OrderService;
 import g6.fashionFlex.service.UserService;
+import g6.fashionFlex.service.VNPayService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,8 @@ public class CheckoutController {
     private final AddressService addressService;
     private final OrderService orderService;
     private final UserService userService;
+    private final VNPayService vnPayService;
+    private final OrderRepository orderRepository;
 
     /**
      * Display checkout page
@@ -104,7 +107,8 @@ public class CheckoutController {
     public String placeOrder(@Valid @ModelAttribute("checkoutRequest") CheckoutRequest request,
                              BindingResult bindingResult,
                              Model model,
-                             RedirectAttributes redirectAttributes) {
+                             RedirectAttributes redirectAttributes,
+                             HttpServletRequest httpRequest) {
         UserDTO currentUser = getCurrentUser();
         if (currentUser == null) {
             redirectAttributes.addFlashAttribute("error", "Please login to place order");
@@ -183,9 +187,25 @@ public class CheckoutController {
             log.error("Non-critical error: Failed to clear cart for user {} after order placement.", currentUser.getEmail(), e);
         }
 
-        // Step 4: Redirect to confirmation page
-        redirectAttributes.addFlashAttribute("orderConfirmation", confirmation);
-        return "redirect:/checkout/confirmation/" + confirmation.getOrderId();
+        // Step 4: Check payment method and redirect accordingly
+        if ("VNPAY".equals(request.getPaymentMethod())) {
+            // For VNPay payment, redirect to VNPay payment gateway
+            try {
+                log.info("Redirecting to VNPay payment for order: {}", confirmation.getOrderId());
+                Order order = orderRepository.findById(confirmation.getOrderId())
+                        .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+                String paymentUrl = vnPayService.createPaymentUrl(order, httpRequest);
+                return "redirect:" + paymentUrl;
+            } catch (Exception e) {
+                log.error("Failed to create VNPay payment URL", e);
+                redirectAttributes.addFlashAttribute("error", "Failed to initiate VNPay payment: " + e.getMessage());
+                return "redirect:/checkout/confirmation/" + confirmation.getOrderId();
+            }
+        } else {
+            // For other payment methods (COD, etc.), redirect to confirmation page
+            redirectAttributes.addFlashAttribute("orderConfirmation", confirmation);
+            return "redirect:/checkout/confirmation/" + confirmation.getOrderId();
+        }
     }
 
     /**

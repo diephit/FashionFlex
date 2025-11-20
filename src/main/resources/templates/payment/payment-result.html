@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Payment Result - FashionFlex</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" th:href="@{/images/icons/favicon.png}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/vendor/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/fonts/font-awesome-4.7.0/css/font-awesome.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/fonts/iconic/css/material-design-iconic-font.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/fonts/linearicons-v1.0.0/icon-font.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/vendor/animate/animate.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/vendor/css-hamburgers/hamburgers.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/vendor/animsition/css/animsition.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/util.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
+    <style>
+        .payment-result-container {
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 50px 15px;
+        }
+        .payment-result-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            padding: 50px 40px;
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+        .payment-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+        }
+        .payment-icon.success {
+            background-color: #d4edda;
+            color: #28a745;
+        }
+        .payment-icon.failed {
+            background-color: #f8d7da;
+            color: #dc3545;
+        }
+        .payment-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .payment-title.success {
+            color: #28a745;
+        }
+        .payment-title.failed {
+            color: #dc3545;
+        }
+        .payment-message {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .payment-details {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        .payment-detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .payment-detail-row:last-child {
+            border-bottom: none;
+        }
+        .payment-detail-label {
+            color: #666;
+            font-weight: 500;
+        }
+        .payment-detail-value {
+            color: #333;
+            font-weight: 600;
+        }
+        .payment-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn-payment-action {
+            padding: 12px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary-action {
+            background-color: #717fe0;
+            color: white;
+        }
+        .btn-primary-action:hover {
+            background-color: #5a68c9;
+            color: white;
+        }
+        .btn-secondary-action {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn-secondary-action:hover {
+            background-color: #5a6268;
+            color: white;
+        }
+    </style>
+</head>
+<body class="animsition">
+
+    <!-- Header -->
+    <div th:replace="~{fragments/header :: header('cart')}"></div>
+
+    <!-- Payment Result -->
+    <div class="payment-result-container">
+        <div class="payment-result-card">
+            <!-- Success Icon -->
+            <div th:if="${paymentSuccess}" class="payment-icon success">
+                <i class="fa fa-check-circle"></i>
+            </div>
+
+            <!-- Failed Icon -->
+            <div th:if="${!paymentSuccess}" class="payment-icon failed">
+                <i class="fa fa-times-circle"></i>
+            </div>
+
+            <!-- Title -->
+            <h2 th:class="${paymentSuccess ? 'payment-title success' : 'payment-title failed'}"
+                th:text="${paymentSuccess ? 'Payment Successful!' : 'Payment Failed'}">
+                Payment Result
+            </h2>
+
+            <!-- Message -->
+            <p class="payment-message" th:text="${message}">
+                Payment processing message
+            </p>
+
+            <!-- Payment Details -->
+            <div class="payment-details" th:if="${orderNumber != null}">
+                <div class="payment-detail-row">
+                    <span class="payment-detail-label">Order Number:</span>
+                    <span class="payment-detail-value" th:text="${orderNumber}">ORD-123456</span>
+                </div>
+                <div class="payment-detail-row" th:if="${transactionNo != null}">
+                    <span class="payment-detail-label">Transaction Number:</span>
+                    <span class="payment-detail-value" th:text="${transactionNo}">TXN-789012</span>
+                </div>
+                <div class="payment-detail-row" th:if="${paymentResult != null and paymentResult.amount != null}">
+                    <span class="payment-detail-label">Amount:</span>
+                    <span class="payment-detail-value"
+                          th:text="${#numbers.formatDecimal(#numbers.convertNumberToSubclass(paymentResult.amount, 'java.lang.Long') / 100, 1, 'COMMA', 2, 'POINT')} + ' VND'">
+                        0.00 VND
+                    </span>
+                </div>
+                <div class="payment-detail-row" th:if="${paymentResult != null and paymentResult.bankCode != null}">
+                    <span class="payment-detail-label">Bank:</span>
+                    <span class="payment-detail-value" th:text="${paymentResult.bankCode}">BANK</span>
+                </div>
+                <div class="payment-detail-row" th:if="${paymentResult != null and paymentResult.cardType != null}">
+                    <span class="payment-detail-label">Card Type:</span>
+                    <span class="payment-detail-value" th:text="${paymentResult.cardType}">CARD</span>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="payment-actions">
+                <a th:if="${paymentSuccess and orderId != null}"
+                   th:href="@{/user/orders/{id}(id=${orderId})}"
+                   class="btn-payment-action btn-primary-action">
+                    <i class="fa fa-file-text-o"></i>
+                    View Order Details
+                </a>
+                <a th:href="@{/user/orders}" class="btn-payment-action btn-secondary-action">
+                    <i class="fa fa-list"></i>
+                    My Orders
+                </a>
+                <a th:href="@{/product}" class="btn-payment-action btn-secondary-action">
+                    <i class="fa fa-shopping-bag"></i>
+                    Continue Shopping
+                </a>
+            </div>
+
+            <!-- Additional Info for Success -->
+            <div th:if="${paymentSuccess}" style="margin-top: 30px; padding-top: 30px; border-top: 1px solid #e0e0e0;">
+                <p style="font-size: 14px; color: #666; margin: 0;">
+                    <i class="fa fa-info-circle"></i>
+                    A confirmation email has been sent to your registered email address.
+                </p>
+            </div>
+
+            <!-- Additional Info for Failed -->
+            <div th:if="${!paymentSuccess}" style="margin-top: 30px; padding-top: 30px; border-top: 1px solid #e0e0e0;">
+                <p style="font-size: 14px; color: #666; margin: 0;">
+                    <i class="fa fa-question-circle"></i>
+                    If you have any questions, please contact our support team.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <!-- Scripts -->
+    <script th:src="@{/vendor/jquery/jquery-3.2.1.min.js}"></script>
+    <script th:src="@{/vendor/animsition/js/animsition.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/popper.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

@@ -75,6 +75,9 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
                     .requestMatchers("/login", "/register", "/api/auth/**").permitAll()
                     .requestMatchers("/forgot-password", "/verify-token", "/reset-password", "/resend-code", "/check-cooldown").permitAll()
 
+                    // VNPay payment callback - must be public to receive callbacks from VNPay gateway
+                    .requestMatchers("/payment/vnpay/callback").permitAll()
+
                     // Static resources
                     .requestMatchers("/css/**", "/js/**", "/images/**", "/fonts/**", "/vendor/**", "/assets/**").permitAll()
                     .requestMatchers("/h2-console/**").permitAll()
