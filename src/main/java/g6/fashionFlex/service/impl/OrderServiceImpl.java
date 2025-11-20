@@ -504,6 +504,11 @@ public class OrderServiceImpl implements OrderService {
         return dto;
     }
 
+    @Override
+    public long getUserOrderCount(Long userId) {
+        return orderRepository.countByUserId(userId);
+    }
+
     private OrderItemDTO convertOrderItemToDTO(OrderItem item) {
         OrderItemDTO dto = new OrderItemDTO();
         dto.setId(item.getId());

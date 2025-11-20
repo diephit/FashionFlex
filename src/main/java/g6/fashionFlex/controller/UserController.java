@@ -64,8 +64,26 @@ public class UserController {
         if (user == null) {
             return "redirect:/login";
         }
+
         model.addAttribute("user", user);
         model.addAttribute("isAuthenticated", true);
+
+        try {
+            // Get real counts for user statistics
+            long orderCount = orderService.getUserOrderCount(user.getId());
+            long wishlistCount = wishlistService.getWishlistCount(user.getId());
+            long addressCount = addressService.getUserAddressCount(user.getId());
+
+            model.addAttribute("orderCount", orderCount);
+            model.addAttribute("wishlistCount", wishlistCount);
+            model.addAttribute("addressCount", addressCount);
+        } catch (Exception e) {
+            // Fallback to 0 if services are not available
+            model.addAttribute("orderCount", 0);
+            model.addAttribute("wishlistCount", 0);
+            model.addAttribute("addressCount", 0);
+        }
+
         return "user/my-account";
     }
 

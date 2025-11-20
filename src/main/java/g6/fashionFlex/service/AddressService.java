@@ -10,4 +10,5 @@ public interface AddressService {
     AddressDTO save(AddressDTO addressDTO, Long userId);
     void deleteById(Long id);
     void setDefault(Long addressId, Long userId);
+    long getUserAddressCount(Long userId);
 }

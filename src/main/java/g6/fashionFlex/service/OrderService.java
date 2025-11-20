@@ -73,4 +73,11 @@ public interface OrderService {
      * @return Updated order DTO
      */
     OrderDTO cancelOrder(Long orderId, Long userId, String reason);
+
+    /**
+     * Get total count of orders for a specific user
+     * @param userId User ID
+     * @return Total number of orders for the user
+     */
+    long getUserOrderCount(Long userId);
 }

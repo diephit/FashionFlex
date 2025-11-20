@@ -110,4 +110,9 @@ public class AddressServiceImpl implements AddressService {
         address.setDefault(addressDTO.isDefault());
         return address;
     }
+
+    @Override
+    public long getUserAddressCount(Long userId) {
+        return addressRepository.countByUserId(userId);
+    }
 }
