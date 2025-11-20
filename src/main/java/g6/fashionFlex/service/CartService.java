@@ -66,6 +66,13 @@ public class CartService {
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + request.getProductId()));
 
+        if (request.getSize() == null || request.getSize().isBlank()) {
+            throw new IllegalArgumentException("Size is required");
+        }
+        if (request.getColor() == null || request.getColor().isBlank()) {
+            throw new IllegalArgumentException("Color is required");
+        }
+
         // Validate product is active
         if (!product.getActive()) {
             throw new IllegalArgumentException("Product is no longer available");
