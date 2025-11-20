@@ -69,7 +69,7 @@
                 <!-- Filter Panel -->
                 <div class="filter-panel">
                     <form method="get" action="/admin/orders" class="filter-form">
-                        <div class="row g-3">
+                        <div class="row g-3 align-items-center">
                             <div class="col-md-3">
                                 <input type="search" name="keyword" class="form-control"
                                        placeholder="Search by order #, customer..." th:value="${keyword}">
@@ -103,12 +103,12 @@
                             </div>
                             <div class="col-md-1">
                                 <button type="submit" class="btn btn-primary w-100">
-                                    <i class="fa fa-search"></i> Search
+                                    <i class="fa fa-search"></i>
                                 </button>
                             </div>
                             <div class="col-md-2">
                                 <button type="button" onclick="clearFilters()" class="btn btn-secondary w-100">
-                                    <i class="fa fa-times"></i> Clear Filters
+                                    <i class="fa fa-times"></i> Clear
                                 </button>
                             </div>
                         </div>

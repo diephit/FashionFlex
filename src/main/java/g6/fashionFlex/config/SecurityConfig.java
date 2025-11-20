@@ -2,7 +2,6 @@ package g6.fashionFlex.config;
 
 import g6.fashionFlex.security.CustomOAuth2UserService;
 import g6.fashionFlex.security.CustomUserDetailsService;
-import g6.fashionFlex.security.JwtAuthenticationEntryPoint;
 import g6.fashionFlex.security.OAuth2LoginSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

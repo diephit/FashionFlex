@@ -1,35 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="${brand.id != null} ? 'Edit Brand' : 'Add Brand'">Brand Form</title>
-    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-    <style>
-        body { background-color: #f8f9fa; font-family: Arial, sans-serif; }
-        .sidebar { min-height: 100vh; background: #343a40; color: white; padding: 20px 0; }
-        .sidebar a { color: #fff; padding: 10px 20px; display: block; text-decoration: none; }
-        .sidebar a:hover, .sidebar a.active { background: #495057; }
-        .main-content { padding: 30px; }
-        .form-card { background: white; border-radius: 8px; padding: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .logo-preview { max-width: 200px; max-height: 200px; margin-top: 10px; }
-    </style>
-</head>
+<head th:replace="~{admin/fragments/head :: head(${brand.id != null ? 'Edit Brand' : 'Add Brand'})}"></head>
 <body>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-2 sidebar">
-                <h4 class="text-center mb-4">FashionFlex Admin</h4>
-                <a href="/admin"><i class="fa fa-dashboard"></i> Dashboard</a>
-                <a href="/admin/products"><i class="fa fa-shopping-bag"></i> Products</a>
-                <a href="/admin/categories"><i class="fa fa-list"></i> Categories</a>
-                <a href="/admin/brands" class="active"><i class="fa fa-tag"></i> Brands</a>
-                <a href="/admin/orders"><i class="fa fa-shopping-cart"></i> Orders</a>
-                <a href="/admin/users"><i class="fa fa-users"></i> Users</a>
-                <hr style="border-color: #495057;">
-                <a href="/"><i class="fa fa-home"></i> Back to Site</a>
-                <a href="/logout"><i class="fa fa-sign-out"></i> Logout</a>
-            </div>
+            <!-- Sidebar Fragment -->
+            <div th:replace="~{admin/fragments/sidebar :: sidebar('brands')}"></div>
 
             <div class="col-md-10 main-content">
                 <h1 th:text="${brand.id != null} ? 'Edit Brand' : 'Add New Brand'">Brand Form</h1>
@@ -89,6 +65,10 @@
         </div>
     </div>
 
+    <!-- Scripts Fragment -->
+    <th:block th:replace="~{admin/fragments/scripts :: scripts}"></th:block>
+
+    <!-- Page-specific script for logo preview -->
     <script>
         function previewLogo(event) {
             const file = event.target.files[0];

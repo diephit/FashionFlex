@@ -64,14 +64,14 @@
                 <!-- Filter Panel -->
                 <div class="filter-panel">
                     <form method="get" action="/admin/brands" class="filter-form">
-                        <div class="row g-3">
-                            <div class="col-md-6">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-4">
                                 <input type="search" name="keyword" class="form-control"
                                        placeholder="Search by name or description..." th:value="${keyword}">
                             </div>
                             <div class="col-md-2">
                                 <select name="active" class="form-select">
-                                    <option value="">Status</option>
+                                    <option value="">All Statuses</option>
                                     <option value="true" th:selected="${active != null && active}">Active</option>
                                     <option value="false" th:selected="${active != null && !active}">Inactive</option>
                                 </select>
@@ -83,7 +83,7 @@
                             </div>
                             <div class="col-md-2">
                                 <button type="button" onclick="clearFilters()" class="btn btn-secondary w-100">
-                                    <i class="fa fa-times"></i> Clear Filters
+                                    <i class="fa fa-times"></i> Clear
                                 </button>
                             </div>
                         </div>

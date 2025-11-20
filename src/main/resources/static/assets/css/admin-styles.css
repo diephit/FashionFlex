@@ -138,6 +138,80 @@ body {
 .filter-panel .form-control,
 .filter-panel .form-select {
     font-size: 14px;
+    height: 38px;
+    border: 1px solid #ced4da;
+    transition: all 0.3s ease;
+}
+
+.filter-panel .form-control:focus,
+.filter-panel .form-select:focus {
+    border-color: #495057;
+    box-shadow: 0 0 0 0.2rem rgba(73, 80, 87, 0.15);
+}
+
+.filter-panel .form-select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    padding-right: 2.5rem;
+    cursor: pointer;
+}
+
+.filter-panel .form-select:hover {
+    border-color: #495057;
+    background-color: #f8f9fa;
+}
+
+/* Standardized filter widths */
+.filter-col-search {
+    flex: 0 0 auto;
+    width: 25%;
+}
+
+.filter-col-dropdown {
+    flex: 0 0 auto;
+    width: 15%;
+}
+
+.filter-col-dropdown-sm {
+    flex: 0 0 auto;
+    width: 12%;
+}
+
+.filter-col-button {
+    flex: 0 0 auto;
+    width: 10%;
+}
+
+/* Filter button styles */
+.filter-panel .btn {
+    height: 38px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.filter-panel .btn-primary {
+    background-color: #343a40;
+    border-color: #343a40;
+}
+
+.filter-panel .btn-primary:hover {
+    background-color: #23272b;
+    border-color: #1d2124;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.filter-panel .btn-secondary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* Filter icon spacing */
+.filter-panel .btn i {
+    margin-right: 4px;
 }
 
 /* Pagination Improvements */
@@ -262,4 +336,14 @@ body {
 
 .empty-state p {
     font-size: 1rem;
+}
+
+/* Logo/Image Preview */
+.logo-preview {
+    max-width: 200px;
+    max-height: 200px;
+    margin-top: 10px;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+    padding: 5px;
 }
