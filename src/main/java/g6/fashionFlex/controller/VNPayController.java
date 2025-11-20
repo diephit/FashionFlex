@@ -102,6 +102,11 @@ public class VNPayController {
             String responseCode = paymentResult.get("responseCode");
             String transactionStatus = paymentResult.get("transactionStatus");
             String transactionNo = paymentResult.get("transactionNo");
+            String amountStr = paymentResult.get("amount");
+            long paidAmount = 0L;
+            if (amountStr != null && !amountStr.isEmpty()) {
+                paidAmount = Long.parseLong(amountStr);
+            }
 
             log.info("Payment callback - OrderID: {}, ResponseCode: {}, TransactionStatus: {}, TransactionNo: {}",
                     orderIdStr, responseCode, transactionStatus, transactionNo);
@@ -146,6 +151,7 @@ public class VNPayController {
             // Add additional payment info
             model.addAttribute("paymentResult", paymentResult);
             model.addAttribute("order", order);
+            model.addAttribute("paidAmount", paidAmount);
 
             return "payment/payment-result";
 
@@ -155,6 +161,7 @@ public class VNPayController {
             model.addAttribute("message", "Error processing payment. Please contact support.");
             model.addAttribute("paymentResult", new java.util.HashMap<>());
             model.addAttribute("order", new Order());
+            model.addAttribute("paidAmount", 0L);
             return "payment/payment-result";
         }
     }
@@ -185,8 +192,8 @@ public class VNPayController {
 
         } catch (Exception e) {
             log.error("Error showing payment result for order: {}", orderId, e);
-            redirectAttributes.addFlashAttribute("error", "Order not found");
-            return "redirect:/user/orders";
-        }
-    }
+redirectAttributes.addFlashAttribute("error", "Order not found");
+return "redirect:/user/orders";
+}
+}
 }

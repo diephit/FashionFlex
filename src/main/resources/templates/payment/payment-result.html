@@ -163,10 +163,10 @@
                     <span class="payment-detail-label">Transaction Number:</span>
                     <span class="payment-detail-value" th:text="${transactionNo}">TXN-789012</span>
                 </div>
-                <div class="payment-detail-row" th:if="${paymentResult != null and paymentResult.amount != null}">
+                <div class="payment-detail-row" th:if="${paidAmount > 0}">
                     <span class="payment-detail-label">Amount:</span>
                     <span class="payment-detail-value"
-                          th:text="${#numbers.formatDecimal(#numbers.convertNumberToSubclass(paymentResult.amount, 'java.lang.Long') / 100, 1, 'COMMA', 2, 'POINT')} + ' VND'">
+                          th:text="${#numbers.formatDecimal(paidAmount / 100, 1, 'COMMA', 2, 'POINT')} + ' VND'">
                         0.00 VND
                     </span>
                 </div>
