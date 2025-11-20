@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Checkout - FashionFlex</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--===============================================================================================-->
+	<link rel="icon" type="image/png" th:href="@{/images/icons/favicon.png}"/>
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/bootstrap/css/bootstrap.min.css}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/font-awesome-4.7.0/css/font-awesome.min.css}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/iconic/css/material-design-iconic-font.min.css}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/linearicons-v1.0.0/icon-font.min.css}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/animate/animate.css}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/css-hamburgers/hamburgers.min.css}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/animsition/css/animsition.min.css}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/select2/select2.min.css}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/perfect-scrollbar/perfect-scrollbar.css}">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/css/util.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/assets/css/pages/checkout-styles.css}">
+<!--===============================================================================================-->
+</head>
+<body class="animsition">
+
+	<!-- Header -->
+	<div th:replace="~{fragments/header :: header('cart')}"></div>
+
+	<!-- Cart Sidebar -->
+	<div th:replace="~{fragments/header :: cart}"></div>
+
+	<!-- Main Content -->
+	<div class="container" style="padding: 60px 15px;">
+		<!-- Error/Success Messages -->
+		<div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert" id="alertMessage"
+		     style="font-size: 16px; padding: 20px; margin-bottom: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);">
+			<i class="fa fa-exclamation-triangle" style="font-size: 20px; margin-right: 10px;"></i>
+			<strong>Error:</strong> <span th:text="${error}"></span>
+			<button type="button" class="close" data-dismiss="alert" style="font-size: 24px;">&times;</button>
+		</div>
+		<div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert" id="alertMessage"
+		     style="font-size: 16px; padding: 20px; margin-bottom: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);">
+			<i class="fa fa-check-circle" style="font-size: 20px; margin-right: 10px;"></i>
+			<strong>Success:</strong> <span th:text="${success}"></span>
+			<button type="button" class="close" data-dismiss="alert" style="font-size: 24px;">&times;</button>
+		</div>
+
+		<!-- Checkout Progress Steps (Single page - all active) -->
+		<ul class="checkout-progress">
+			<li class="checkout-step active">
+				<div class="checkout-step-circle">1</div>
+				<div class="checkout-step-label">Shipping & Payment</div>
+			</li>
+			<li class="checkout-step">
+				<div class="checkout-step-circle">2</div>
+				<div class="checkout-step-label">Complete</div>
+			</li>
+		</ul>
+
+		<div class="row">
+			<!-- Shipping Information Form -->
+			<div class="col-lg-8">
+				<div class="checkout-section">
+					<h3 class="checkout-section-title">Shipping Information</h3>
+
+					<form id="checkoutForm" th:action="@{/checkout/place-order}" th:object="${checkoutRequest}" method="post">
+						<!-- Saved Addresses Dropdown -->
+						<div class="checkout-form-row full" th:if="${addresses != null and !#lists.isEmpty(addresses)}">
+							<div class="checkout-form-group">
+								<label for="savedAddressId">Select Saved Address</label>
+								<select id="savedAddressId" th:field="*{savedAddressId}" class="checkout-form-control" onchange="fillAddressForm(this.value)">
+									<option value="">-- Enter new address --</option>
+									<option th:each="addr : ${addresses}"
+									        th:value="${addr.id}"
+									        th:text="${addr.fullName + ' - ' + addr.street + ', ' + addr.city}"
+									        th:data-fullname="${addr.fullName}"
+									        th:data-phone="${addr.phoneNumber}"
+									        th:data-street="${addr.street}"
+									        th:data-city="${addr.city}"
+									        th:data-state="${addr.state}"
+									        th:data-zipcode="${addr.zipCode}"
+									        th:data-country="${addr.country}">
+									</option>
+								</select>
+							</div>
+						</div>
+
+						<!-- Address Form Fields -->
+						<div id="addressFormFields">
+							<div class="checkout-form-row">
+								<div class="checkout-form-group">
+									<label for="fullName" class="required">Full Name</label>
+									<input type="text" id="fullName" th:field="*{fullName}" class="checkout-form-control" required>
+									<div class="text-danger" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
+								</div>
+								<div class="checkout-form-group">
+									<label for="phoneNumber" class="required">Phone Number</label>
+									<input type="tel" id="phoneNumber" th:field="*{phoneNumber}" class="checkout-form-control" required>
+									<div class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></div>
+								</div>
+							</div>
+
+							<div class="checkout-form-row full">
+								<div class="checkout-form-group">
+									<label for="street" class="required">Street Address</label>
+									<input type="text" id="street" th:field="*{street}" class="checkout-form-control" placeholder="House number and street name" required>
+									<div class="text-danger" th:if="${#fields.hasErrors('street')}" th:errors="*{street}"></div>
+								</div>
+							</div>
+
+							<div class="checkout-form-row">
+								<div class="checkout-form-group">
+									<label for="city" class="required">City</label>
+									<input type="text" id="city" th:field="*{city}" class="checkout-form-control" required>
+									<div class="text-danger" th:if="${#fields.hasErrors('city')}" th:errors="*{city}"></div>
+								</div>
+								<div class="checkout-form-group">
+									<label for="country" class="required">Country</label>
+									<select id="country" th:field="*{country}" class="checkout-form-control" required>
+										<option value="">Select a country</option>
+										<option value="United States">United States</option>
+										<option value="United Kingdom">United Kingdom</option>
+										<option value="Canada">Canada</option>
+										<option value="Australia">Australia</option>
+										<option value="Vietnam">Vietnam</option>
+									</select>
+									<div class="text-danger" th:if="${#fields.hasErrors('country')}" th:errors="*{country}"></div>
+								</div>
+							</div>
+
+							<div class="checkout-form-row">
+								<div class="checkout-form-group">
+									<label for="state" class="required">State / Province</label>
+									<input type="text" id="state" th:field="*{state}" class="checkout-form-control" required>
+									<div class="text-danger" th:if="${#fields.hasErrors('state')}" th:errors="*{state}"></div>
+								</div>
+								<div class="checkout-form-group">
+									<label for="zipCode" class="required">Postal Code</label>
+									<input type="text" id="zipCode" th:field="*{zipCode}" class="checkout-form-control" required>
+									<div class="text-danger" th:if="${#fields.hasErrors('zipCode')}" th:errors="*{zipCode}"></div>
+								</div>
+							</div>
+
+							<!-- Save Address Checkbox -->
+							<div class="checkout-form-row full">
+								<div class="checkout-form-group">
+									<label style="display: flex; align-items: center; cursor: pointer;">
+										<input type="checkbox" th:field="*{saveAddress}" style="margin-right: 10px;">
+										<span>Save this address for future orders</span>
+									</label>
+								</div>
+							</div>
+						</div>
+
+						<div class="checkout-form-row full">
+							<div class="checkout-form-group">
+								<label for="notes">Order Notes (optional)</label>
+								<textarea id="notes" th:field="*{notes}" class="checkout-form-control" rows="4" placeholder="Notes about your order, e.g. special notes for delivery"></textarea>
+							</div>
+						</div>
+
+						<!-- Payment Method Section -->
+						<h3 class="checkout-section-title" style="margin-top: 40px; padding-top: 30px; border-top: 2px solid #e6e6e6;">Payment Method</h3>
+
+						<div class="checkout-form-row full">
+							<div class="checkout-form-group">
+								<div th:each="method : ${paymentMethods}" style="margin-bottom: 15px;">
+									<label style="display: flex; align-items: center; padding: 15px; border: 2px solid #e6e6e6; border-radius: 5px; cursor: pointer; transition: all 0.3s;"
+									       onmouseover="this.style.borderColor='#717fe0'"
+									       onmouseout="if(!this.querySelector('input').checked) this.style.borderColor='#e6e6e6'">
+										<input type="radio" th:field="*{paymentMethod}" th:value="${method}" required
+										       onclick="this.parentElement.parentElement.querySelectorAll('label').forEach(l => l.style.borderColor='#e6e6e6'); this.parentElement.style.borderColor='#717fe0';"
+										       style="margin-right: 15px; width: 20px; height: 20px;">
+										<div>
+											<strong th:text="${method}" style="display: block; margin-bottom: 5px;"></strong>
+											<span th:if="${method.name() == 'CASH_ON_DELIVERY'}" style="font-size: 13px; color: #666;">Pay when you receive your order</span>
+											<span th:if="${method.name() == 'CREDIT_CARD'}" style="font-size: 13px; color: #666;">Pay securely with credit card</span>
+											<span th:if="${method.name() == 'DEBIT_CARD'}" style="font-size: 13px; color: #666;">Pay with your debit card</span>
+											<span th:if="${method.name() == 'PAYPAL'}" style="font-size: 13px; color: #666;">Fast & secure PayPal payment</span>
+											<span th:if="${method.name() == 'BANK_TRANSFER'}" style="font-size: 13px; color: #666;">Direct bank transfer</span>
+											<span th:if="${method.name() == 'VNPAY'}" style="font-size: 13px; color: #666;">Pay online via VNPay gateway (ATM/QR/Visa/MasterCard)</span>
+										</div>
+									</label>
+								</div>
+								<div class="text-danger" th:if="${#fields.hasErrors('paymentMethod')}" th:errors="*{paymentMethod}"></div>
+							</div>
+						</div>
+
+						<!-- Action Buttons -->
+						<div style="text-align: right; margin-top: 30px;">
+							<a th:href="@{/shopping-cart}" class="flex-c-m stext-101 cl2 size-116 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer" style="display: inline-flex; margin-right: 10px;">
+								<i class="fa fa-arrow-left" style="margin-right: 8px;"></i> Back to Cart
+							</a>
+							<button type="submit" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer" style="display: inline-flex; border: none;">
+								<i class="fa fa-check" style="margin-right: 8px;"></i> Place Order
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+
+			<!-- Order Summary Sidebar -->
+			<div class="col-lg-4">
+				<div class="order-summary">
+					<h3 class="order-summary-title">Order Summary</h3>
+
+					<div class="order-summary-items">
+						<div class="order-summary-item" th:each="item : ${cart.items}">
+							<img th:src="@{${item.productImageUrl}}" alt="Product" class="order-summary-item-image"
+							     onerror="this.src='/images/product-placeholder.jpg'">
+							<div class="order-summary-item-info">
+								<h4 class="order-summary-item-name" th:text="${item.productName}">Product Name</h4>
+								<p class="order-summary-item-details">
+									<span th:if="${item.size != null}">Size: <span th:text="${item.size}">M</span>, </span>
+									<span th:if="${item.color != null}">Color: <span th:text="${item.color}">White</span></span>
+								</p>
+								<p class="order-summary-item-details">Qty: <span th:text="${item.quantity}">1</span></p>
+							</div>
+							<div class="order-summary-item-price" th:text="${'$' + #numbers.formatDecimal(item.itemTotal, 1, 2)}">$16.64</div>
+						</div>
+					</div>
+
+					<div class="order-summary-totals">
+						<div class="order-summary-row">
+							<span>Subtotal</span>
+							<span th:text="${'$' + #numbers.formatDecimal(cart.subtotal, 1, 2)}">$77.45</span>
+						</div>
+						<div class="order-summary-row" th:if="${cart.discountAmount != null and cart.discountAmount > 0}">
+							<span>Discount <small th:if="${cart.couponCode != null}" th:text="'(' + ${cart.couponCode} + ')'"></small></span>
+							<span style="color: #28a745;" th:text="'-$' + ${#numbers.formatDecimal(cart.discountAmount, 1, 2)}">-$10.00</span>
+						</div>
+						<div class="order-summary-row">
+							<span>Shipping <small th:if="${cart.selectedShippingMethod != null}" th:text="'(' + ${cart.selectedShippingMethod} + ')'"></small></span>
+							<span th:text="${'$' + #numbers.formatDecimal(cart.shippingCost ?: 0, 1, 2)}">$5.00</span>
+						</div>
+						<div class="order-summary-row" th:if="${cart.taxAmount != null and cart.taxAmount > 0}">
+							<span>Tax</span>
+							<span th:text="${'$' + #numbers.formatDecimal(cart.taxAmount, 1, 2)}">$7.75</span>
+						</div>
+						<div class="order-summary-row total">
+							<span>Total</span>
+							<span th:text="${'$' + #numbers.formatDecimal(cart.finalTotal ?: cart.total, 1, 2)}">$90.20</span>
+						</div>
+					</div>
+
+					<!-- Order Info -->
+					<div style="margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 5px; font-size: 13px;">
+						<p style="margin: 0 0 10px 0;"><i class="fa fa-info-circle"></i> <strong>Order Information:</strong></p>
+						<p style="margin: 0 0 5px 0;"><i class="fa fa-shopping-bag"></i> <span th:text="${cart.totalItems}"></span> items</p>
+						<p style="margin: 0 0 5px 0;" th:if="${cart.selectedShippingMethod != null}">
+							<i class="fa fa-truck"></i> <span th:text="${cart.selectedShippingMethod}"></span>
+						</p>
+						<p style="margin: 0;" th:if="${user != null}">
+							<i class="fa fa-user"></i> <span th:text="${user.email}"></span>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Footer -->
+	<div th:replace="~{fragments/footer :: footer}"></div>
+
+	<!-- Back to top -->
+	<div class="btn-back-to-top" id="myBtn">
+		<span class="symbol-btn-back-to-top">
+			<i class="zmdi zmdi-chevron-up"></i>
+		</span>
+	</div>
+
+<!--===============================================================================================-->
+	<script th:src="@{/vendor/jquery/jquery-3.2.1.min.js}"></script>
+<!--===============================================================================================-->
+	<script th:src="@{/vendor/animsition/js/animsition.min.js}"></script>
+<!--===============================================================================================-->
+	<script th:src="@{/vendor/bootstrap/js/popper.js}"></script>
+	<script th:src="@{/vendor/bootstrap/js/bootstrap.min.js}"></script>
+<!--===============================================================================================-->
+	<script th:src="@{/vendor/select2/select2.min.js}"></script>
+<!--===============================================================================================-->
+	<script th:src="@{/vendor/perfect-scrollbar/perfect-scrollbar.min.js}"></script>
+	<script>
+		$('.js-pscroll').each(function(){
+			$(this).css('position','relative');
+			$(this).css('overflow','hidden');
+			var ps = new PerfectScrollbar(this, {
+				wheelSpeed: 1,
+				scrollingThreshold: 1000,
+				wheelPropagation: false,
+			});
+
+			$(window).on('resize', function(){
+				ps.update();
+			})
+		});
+	</script>
+<!--===============================================================================================-->
+	<script th:src="@{/js/main.js}"></script>
+	<script>
+		// Fill address form when saved address is selected
+		function fillAddressForm(addressId) {
+			if (!addressId) {
+				// Clear form if "Enter new address" is selected
+				document.getElementById('fullName').value = '';
+				document.getElementById('phoneNumber').value = '';
+				document.getElementById('street').value = '';
+				document.getElementById('city').value = '';
+				document.getElementById('state').value = '';
+				document.getElementById('zipCode').value = '';
+				document.getElementById('country').value = '';
+				document.getElementById('addressFormFields').style.display = 'block';
+				return;
+			}
+
+			// Get selected option
+			const select = document.getElementById('savedAddressId');
+			const option = select.options[select.selectedIndex];
+
+			// Fill form with saved address data
+			document.getElementById('fullName').value = option.getAttribute('data-fullname') || '';
+			document.getElementById('phoneNumber').value = option.getAttribute('data-phone') || '';
+			document.getElementById('street').value = option.getAttribute('data-street') || '';
+			document.getElementById('city').value = option.getAttribute('data-city') || '';
+			document.getElementById('state').value = option.getAttribute('data-state') || '';
+			document.getElementById('zipCode').value = option.getAttribute('data-zipcode') || '';
+			document.getElementById('country').value = option.getAttribute('data-country') || '';
+
+			// Disable fields when using saved address (optional - can keep enabled for editing)
+			// document.getElementById('addressFormFields').style.display = 'none';
+		}
+
+		// Form validation before submit
+		document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+			console.log('=== PLACE ORDER BUTTON CLICKED ===');
+			console.log('Form submission started at:', new Date().toISOString());
+
+			const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+			if (!paymentMethod) {
+				e.preventDefault();
+				alert('Please select a payment method');
+				console.log('Validation failed: No payment method selected');
+				return false;
+			}
+
+			console.log('Payment method selected:', paymentMethod.value);
+			console.log('Submitting form to server...');
+		});
+
+		// Auto-scroll to alert message if exists
+		window.addEventListener('load', function() {
+			const alertMessage = document.getElementById('alertMessage');
+			if (alertMessage) {
+				alertMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+				// Add animation
+				alertMessage.style.animation = 'pulse 0.5s ease-in-out';
+			}
+		});
+	</script>
+
+</body>
+</html>

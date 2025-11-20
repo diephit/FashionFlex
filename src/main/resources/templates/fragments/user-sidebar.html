@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+
+<!-- User Account Sidebar Navigation Fragment -->
+<div th:fragment="sidebar(activePage)" class="user-account-nav">
+	<ul>
+		<li>
+			<a th:href="@{/user/my-account}" th:classappend="${activePage == 'dashboard'} ? 'active' : ''">
+				<i class="fa fa-tachometer"></i>
+				Dashboard
+			</a>
+		</li>
+		<li>
+			<a th:href="@{/user/orders}" th:classappend="${activePage == 'orders'} ? 'active' : ''">
+				<i class="fa fa-shopping-bag"></i>
+				Orders
+			</a>
+		</li>
+		<li>
+			<a th:href="@{/user/order-tracking}" th:classappend="${activePage == 'tracking'} ? 'active' : ''">
+				<i class="fa fa-map-marker"></i>
+				Track Order
+			</a>
+		</li>
+		<li>
+			<a th:href="@{/user/wishlist}" th:classappend="${activePage == 'wishlist'} ? 'active' : ''">
+				<i class="fa fa-heart"></i>
+				Wishlist
+			</a>
+		</li>
+		<li>
+			<a th:href="@{/user/address-book}" th:classappend="${activePage == 'addresses'} ? 'active' : ''">
+				<i class="fa fa-map"></i>
+				Addresses
+			</a>
+		</li>
+		<li>
+			<a th:href="@{/user/profile-edit}" th:classappend="${activePage == 'profile'} ? 'active' : ''">
+				<i class="fa fa-user"></i>
+				Profile
+			</a>
+		</li>
+		<li>
+			<a th:href="@{/logout}">
+				<i class="fa fa-sign-out"></i>
+				Logout
+			</a>
+		</li>
+	</ul>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Product Detail')}"></head>
+<body class="animsition" th:attr="data-authenticated=${isAuthenticated != null ? isAuthenticated : false}">
+
+	<!-- Header -->
+	<div th:replace="~{fragments/header :: header('shop')}"></div>
+
+	<!-- Cart -->
+	<div th:replace="~{fragments/header :: cart}"></div>
+
+
+	<!-- breadcrumb -->
+	<div class="container">
+		<div class="bread-crumb flex-w p-l-25 p-r-15 p-t-80 p-lr-0-lg">
+			<a th:href="@{/}" class="stext-109 cl8 hov-cl1 trans-04">
+				Home
+				<i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+			</a>
+
+			<a th:if="${product.category != null}"
+			   th:href="@{/product(category=${product.category.name})}"
+			   class="stext-109 cl8 hov-cl1 trans-04">
+				<span th:text="${product.category.name}">Category</span>
+				<i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+			</a>
+
+			<span class="stext-109 cl4" th:text="${product.name}">
+				Product Name
+			</span>
+		</div>
+	</div>
+
+
+	<!-- Product Detail -->
+	<section class="sec-product-detail bg0 p-t-65 p-b-60">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-6 col-lg-7 p-b-30">
+					<div class="p-l-25 p-r-30 p-lr-0-lg">
+						<div class="wrap-slick3 flex-sb flex-w">
+							<div class="wrap-slick3-dots"></div>
+							<div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
+
+							<div class="slick3 gallery-lb">
+								<!-- Main product image -->
+								<div class="item-slick3"
+								     th:data-thumb="${product.imageUrl != null && !product.imageUrl.isEmpty() ? product.imageUrl : '/images/product-placeholder.jpg'}">
+									<div class="wrap-pic-w pos-relative">
+										<img th:src="${product.imageUrl != null && !product.imageUrl.isEmpty() ? product.imageUrl : '/images/product-placeholder.jpg'}"
+										     alt="IMG-PRODUCT"
+										     onerror="this.onerror=null; this.src='/images/product-placeholder.jpg'">
+
+										<a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04"
+										   th:href="${product.imageUrl != null && !product.imageUrl.isEmpty() ? product.imageUrl : '/images/product-placeholder.jpg'}">
+											<i class="fa fa-expand"></i>
+										</a>
+									</div>
+								</div>
+
+								<!-- Additional images -->
+								<div th:each="image : ${product.additionalImages}"
+								     class="item-slick3"
+								     th:data-thumb="${image}">
+									<div class="wrap-pic-w pos-relative">
+										<img th:src="${image}"
+										     alt="IMG-PRODUCT"
+										     onerror="this.onerror=null; this.src='/images/product-placeholder.jpg'">
+
+										<a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04"
+										   th:href="${image}">
+											<i class="fa fa-expand"></i>
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-md-6 col-lg-5 p-b-30">
+					<div class="p-r-50 p-t-5 p-lr-0-lg">
+						<!-- Product Name -->
+						<h4 class="mtext-105 cl2 js-name-detail p-b-14" th:text="${product.name}">
+							Lightweight Jacket
+						</h4>
+
+						<!-- Price Display -->
+						<div class="mtext-106 cl2">
+							<!-- If has discount, show both prices -->
+							<span th:if="${product.hasDiscount()}">
+								<span style="text-decoration: line-through; color: #999; margin-right: 10px;"
+								      th:text="'$' + ${#numbers.formatDecimal(product.price, 1, 2)}">$100.00</span>
+								<span style="color: #e65540; font-weight: 600;"
+								      th:text="'$' + ${#numbers.formatDecimal(product.effectivePrice, 1, 2)}">$58.79</span>
+							</span>
+							<!-- If no discount, show regular price -->
+							<span th:unless="${product.hasDiscount()}"
+							      th:text="'$' + ${#numbers.formatDecimal(product.effectivePrice, 1, 2)}">
+								$58.79
+							</span>
+						</div>
+
+						<!-- Stock Status -->
+						<div class="p-t-15">
+							<span th:if="${product.stock > 0}" class="stext-102 cl3">
+								<i class="fa fa-check-circle" style="color: #28a745;"></i>
+								<span th:text="${product.stock + ' in stock'}">In Stock</span>
+							</span>
+							<span th:unless="${product.stock > 0}" class="stext-102" style="color: #dc3545;">
+								<i class="fa fa-times-circle"></i> Out of Stock
+							</span>
+						</div>
+
+						<!-- Product Description -->
+						<p class="stext-102 cl3 p-t-23"
+						   th:text="${product.description != null && !product.description.isEmpty() ? product.description : 'No description available'}">
+							Nulla eget sem vitae eros pharetra viverra. Nam vitae luctus ligula. Mauris consequat ornare feugiat.
+						</p>
+
+						<!--  -->
+						<div class="p-t-33">
+							<!-- Size Selector -->
+							<div class="flex-w flex-r-m p-b-10"
+							     th:if="${product.availableSizes != null && !product.availableSizes.isEmpty()}">
+								<div class="size-203 flex-c-m respon6">
+									Size
+								</div>
+
+								<div class="size-204 respon6-next">
+									<div class="rs1-select2 bor8 bg0">
+										<select class="js-select2" name="size" id="productSize">
+											<option value="">Choose an option</option>
+											<option th:each="size : ${product.availableSizes}"
+											        th:value="${size}"
+											        th:text="${size}">Size S</option>
+										</select>
+										<div class="dropDownSelect2"></div>
+									</div>
+								</div>
+							</div>
+
+							<!-- Color Selector -->
+							<div class="flex-w flex-r-m p-b-10"
+							     th:if="${product.availableColors != null && !product.availableColors.isEmpty()}">
+								<div class="size-203 flex-c-m respon6">
+									Color
+								</div>
+
+								<div class="size-204 respon6-next">
+									<div class="rs1-select2 bor8 bg0">
+										<select class="js-select2" name="color" id="productColor">
+											<option value="">Choose an option</option>
+											<option th:each="color : ${product.availableColors}"
+											        th:value="${color}"
+											        th:text="${color}">Red</option>
+										</select>
+										<div class="dropDownSelect2"></div>
+									</div>
+								</div>
+							</div>
+
+							<!-- Quantity and Add to Cart -->
+							<div class="flex-w flex-r-m p-b-10">
+								<div class="size-204 flex-w flex-m respon6-next">
+									<div class="wrap-num-product flex-w m-r-20 m-tb-10">
+										<div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
+											<i class="fs-16 zmdi zmdi-minus"></i>
+										</div>
+
+										<input class="mtext-104 cl3 txt-center num-product"
+										       type="number"
+										       name="num-product"
+										       id="productQuantity"
+										       value="1"
+										       min="1"
+										       th:max="${product.stock}">
+
+										<div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
+											<i class="fs-16 zmdi zmdi-plus"></i>
+										</div>
+									</div>
+
+									<button class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail"
+									        th:data-product-id="${product.id}"
+									        th:disabled="${product.stock <= 0}">
+										<span th:if="${product.stock > 0}">Add to cart</span>
+										<span th:unless="${product.stock > 0}">Out of Stock</span>
+									</button>
+								</div>
+							</div>
+						</div>
+
+						<!--  -->
+						<div class="flex-w flex-m p-l-100 p-t-40 respon7">
+							<div class="flex-m bor9 p-r-10 m-r-11">
+								<button type="button"
+								        th:data-product-id="${product.id}"
+								        th:onclick="'toggleWishlist(' + ${product.id} + ', this)'"
+								        class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 wishlist-btn tooltip100"
+								        data-tooltip="Add to Wishlist"
+								        style="background: none; border: none; cursor: pointer;">
+									<i class="zmdi zmdi-favorite"></i>
+								</button>
+							</div>
+
+							<a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100" data-tooltip="Facebook">
+								<i class="fa fa-facebook"></i>
+							</a>
+
+							<a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100" data-tooltip="Twitter">
+								<i class="fa fa-twitter"></i>
+							</a>
+
+							<a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100" data-tooltip="Google Plus">
+								<i class="fa fa-google-plus"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="bor10 m-t-50 p-t-43 p-b-40">
+				<!-- Tab01 -->
+				<div class="tab01">
+					<!-- Nav tabs -->
+					<ul class="nav nav-tabs" role="tablist">
+						<li class="nav-item p-b-10">
+							<a class="nav-link active" data-toggle="tab" href="#description" role="tab">Description</a>
+						</li>
+
+						<li class="nav-item p-b-10">
+							<a class="nav-link" data-toggle="tab" href="#information" role="tab">Additional information</a>
+						</li>
+
+						<li class="nav-item p-b-10">
+							<a class="nav-link" data-toggle="tab" href="#reviews" role="tab">Reviews (0)</a>
+						</li>
+					</ul>
+
+					<!-- Tab panes -->
+					<div class="tab-content p-t-43">
+						<!-- Description Tab -->
+						<div class="tab-pane fade show active" id="description" role="tabpanel">
+							<div class="how-pos2 p-lr-15-md">
+								<p class="stext-102 cl6"
+								   th:text="${product.description != null && !product.description.isEmpty() ? product.description : 'No detailed description available for this product.'}">
+									Aenean sit amet gravida nisi. Nam fermentum est felis, quis feugiat nunc fringilla sit amet.
+								</p>
+							</div>
+						</div>
+
+						<!-- Additional Information Tab -->
+						<div class="tab-pane fade" id="information" role="tabpanel">
+							<div class="row">
+								<div class="col-sm-10 col-md-8 col-lg-6 m-lr-auto">
+									<ul class="p-lr-28 p-lr-15-sm">
+										<li class="flex-w flex-t p-b-7" th:if="${product.sku != null && !product.sku.isEmpty()}">
+											<span class="stext-102 cl3 size-205">
+												SKU
+											</span>
+											<span class="stext-102 cl6 size-206" th:text="${product.sku}">
+												JAK-01
+											</span>
+										</li>
+
+										<li class="flex-w flex-t p-b-7" th:if="${product.category != null}">
+											<span class="stext-102 cl3 size-205">
+												Category
+											</span>
+											<span class="stext-102 cl6 size-206" th:text="${product.category.name}">
+												Men
+											</span>
+										</li>
+
+										<li class="flex-w flex-t p-b-7" th:if="${product.brand != null}">
+											<span class="stext-102 cl3 size-205">
+												Brand
+											</span>
+											<span class="stext-102 cl6 size-206" th:text="${product.brand.name}">
+												Brand Name
+											</span>
+										</li>
+
+										<li class="flex-w flex-t p-b-7"
+										    th:if="${product.availableColors != null && !product.availableColors.isEmpty()}">
+											<span class="stext-102 cl3 size-205">
+												Available Colors
+											</span>
+											<span class="stext-102 cl6 size-206">
+												<span th:each="color, iterStat : ${product.availableColors}">
+													<span th:text="${color}">Color</span><span th:if="${!iterStat.last}">, </span>
+												</span>
+											</span>
+										</li>
+
+										<li class="flex-w flex-t p-b-7"
+										    th:if="${product.availableSizes != null && !product.availableSizes.isEmpty()}">
+											<span class="stext-102 cl3 size-205">
+												Available Sizes
+											</span>
+											<span class="stext-102 cl6 size-206">
+												<span th:each="size, iterStat : ${product.availableSizes}">
+													<span th:text="${size}">Size</span><span th:if="${!iterStat.last}">, </span>
+												</span>
+											</span>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+
+						<!-- Reviews Tab (Keep static for now) -->
+						<div class="tab-pane fade" id="reviews" role="tabpanel">
+							<div class="row">
+								<div class="col-sm-10 col-md-8 col-lg-6 m-lr-auto">
+									<div class="p-b-30 m-lr-15-sm">
+										<!-- No reviews message -->
+										<div class="text-center p-t-40 p-b-40">
+											<p class="stext-102 cl6">No reviews yet. Be the first to review this product!</p>
+										</div>
+
+										<!-- Add review form (static for now) -->
+										<form class="w-full">
+											<h5 class="mtext-108 cl2 p-b-7">
+												Add a review
+											</h5>
+
+											<p class="stext-102 cl6">
+												Your email address will not be published. Required fields are marked *
+											</p>
+
+											<div class="flex-w flex-m p-t-50 p-b-23">
+												<span class="stext-102 cl3 m-r-16">
+													Your Rating
+												</span>
+
+												<span class="wrap-rating fs-18 cl11 pointer">
+													<i class="item-rating pointer zmdi zmdi-star-outline"></i>
+													<i class="item-rating pointer zmdi zmdi-star-outline"></i>
+													<i class="item-rating pointer zmdi zmdi-star-outline"></i>
+													<i class="item-rating pointer zmdi zmdi-star-outline"></i>
+													<i class="item-rating pointer zmdi zmdi-star-outline"></i>
+													<input class="dis-none" type="number" name="rating">
+												</span>
+											</div>
+
+											<div class="row p-b-25">
+												<div class="col-12 p-b-5">
+													<label class="stext-102 cl3" for="review">Your review</label>
+													<textarea class="size-110 bor8 stext-102 cl2 p-lr-20 p-tb-10" id="review" name="review"></textarea>
+												</div>
+
+												<div class="col-sm-6 p-b-5">
+													<label class="stext-102 cl3" for="name">Name</label>
+													<input class="size-111 bor8 stext-102 cl2 p-lr-20" id="name" type="text" name="name">
+												</div>
+
+												<div class="col-sm-6 p-b-5">
+													<label class="stext-102 cl3" for="email">Email</label>
+													<input class="size-111 bor8 stext-102 cl2 p-lr-20" id="email" type="text" name="email">
+												</div>
+											</div>
+
+											<button class="flex-c-m stext-101 cl0 size-112 bg7 bor11 hov-btn3 p-lr-15 trans-04 m-b-10">
+												Submit
+											</button>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- SKU, Category, Brand info bar -->
+		<div class="bg6 flex-c-m flex-w size-302 m-t-73 p-tb-15">
+			<span class="stext-107 cl6 p-lr-25" th:if="${product.sku != null && !product.sku.isEmpty()}">
+				<span th:text="'SKU: ' + ${product.sku}">SKU: JAK-01</span>
+			</span>
+
+			<span class="stext-107 cl6 p-lr-25" th:if="${product.category != null}">
+				<span>Categories: </span>
+				<span th:text="${product.category.name}">Category</span>
+				<span th:if="${product.brand != null}">, </span>
+				<span th:if="${product.brand != null}" th:text="${product.brand.name}">Brand</span>
+			</span>
+		</div>
+	</section>
+
+
+	<!-- Related Products -->
+	<section class="sec-relate-product bg0 p-t-45 p-b-105"
+	         th:if="${relatedProducts != null && !relatedProducts.isEmpty()}">
+		<div class="container">
+			<div class="p-b-45">
+				<h3 class="ltext-106 cl5 txt-center">
+					Related Products
+				</h3>
+			</div>
+
+			<!-- Slide2 -->
+			<div class="wrap-slick2">
+				<div class="slick2">
+					<div th:each="relatedProduct : ${relatedProducts}"
+					     class="item-slick2 p-l-15 p-r-15 p-t-15 p-b-15">
+						<!-- Block2 -->
+						<div class="block2">
+							<div class="block2-pic hov-img0">
+								<!-- Discount Badge -->
+								<span th:if="${relatedProduct.hasDiscount()}"
+								      class="stext-105 cl0 bg8 bor2 pos-relative p-lr-15 m-tb-10"
+								      style="position: absolute; top: 10px; left: 10px; font-size: 12px; padding: 5px 10px; border-radius: 3px; z-index: 10;">
+									-<span th:text="${relatedProduct.discountPercentage}">20</span>%
+								</span>
+
+								<img th:src="${relatedProduct.imageUrl != null && !relatedProduct.imageUrl.isEmpty() ? relatedProduct.imageUrl : '/images/product-placeholder.jpg'}"
+								     alt="IMG-PRODUCT"
+								     onerror="this.onerror=null; this.src='/images/product-placeholder.jpg'">
+
+								<button th:data-product-id="${relatedProduct.id}"
+								        class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
+									Quick View
+								</button>
+							</div>
+
+							<div class="block2-txt flex-w flex-t p-t-14">
+								<div class="block2-txt-child1 flex-col-l">
+									<a th:href="@{/product/{id}(id=${relatedProduct.id})}"
+									   class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6"
+									   th:text="${relatedProduct.name}">
+										Esprit Ruffle Shirt
+									</a>
+
+									<!-- Price with discount handling -->
+									<span th:if="${relatedProduct.hasDiscount()}">
+										<span style="text-decoration: line-through; color: #999; margin-right: 8px;"
+										      th:text="'$' + ${#numbers.formatDecimal(relatedProduct.price, 1, 2)}">
+											$50.00
+										</span>
+										<span style="color: #e65540; font-weight: 600;"
+										      th:text="'$' + ${#numbers.formatDecimal(relatedProduct.effectivePrice, 1, 2)}">
+											$40.00
+										</span>
+									</span>
+
+									<span th:unless="${relatedProduct.hasDiscount()}"
+									      class="stext-105 cl3"
+									      th:text="'$' + ${#numbers.formatDecimal(relatedProduct.effectivePrice, 1, 2)}">
+										$16.64
+									</span>
+								</div>
+
+								<div class="block2-txt-child2 flex-r p-t-3">
+									<button type="button"
+									        th:data-product-id="${relatedProduct.id}"
+									        th:onclick="'toggleWishlist(' + ${relatedProduct.id} + ', this)'"
+									        class="wishlist-btn btn-addwish-b2 dis-block pos-relative"
+									        style="background: none; border: none; padding: 0; cursor: pointer;"
+									        title="Add to wishlist">
+										<i class="fa fa-heart text-muted trans-04"
+										   style="font-size: 20px;"></i>
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+
+	<!-- Footer -->
+	<div th:replace="~{fragments/footer :: footer}"></div>
+
+
+	<!-- Back to top -->
+	<div th:replace="~{fragments/footer :: back-to-top}"></div>
+
+	<!-- Modal1 - Quick View -->
+	<div class="wrap-modal1 js-modal1 p-t-60 p-b-20">
+		<div class="overlay-modal1 js-hide-modal1"></div>
+
+		<div class="container">
+			<div class="bg0 p-t-60 p-b-30 p-lr-15-lg how-pos3-parent">
+				<button class="how-pos3 hov3 trans-04 js-hide-modal1">
+					<img th:src="@{/images/icons/icon-close.png}" alt="CLOSE">
+				</button>
+
+				<div class="quick-view-content">
+					<!-- Content will be loaded via AJAX -->
+					<div class="text-center p-t-50 p-b-50">
+						<div class="loader05"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Scripts -->
+	<div th:replace="~{fragments/header :: scripts}"></div>
+
+	<!-- Product Detail specific scripts -->
+	<script>
+		$(document).ready(function(){
+			// NOTE: Select2, Magnific Popup, quantity buttons are already initialized in fragments/header :: scripts and main.js
+			// We only need to initialize slick carousels here
+
+			// Initialize slick carousel for product images
+			try {
+				if($('.slick3').length > 0 && $('.wrap-slick3-dots').length > 0 && $('.wrap-slick3-arrows').length > 0) {
+					$('.slick3').slick({
+						slidesToShow: 1,
+						slidesToScroll: 1,
+						fade: true,
+						infinite: true,
+						autoplay: false,
+						autoplaySpeed: 6000,
+						arrows: true,
+						appendArrows: $('.wrap-slick3-arrows'),
+						prevArrow:'<button class="arrow-slick3 prev-slick3"><i class="fa fa-angle-left" aria-hidden="true"></i></button>',
+						nextArrow:'<button class="arrow-slick3 next-slick3"><i class="fa fa-angle-right" aria-hidden="true"></i></button>',
+						dots: true,
+						appendDots: $('.wrap-slick3-dots'),
+						dotsClass:'slick3-dots',
+						customPaging: function(slick, index) {
+							var portrait = $(slick.$slides[index]).data('thumb');
+							return '<img src=" ' + portrait + ' "/><div class="slick3-dot-overlay"></div>';
+						},
+					});
+				}
+			} catch(e) {
+				console.error('Error initializing product carousel:', e);
+			}
+
+			// Initialize related products carousel
+			try {
+				if($('.slick2').length > 0 && $('.wrap-slick2').length > 0) {
+					$('.slick2').slick({
+						slidesToShow: 4,
+						slidesToScroll: 4,
+						infinite: true,
+						autoplay: false,
+						autoplaySpeed: 6000,
+						arrows: true,
+						appendArrows: $('.wrap-slick2'),
+						prevArrow:'<button class="arrow-slick2 prev-slick2"><i class="fa fa-angle-left" aria-hidden="true"></i></button>',
+						nextArrow:'<button class="arrow-slick2 next-slick2"><i class="fa fa-angle-right" aria-hidden="true"></i></button>',
+						responsive: [
+							{
+							  breakpoint: 1200,
+							  settings: {
+								slidesToShow: 4,
+								slidesToScroll: 4
+							  }
+							},
+							{
+							  breakpoint: 992,
+							  settings: {
+								slidesToShow: 3,
+								slidesToScroll: 3
+							  }
+							},
+							{
+							  breakpoint: 768,
+							  settings: {
+								slidesToShow: 2,
+								slidesToScroll: 2
+							  }
+							},
+							{
+							  breakpoint: 576,
+							  settings: {
+								slidesToShow: 1,
+								slidesToScroll: 1
+							  }
+							}
+						]
+					});
+				}
+			} catch(e) {
+				console.error('Error initializing related products carousel:', e);
+			}
+
+			// Add to Cart functionality - Use event delegation to ensure handler works
+			// Event delegation ensures the handler works even if button is added dynamically
+			$(document).on('click', '.js-addcart-detail', function(e){
+				e.preventDefault();
+
+				// Check if user is authenticated
+				const isAuthenticated = $('body').data('authenticated');
+				const isAuthAttr = $('body').attr('data-authenticated');
+
+				// More flexible authentication check
+				if (!isAuthenticated && isAuthAttr !== 'true') {
+					swal("Login Required", "Please login to add items to cart", "warning").then(() => {
+						window.location.href = '/login';
+					});
+					return;
+				}
+
+				var productId = $(this).data('product-id');
+
+				// Check if button is in modal or main page
+				const $button = $(this);
+				const isInModal = $button.closest('.js-modal1').length > 0;
+				const context = isInModal ? '.js-modal1 ' : '';
+
+				var quantity = parseInt($(context + '#productQuantity').val()) || 1;
+				var size = $(context + '#productSize').val();
+				var color = $(context + '#productColor').val();
+
+				// Prepare request data
+				const requestData = {
+					productId: productId,
+					quantity: quantity
+				};
+
+				if (size && size !== 'Choose an option' && size !== '') {
+					requestData.size = size;
+				}
+				if (color && color !== 'Choose an option' && color !== '') {
+					requestData.color = color;
+				}
+
+				// Send AJAX request
+				$.ajax({
+					url: '/api/cart/add',
+					method: 'POST',
+					contentType: 'application/json',
+					data: JSON.stringify(requestData),
+					success: function(response) {
+						if (response.success) {
+							swal("Success!", "Product added to cart successfully", "success");
+							// Update cart count in header
+							if ($('.js-show-cart').length) {
+								$('.js-show-cart').attr('data-notify', response.cart.totalItems || 0);
+							}
+							// Close modal if in modal context
+							if (isInModal) {
+								$('.js-modal1').removeClass('show-modal1');
+							}
+						} else {
+							swal("Error", response.message || "Failed to add product to cart", "error");
+						}
+					},
+					error: function(xhr, status, error) {
+						const response = xhr.responseJSON;
+						swal("Error", response?.message || "An error occurred while adding to cart", "error");
+					}
+				});
+			});
+
+			// Quick View functionality
+			$('.js-show-modal1').on('click', function(e){
+				e.preventDefault();
+				var productId = $(this).data('product-id');
+
+				// Show modal
+				$('.js-modal1').addClass('show-modal1');
+
+				// Load product details via AJAX
+				$.ajax({
+					url: '/product/quick-view/' + productId,
+					method: 'GET',
+					success: function(data) {
+						$('.quick-view-content').html(data);
+
+						// Wait a bit for DOM to be ready
+						setTimeout(function() {
+							// Re-initialize slick carousel
+							if($('.js-modal1 .slick3').length > 0) {
+								$('.js-modal1 .slick3').not('.slick-initialized').slick({
+									slidesToShow: 1,
+									slidesToScroll: 1,
+									fade: true,
+									infinite: true,
+									autoplay: false,
+									autoplaySpeed: 6000,
+									arrows: true,
+									appendArrows: $('.js-modal1 .wrap-slick3-arrows'),
+									prevArrow:'<button class="arrow-slick3 prev-slick3"><i class="fa fa-angle-left" aria-hidden="true"></i></button>',
+									nextArrow:'<button class="arrow-slick3 next-slick3"><i class="fa fa-angle-right" aria-hidden="true"></i></button>',
+									dots: true,
+									appendDots: $('.js-modal1 .wrap-slick3-dots'),
+									dotsClass:'slick3-dots',
+									customPaging: function(slick, index) {
+										var portrait = $(slick.$slides[index]).data('thumb');
+										return '<img src=" ' + portrait + ' "/><div class="slick3-dot-overlay"></div>';
+									},
+								});
+							}
+
+							// Re-initialize select2
+							$(".js-modal1 .js-select2").each(function(){
+								if (!$(this).hasClass('select2-hidden-accessible')) {
+									$(this).select2({
+										minimumResultsForSearch: 20,
+										dropdownParent: $(this).next('.dropDownSelect2')
+									});
+								}
+							});
+
+							// Re-initialize magnific popup
+							$('.js-modal1 .gallery-lb').magnificPopup({
+								delegate: 'a',
+								type: 'image',
+								gallery: {
+									enabled:true
+								},
+								mainClass: 'mfp-fade'
+							});
+
+							// Note: Add to Cart button handler is already set up via event delegation above
+							// No need to reinitialize it here
+						}, 100);
+					},
+					error: function() {
+						$('.quick-view-content').html('<div class="text-center p-t-50 p-b-50"><p class="stext-102 cl6">Error loading product details. Please try again.</p></div>');
+					}
+				});
+			});
+		});
+	</script>
+
+	<!-- Wishlist JavaScript -->
+	<script th:src="@{/js/wishlist.js}"></script>
+
+</body>
+</html>

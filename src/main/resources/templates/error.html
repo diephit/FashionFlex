@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('404 - Page Not Found')}">
+</head>
+<body class="animsition" th:attr="data-authenticated=${isAuthenticated != null ? isAuthenticated : false}">
+
+<!-- Header -->
+<div th:replace="~{fragments/header :: header('none')}"></div>
+
+<!-- Cart Sidebar -->
+<div th:replace="~{fragments/header :: cart}"></div>
+
+<!-- 404 Content -->
+<section style="background: #ffffff; padding: 100px 0;">
+	<div class="container">
+
+		<!-- 404 Number -->
+		<div class="row">
+			<div class="col-md-12 text-center">
+				<h1 style="font-size: 120px; color: #000000; font-weight: bold; margin: 0;">
+					404
+				</h1>
+			</div>
+		</div>
+
+		<!-- Icon -->
+		<div class="row">
+			<div class="col-md-12 text-center" style="padding-top: 30px;">
+				<i class="fa fa-search" style="font-size: 50px; color: #666666;"></i>
+			</div>
+		</div>
+
+		<!-- Title -->
+		<div class="row">
+			<div class="col-md-12 text-center" style="padding-top: 25px;">
+				<h3 style="font-size: 24px; color: #333333; font-weight: 500; margin: 0;">
+					Page Not Found
+				</h3>
+			</div>
+		</div>
+
+		<!-- Description -->
+		<div class="row">
+			<div class="col-md-12 text-center" style="padding-top: 15px;">
+				<p style="font-size: 16px; color: #666666; margin: 0;">
+					The page you're looking for doesn't exist.
+				</p>
+			</div>
+		</div>
+
+		
+		<!-- Buttons -->
+		<div class="row">
+			<div class="col-md-12 text-center" style="padding-top: 40px;">
+				<a th:href="@{/}" style="display: inline-block; padding: 12px 25px; background: #000000; color: white; text-decoration: none; border-radius: 23px; margin-right: 10px; font-size: 14px; transition: all 0.3s;">
+					Back to Home
+				</a>
+				<a th:href="@{/product}" style="display: inline-block; padding: 12px 25px; background: transparent; color: #333333; text-decoration: none; border: 1px solid #e5e5e5; border-radius: 23px; font-size: 14px; transition: all 0.3s;">
+					Shop Now
+				</a>
+			</div>
+		</div>
+
+		<!-- Links -->
+		<div class="row">
+			<div class="col-md-12 text-center" style="padding-top: 50px;">
+				<a th:href="@{/}" style="color: #666666; text-decoration: none; padding: 0 15px; font-size: 14px; transition: color 0.3s;">
+					Home
+				</a>
+				<a th:href="@{/product}" style="color: #666666; text-decoration: none; padding: 0 15px; font-size: 14px; transition: color 0.3s;">
+					Shop
+				</a>
+				<a th:href="@{/about}" style="color: #666666; text-decoration: none; padding: 0 15px; font-size: 14px; transition: color 0.3s;">
+					About
+				</a>
+				<a th:href="@{/contact}" style="color: #666666; text-decoration: none; padding: 0 15px; font-size: 14px; transition: color 0.3s;">
+					Contact
+				</a>
+			</div>
+		</div>
+
+	</div>
+</section>
+
+<!-- Footer -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<!-- Back to top -->
+<div th:replace="~{fragments/footer :: back-to-top}"></div>
+
+<!-- Scripts -->
+<div th:replace="~{fragments/header :: scripts}"></div>
+
+<style>
+	/* Hover effects */
+	a[style*="background: #000000"]:hover {
+		background: #333333 !important;
+	}
+
+	a[style*="background: transparent"]:hover {
+		background: #f5f5f5 !important;
+	}
+
+	a[style*="color: #666666"]:hover {
+		color: #000000 !important;
+	}
+
+	</style>
+
+<script>
+	$(document).ready(function() {
+		// No search functionality needed
+	});
+</script>
+
+</body>
+</html>

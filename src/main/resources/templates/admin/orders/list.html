@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/head :: head('Orders Management')}"></head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar Fragment -->
+            <div th:replace="~{admin/fragments/sidebar :: sidebar('orders')}"></div>
+
+            <!-- Main Content -->
+            <div class="col-md-10 main-content">
+                <!-- Page Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>Order Management</h1>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="row mb-4" th:if="${statistics}">
+                    <div class="col-md-2">
+                        <div class="stats-card">
+                            <h5>Total Orders</h5>
+                            <h2 th:text="${statistics.totalOrders}">0</h2>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="stats-card">
+                            <h5>Pending</h5>
+                            <h2 th:text="${statistics.pendingOrders}" style="color: #ffc107;">0</h2>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="stats-card">
+                            <h5>Shipped</h5>
+                            <h2 th:text="${statistics.shippedOrders}" style="color: #17a2b8;">0</h2>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="stats-card">
+                            <h5>Delivered</h5>
+                            <h2 th:text="${statistics.deliveredOrders}" style="color: #28a745;">0</h2>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="stats-card">
+                            <h5>Cancelled</h5>
+                            <h2 th:text="${statistics.cancelledOrders}" style="color: #dc3545;">0</h2>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="stats-card">
+                            <h5>Total Revenue</h5>
+                            <h2 style="color: #28a745; font-size: 1.3rem;">
+                                $<span th:text="${#numbers.formatDecimal(statistics.totalRevenue, 1, 2)}">0.00</span>
+                            </h2>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Messages -->
+                <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+                    <span th:text="${success}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+                    <span th:text="${error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <!-- Filter Panel -->
+                <div class="filter-panel">
+                    <form method="get" action="/admin/orders" class="filter-form">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-3">
+                                <input type="search" name="keyword" class="form-control"
+                                       placeholder="Search by order #, customer..." th:value="${keyword}">
+                            </div>
+                            <div class="col-md-2">
+                                <select name="status" class="form-select">
+                                    <option value="">All Statuses</option>
+                                    <option th:each="orderStatus : ${orderStatuses}"
+                                            th:value="${orderStatus.name()}"
+                                            th:text="${orderStatus.name()}"
+                                            th:selected="${status != null && status == orderStatus.name()}">
+                                        Status
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <select name="paymentStatus" class="form-select">
+                                    <option value="">Payment Status</option>
+                                    <option th:each="payStatus : ${paymentStatuses}"
+                                            th:value="${payStatus.name()}"
+                                            th:text="${payStatus.name()}"
+                                            th:selected="${paymentStatus != null && paymentStatus == payStatus.name()}">
+                                        Payment
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="date" name="startDate" class="form-control"
+                                       placeholder="Start Date"
+                                       th:value="${startDate != null ? #temporals.format(startDate, 'yyyy-MM-dd') : ''}">
+                            </div>
+                            <div class="col-md-1">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" onclick="clearFilters()" class="btn btn-secondary w-100">
+                                    <i class="fa fa-times"></i> Clear
+                                </button>
+                            </div>
+                        </div>
+                        <input type="hidden" name="page" th:value="${currentPage}">
+                        <input type="hidden" name="size" value="15">
+                        <input type="hidden" name="sortBy" th:value="${sortBy}">
+                        <input type="hidden" name="sortDir" th:value="${sortDir}">
+                    </form>
+                </div>
+
+                <!-- Bulk Actions Bar (hidden by default) -->
+                <div class="bulk-actions-bar">
+                    <span><strong><span id="selectedCount">0</span></strong> orders selected</span>
+                    <div class="float-end">
+                        <button class="btn btn-sm btn-info" data-bulk-action="mark-shipped">
+                            <i class="fa fa-truck"></i> Mark as Shipped
+                        </button>
+                        <button class="btn btn-sm btn-success" data-bulk-action="mark-delivered">
+                            <i class="fa fa-check"></i> Mark as Delivered
+                        </button>
+                        <button class="btn btn-sm btn-danger" data-bulk-action="cancel"
+                                data-confirm="Are you sure you want to cancel selected orders?">
+                            <i class="fa fa-ban"></i> Cancel Orders
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Orders Table -->
+                <div class="table-card">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width: 30px;">
+                                        <input type="checkbox" id="selectAll" class="bulk-checkbox">
+                                    </th>
+                                    <th>Order #</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Payment</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${#lists.isEmpty(orders)}">
+                                    <td colspan="8">
+                                        <div class="empty-state">
+                                            <i class="fa fa-shopping-cart"></i>
+                                            <h3>No orders found</h3>
+                                            <p>Try adjusting your filters</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr th:each="order : ${orders}">
+                                    <td>
+                                        <input type="checkbox" class="item-checkbox bulk-checkbox"
+                                               th:value="${order.id}">
+                                    </td>
+                                    <td>
+                                        <strong th:text="${order.orderNumber}">ORD-001</strong>
+                                    </td>
+                                    <td>
+                                        <div th:text="${order.userName}">Customer Name</div>
+                                        <small class="text-muted" th:text="${order.userEmail}">email@example.com</small>
+                                    </td>
+                                    <td th:text="${#temporals.format(order.createdAt, 'yyyy-MM-dd HH:mm')}">2024-01-01 12:00</td>
+                                    <td>
+                                        <strong>$<span th:text="${#numbers.formatDecimal(order.totalAmount, 1, 2)}">0.00</span></strong>
+                                    </td>
+                                    <td>
+                                        <span th:if="${order.status == 'PENDING'}" class="badge bg-warning text-dark">PENDING</span>
+                                        <span th:if="${order.status == 'CONFIRMED'}" class="badge bg-info">CONFIRMED</span>
+                                        <span th:if="${order.status == 'PROCESSING'}" class="badge bg-primary">PROCESSING</span>
+                                        <span th:if="${order.status == 'SHIPPED'}" class="badge bg-info">SHIPPED</span>
+                                        <span th:if="${order.status == 'DELIVERED'}" class="badge bg-success">DELIVERED</span>
+                                        <span th:if="${order.status == 'CANCELLED'}" class="badge bg-danger">CANCELLED</span>
+                                        <span th:if="${order.status == 'REFUNDED'}" class="badge bg-secondary">REFUNDED</span>
+                                    </td>
+                                    <td>
+                                        <span th:if="${order.paymentStatus == 'PENDING'}" class="badge bg-warning text-dark">PENDING</span>
+                                        <span th:if="${order.paymentStatus == 'PAID'}" class="badge bg-success">PAID</span>
+                                        <span th:if="${order.paymentStatus == 'FAILED'}" class="badge bg-danger">FAILED</span>
+                                        <span th:if="${order.paymentStatus == 'REFUNDED'}" class="badge bg-secondary">REFUNDED</span>
+                                    </td>
+                                    <td>
+                                        <a th:href="@{/admin/orders/form/{id}(id=${order.id})}"
+                                           class="btn btn-sm btn-info" title="View Details">
+                                            <i class="fa fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <nav th:if="${totalPages > 1}">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/admin/orders(page=${currentPage - 1}, size=15, sortBy=${sortBy}, sortDir=${sortDir}, keyword=${keyword}, status=${status}, paymentStatus=${paymentStatus}, startDate=${startDate})}">
+                                    <i class="fa fa-chevron-left"></i> Previous
+                                </a>
+                            </li>
+
+                            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                                th:if="${i >= (currentPage - 2) && i <= (currentPage + 2)}"
+                                th:classappend="${i == currentPage} ? 'active'">
+                                <a class="page-link"
+                                   th:href="@{/admin/orders(page=${i}, size=15, sortBy=${sortBy}, sortDir=${sortDir}, keyword=${keyword}, status=${status}, paymentStatus=${paymentStatus}, startDate=${startDate})}"
+                                   th:text="${i + 1}">1</a>
+                            </li>
+
+                            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/admin/orders(page=${currentPage + 1}, size=15, sortBy=${sortBy}, sortDir=${sortDir}, keyword=${keyword}, status=${status}, paymentStatus=${paymentStatus}, startDate=${startDate})}">
+                                    Next <i class="fa fa-chevron-right"></i>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="text-center text-muted small">
+                            Showing <strong th:text="${currentPage * 15 + 1}">1</strong> to
+                            <strong th:text="${(currentPage + 1) * 15 > totalItems ? totalItems : (currentPage + 1) * 15}">15</strong> of
+                            <strong th:text="${totalItems}">0</strong> orders
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts Fragment -->
+    <th:block th:replace="~{admin/fragments/scripts :: scripts}"></th:block>
+
+    <!-- Page-specific script for bulk actions -->
+    <script>
+        // Override bulk action URL for orders
+        document.addEventListener('DOMContentLoaded', function() {
+            const bulkActionButtons = document.querySelectorAll('[data-bulk-action]');
+            bulkActionButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const action = this.getAttribute('data-bulk-action');
+                    const checkedIds = Array.from(document.querySelectorAll('.item-checkbox:checked'))
+                        .map(cb => parseInt(cb.value));
+
+                    if (checkedIds.length === 0) {
+                        alert('Please select at least one order');
+                        return;
+                    }
+
+                    const confirmMessage = this.getAttribute('data-confirm') ||
+                        `Are you sure you want to ${action} ${checkedIds.length} order(s)?`;
+
+                    if (confirm(confirmMessage)) {
+                        // For cancel action, ask for reason
+                        let payload = { ids: checkedIds };
+                        if (action === 'cancel') {
+                            const reason = prompt('Please enter cancellation reason (optional):');
+                            payload.reason = reason || 'Bulk cancellation';
+                        }
+
+                        window.adminCommon.showLoading();
+
+                        fetch(`/admin/orders/bulk/${action}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            window.adminCommon.hideLoading();
+                            if (data.success) {
+                                location.reload();
+                            } else {
+                                alert(data.message || 'An error occurred');
+                            }
+                        })
+                        .catch(error => {
+                            window.adminCommon.hideLoading();
+                            alert('An error occurred while processing your request');
+                            console.error('Error:', error);
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

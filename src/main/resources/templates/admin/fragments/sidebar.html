@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- Admin Sidebar Fragment -->
+    <div th:fragment="sidebar(activePage)" class="col-md-2 sidebar">
+        <h4 class="text-center mb-4">FashionFlex Admin</h4>
+        <a href="/admin" th:classappend="${activePage == 'dashboard'} ? 'active'">
+            <i class="fa fa-dashboard"></i> Dashboard
+        </a>
+        <a href="/admin/products" th:classappend="${activePage == 'products'} ? 'active'">
+            <i class="fa fa-shopping-bag"></i> Products
+        </a>
+        <a href="/admin/categories" th:classappend="${activePage == 'categories'} ? 'active'">
+            <i class="fa fa-list"></i> Categories
+        </a>
+        <a href="/admin/brands" th:classappend="${activePage == 'brands'} ? 'active'">
+            <i class="fa fa-tag"></i> Brands
+        </a>
+        <a href="/admin/orders" th:classappend="${activePage == 'orders'} ? 'active'">
+            <i class="fa fa-shopping-cart"></i> Orders
+        </a>
+        <a href="/admin/users" th:classappend="${activePage == 'users'} ? 'active'">
+            <i class="fa fa-users"></i> Users
+        </a>
+        <a href="/admin/coupons" th:classappend="${activePage == 'coupons'} ? 'active'">
+            <i class="fa fa-ticket"></i> Coupons
+        </a>
+        <hr style="border-color: #495057;">
+        <a href="/"><i class="fa fa-home"></i> Back to Site</a>
+        <a href="/logout"><i class="fa fa-sign-out"></i> Logout</a>
+    </div>
+</body>
+</html>

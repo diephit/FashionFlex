@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/head :: head(${brand.id != null ? 'Edit Brand' : 'Add Brand'})}"></head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar Fragment -->
+            <div th:replace="~{admin/fragments/sidebar :: sidebar('brands')}"></div>
+
+            <div class="col-md-10 main-content">
+                <h1 th:text="${brand.id != null} ? 'Edit Brand' : 'Add New Brand'">Brand Form</h1>
+
+                <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+                <div class="form-card">
+                    <form method="post" th:action="@{/admin/brands/save}" th:object="${brand}" enctype="multipart/form-data">
+                        <input type="hidden" th:field="*{id}">
+
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Brand Name *</label>
+                            <input type="text" class="form-control" id="name" th:field="*{name}" required maxlength="100">
+                            <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" rows="3" th:field="*{description}" maxlength="500"></textarea>
+                            <div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="logoFile" class="form-label">Brand Logo</label>
+                            <input type="file" class="form-control" id="logoFile" name="logoFile" accept="image/*" onchange="previewLogo(event)">
+                            <small class="form-text text-muted">Accepted formats: JPG, PNG, GIF. Max size: 5MB</small>
+
+                            <!-- Current logo preview -->
+                            <div th:if="${brand.logoUrl != null and !brand.logoUrl.isEmpty()}" class="mt-3">
+                                <label>Current Logo:</label><br>
+                                <img th:src="${brand.logoUrl}" alt="Current Logo" class="logo-preview" id="currentLogo">
+                            </div>
+
+                            <!-- New logo preview -->
+                            <div id="newLogoPreview" style="display: none;" class="mt-3">
+                                <label>New Logo Preview:</label><br>
+                                <img id="logoPreview" class="logo-preview" alt="Logo Preview">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="active" th:field="*{active}">
+                                <label class="form-check-label" for="active">Active</label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-save"></i> Save
+                        </button>
+                        <a href="/admin/brands" class="btn btn-secondary">
+                            <i class="fa fa-times"></i> Cancel
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts Fragment -->
+    <th:block th:replace="~{admin/fragments/scripts :: scripts}"></th:block>
+
+    <!-- Page-specific script for logo preview -->
+    <script>
+        function previewLogo(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('logoPreview');
+                    preview.src = e.target.result;
+                    document.getElementById('newLogoPreview').style.display = 'block';
+
+                    // Hide current logo if exists
+                    const currentLogo = document.getElementById('currentLogo');
+                    if (currentLogo) {
+                        currentLogo.style.display = 'none';
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+</body>
+</html>

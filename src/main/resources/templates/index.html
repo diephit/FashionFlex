@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Home')}">
+</head>
+<body class="animsition" th:attr="data-authenticated=${isAuthenticated != null ? isAuthenticated : false}">
+
+<!-- Header -->
+<div th:replace="~{fragments/header :: header('home')}"></div>
+
+<!-- Cart Sidebar -->
+<div th:replace="~{fragments/header :: cart}"></div>
+
+<!-- Slider -->
+<section class="section-slide">
+	<div class="wrap-slick1">
+		<div class="slick1">
+			<div class="item-slick1" style="background-image: url(images/slide-01.jpg);">
+				<div class="container h-full">
+					<div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
+						<div class="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay="0">
+							<span class="ltext-101 cl2 respon2">
+								Women Collection 2025
+							</span>
+						</div>
+
+						<div class="layer-slick1 animated visible-false" data-appear="fadeInUp" data-delay="800">
+							<h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">
+								NEW SEASON
+							</h2>
+						</div>
+
+						<div class="layer-slick1 animated visible-false" data-appear="zoomIn" data-delay="1600">
+							<a th:href="@{/product}" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+								Shop Now
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="item-slick1" style="background-image: url(images/slide-02.jpg);">
+				<div class="container h-full">
+					<div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
+						<div class="layer-slick1 animated visible-false" data-appear="rollIn" data-delay="0">
+							<span class="ltext-101 cl2 respon2">
+								Men New-Season
+							</span>
+						</div>
+
+						<div class="layer-slick1 animated visible-false" data-appear="lightSpeedIn" data-delay="800">
+							<h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">
+								Jackets & Coats
+							</h2>
+						</div>
+
+						<div class="layer-slick1 animated visible-false" data-appear="slideInUp" data-delay="1600">
+							<a th:href="@{/product}" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+								Shop Now
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="item-slick1" style="background-image: url(images/slide-03.jpg);">
+				<div class="container h-full">
+					<div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
+						<div class="layer-slick1 animated visible-false" data-appear="rotateInDownLeft" data-delay="0">
+							<span class="ltext-101 cl2 respon2">
+								Men Collection 2025
+							</span>
+						</div>
+
+						<div class="layer-slick1 animated visible-false" data-appear="rotateInUpRight" data-delay="800">
+							<h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">
+								New arrivals
+							</h2>
+						</div>
+
+						<div class="layer-slick1 animated visible-false" data-appear="rotateIn" data-delay="1600">
+							<a th:href="@{/product}" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+								Shop Now
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Banner -->
+<div class="sec-banner bg0 p-t-80 p-b-50">
+	<div class="container">
+		<div class="row" th:if="${categories != null and !categories.isEmpty()}">
+			<!-- Loop through the first 3 active categories -->
+			<div th:each="cat, iterStat : ${categories}" th:if="${iterStat.count <= 3}" class="col-md-6 col-xl-4 p-b-30 m-lr-auto">
+				<div class="block1 wrap-pic-w">
+					<img th:src="@{'/images/banner-0' + ${iterStat.count} + '.jpg'}" th:alt="${'IMG-BANNER-' + cat.name}">
+					<a th:href="@{/product(category=${cat.name})}" class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
+						<div class="block1-txt-child1 flex-col-l">
+							<span class="block1-name ltext-102 trans-04 p-b-8" th:text="${cat.name}">
+								Category Name
+							</span>
+							<span class="block1-info stext-102 trans-04">
+								New Collection
+							</span>
+						</div>
+						<div class="block1-txt-child2 p-b-4 trans-05">
+							<div class="block1-link stext-101 cl0 trans-09">
+								Shop Now
+							</div>
+						</div>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Product Overview -->
+<section class="bg0 p-t-23 p-b-140">
+	<div class="container">
+		<div class="p-b-10">
+			<h3 class="ltext-103 cl5">
+				Product Overview
+			</h3>
+		</div>
+
+		<!-- Product Grid -->
+		<div class="row isotope-grid" th:if="${products != null and !products.isEmpty()}">
+			<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item"
+			     th:each="product : ${products}"
+			     th:classappend="${product.category != null} ? ${product.category.name.toLowerCase()} : ''">
+				<!-- Block2 -->
+				<div class="block2">
+					<div class="block2-pic hov-img0">
+						<img th:src="@{${product.imageUrl != null ? product.imageUrl : '/images/product-01.jpg'}}"
+						     th:alt="${product.name}">
+
+						<button th:data-product-id="${product.id}"
+						   class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
+							Quick View
+						</button>
+					</div>
+
+					<div class="block2-txt flex-w flex-t p-t-14">
+						<div class="block2-txt-child1 flex-col-l">
+							<a th:href="@{/product/{id}(id=${product.id})}"
+							   class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6"
+							   th:text="${product.name}">
+								Product Name
+							</a>
+
+							<span class="stext-105 cl3">
+								<span th:if="${product.hasDiscount()}" class="text-decoration-line-through text-muted" th:text="'$' + ${product.price}">$100</span>
+								<span th:text="'$' + ${product.effectivePrice}">$80</span>
+								<span th:if="${product.hasDiscount()}" class="badge bg-danger ms-2" th:text="'-' + ${product.discountPercentage} + '%'">-20%</span>
+							</span>
+						</div>
+
+						<div class="block2-txt-child2 flex-r p-t-3">
+							<button type="button"
+							        th:data-product-id="${product.id}"
+							        th:onclick="'toggleWishlist(' + ${product.id} + ', this)'"
+							        class="wishlist-btn btn-addwish-b2 dis-block pos-relative"
+							        style="background: none; border: none; padding: 0; cursor: pointer;"
+							        title="Add to wishlist">
+								<i class="fa fa-heart text-muted trans-04"
+								   style="font-size: 20px;"></i>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Empty state -->
+		<div th:if="${products == null or products.isEmpty()}" class="text-center p-t-50 p-b-50">
+			<p class="stext-107 cl6">No products available at the moment.</p>
+		</div>
+
+		<!-- Load more -->
+		<div class="flex-c-m flex-w w-full p-t-45" th:if="${products != null and products.size() >= 16}">
+			<a th:href="@{/product}" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04">
+				Load More
+			</a>
+		</div>
+	</div>
+</section>
+
+<!-- Modal Quick View -->
+<div class="wrap-modal1 js-modal1 p-t-60 p-b-20">
+	<div class="overlay-modal1 js-hide-modal1"></div>
+
+	<div class="container">
+		<div class="bg0 p-t-60 p-b-30 p-lr-15-lg how-pos3-parent">
+			<button class="how-pos3 hov3 trans-04 js-hide-modal1">
+				<img src="/images/icons/icon-close.png" alt="CLOSE">
+			</button>
+
+			<div class="quick-view-content">
+				<!-- Content will be loaded via AJAX -->
+				<div class="text-center p-t-50 p-b-50">
+					<div class="loader05"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Footer -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<!-- Back to top -->
+<div th:replace="~{fragments/footer :: back-to-top}"></div>
+
+<!-- Scripts -->
+<div th:replace="~{fragments/header :: scripts}"></div>
+
+<!-- Custom CSS for better thumbnail display -->
+<style>
+	/* Improve thumbnail gallery display */
+	.wrap-slick3-dots {
+		overflow-y: auto;
+		max-height: 500px;
+		padding-right: 10px;
+	}
+
+	.wrap-slick3-dots::-webkit-scrollbar {
+		width: 6px;
+	}
+
+	.wrap-slick3-dots::-webkit-scrollbar-track {
+		background: #f1f1f1;
+		border-radius: 10px;
+	}
+
+	.wrap-slick3-dots::-webkit-scrollbar-thumb {
+		background: #888;
+		border-radius: 10px;
+	}
+
+	.wrap-slick3-dots::-webkit-scrollbar-thumb:hover {
+		background: #555;
+	}
+
+	.slick3-dots li {
+		margin-bottom: 15px !important;
+		border-radius: 4px;
+		overflow: hidden;
+	}
+
+	.slick3-dots li img {
+		display: block;
+		transition: transform 0.3s ease;
+	}
+
+	.slick3-dots li:hover img {
+		transform: scale(1.05);
+	}
+
+	.slick3-dot-overlay {
+		border-radius: 4px;
+	}
+
+	/* Better spacing in modal */
+	.js-modal1 .wrap-slick3 {
+		margin-bottom: 20px;
+	}
+</style>
+
+<!-- Quick View Script -->
+<script>
+	$(document).ready(function(){
+		// Add to Cart function for quick view modal
+		function addToCartFromModal(productId, quantity, size, color) {
+			console.log('addToCartFromModal called:', {productId, quantity, size, color});
+
+			// Check if user is authenticated
+			const isAuthenticated = $('body').data('authenticated');
+			if (!isAuthenticated) {
+				swal("Login Required", "Please login to add items to cart", "warning").then(() => {
+					window.location.href = '/login';
+				});
+				return;
+			}
+
+			// Prepare request data
+			const requestData = {
+				productId: productId,
+				quantity: quantity || 1
+			};
+
+			if (size && size !== 'Choose an option') {
+				requestData.size = size;
+			}
+			if (color && color !== 'Choose an option') {
+				requestData.color = color;
+			}
+
+			console.log('Sending add to cart request:', requestData);
+
+			// Send AJAX request
+			$.ajax({
+				url: '/api/cart/add',
+				method: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify(requestData),
+				success: function(response) {
+					console.log('Add to cart response:', response);
+					if (response.success) {
+						swal("Success!", "Product added to cart successfully", "success");
+						// Update cart count in header
+						if ($('.js-show-cart').length) {
+							$('.js-show-cart').attr('data-notify', response.cart.totalItems || 0);
+						}
+						// Close modal
+						$('.js-modal1').removeClass('show-modal1');
+					} else {
+						swal("Error", response.message || "Failed to add product to cart", "error");
+					}
+				},
+				error: function(xhr) {
+					console.error('Add to cart error:', xhr);
+					const response = xhr.responseJSON;
+					swal("Error", response?.message || "An error occurred while adding to cart", "error");
+				}
+			});
+		}
+
+		// Add to wishlist function for quick view modal
+		function addToWishlistFromModal(productId) {
+			console.log('addToWishlistFromModal called:', productId);
+
+			// Check if user is authenticated
+			const isAuthenticated = $('body').data('authenticated');
+			if (!isAuthenticated) {
+				swal("Login Required", "Please login to add items to wishlist", "warning").then(() => {
+					window.location.href = '/login';
+				});
+				return;
+			}
+
+			// Call the global toggleWishlist function if available
+			if (typeof toggleWishlist === 'function') {
+				const wishlistBtn = $('.js-modal1 .js-addwish-detail');
+				toggleWishlist(productId, wishlistBtn[0]);
+			} else {
+				// Fallback: direct AJAX call
+				$.ajax({
+					url: '/user/api/wishlist/add',
+					method: 'POST',
+					contentType: 'application/json',
+					data: JSON.stringify({ productId: productId }),
+					success: function(response) {
+						if (response.success) {
+							swal("Success!", "Product added to wishlist", "success");
+							// Update heart icon
+							$('.js-modal1 .js-addwish-detail i').removeClass('zmdi-favorite-outline').addClass('zmdi-favorite');
+						} else {
+							swal("Error", response.message || "Failed to add to wishlist", "error");
+						}
+					},
+					error: function(xhr) {
+						const response = xhr.responseJSON;
+						swal("Error", response?.message || "An error occurred", "error");
+					}
+				});
+			}
+		}
+
+		// Use event delegation for quantity buttons (works for dynamically loaded content)
+		$(document).on('click', '.js-modal1 .btn-num-product-down', function(e){
+			e.preventDefault();
+			console.log('Decrease button clicked');
+			var $input = $(this).next('.num-product');
+			var numProduct = parseInt($input.val()) || 1;
+			if(numProduct > 1) {
+				$input.val(numProduct - 1);
+				console.log('New quantity:', numProduct - 1);
+			}
+		});
+
+		$(document).on('click', '.js-modal1 .btn-num-product-up', function(e){
+			e.preventDefault();
+			console.log('Increase button clicked');
+			var $input = $(this).prev('.num-product');
+			var numProduct = parseInt($input.val()) || 1;
+			var maxStock = parseInt($input.attr('max')) || 999;
+			if(numProduct < maxStock) {
+				$input.val(numProduct + 1);
+				console.log('New quantity:', numProduct + 1);
+			} else {
+				console.log('Max stock reached:', maxStock);
+			}
+		});
+
+		// Use event delegation for Add to Cart button
+		$(document).on('click', '.js-modal1 .js-addcart-detail', function(e){
+			e.preventDefault();
+			console.log('Add to cart button clicked');
+
+			var productId = $(this).data('product-id');
+			var quantity = parseInt($('.js-modal1 input[name="num-product"]').val()) || 1;
+			var size = $('.js-modal1 select[name="size"]').val();
+			var color = $('.js-modal1 select[name="color"]').val();
+
+			console.log('Product details:', {productId, quantity, size, color});
+			addToCartFromModal(productId, quantity, size, color);
+		});
+
+		// Use event delegation for Add to Wishlist button
+		$(document).on('click', '.js-modal1 .js-addwish-detail', function(e){
+			e.preventDefault();
+			console.log('Add to wishlist button clicked');
+
+			// Get product ID from the add to cart button (since wishlist button doesn't have it)
+			var productId = $('.js-modal1 .js-addcart-detail').data('product-id');
+			console.log('Product ID:', productId);
+
+			addToWishlistFromModal(productId);
+		});
+
+		// Quick View functionality
+		$('.js-show-modal1').on('click', function(e){
+			e.preventDefault();
+			var productId = $(this).data('product-id');
+			console.log('Opening quick view for product:', productId);
+
+			// Show modal
+			$('.js-modal1').addClass('show-modal1');
+
+			// Load product details via AJAX
+			$.ajax({
+				url: '/product/quick-view/' + productId,
+				method: 'GET',
+				success: function(data) {
+					console.log('Quick view content loaded');
+					$('.quick-view-content').html(data);
+
+					// Wait a bit for DOM to be ready
+					setTimeout(function() {
+						// Re-initialize slick carousel
+						if($('.js-modal1 .slick3').length > 0) {
+							$('.js-modal1 .slick3').not('.slick-initialized').slick({
+								slidesToShow: 1,
+								slidesToScroll: 1,
+								fade: true,
+								infinite: true,
+								autoplay: false,
+								autoplaySpeed: 6000,
+								arrows: true,
+								appendArrows: $('.js-modal1 .wrap-slick3-arrows'),
+								prevArrow:'<button class="arrow-slick3 prev-slick3"><i class="fa fa-angle-left" aria-hidden="true"></i></button>',
+								nextArrow:'<button class="arrow-slick3 next-slick3"><i class="fa fa-angle-right" aria-hidden="true"></i></button>',
+								dots: true,
+								appendDots: $('.js-modal1 .wrap-slick3-dots'),
+								dotsClass:'slick3-dots',
+								customPaging: function(slick, index) {
+									var portrait = $(slick.$slides[index]).data('thumb');
+									return '<img src=" ' + portrait + ' "/><div class="slick3-dot-overlay"></div>';
+								},
+							});
+						}
+
+						// Re-initialize select2
+						$(".js-modal1 .js-select2").each(function(){
+							if (!$(this).hasClass('select2-hidden-accessible')) {
+								$(this).select2({
+									minimumResultsForSearch: 20,
+									dropdownParent: $(this).next('.dropDownSelect2')
+								});
+							}
+						});
+
+						// Re-initialize magnific popup
+						$('.js-modal1 .gallery-lb').magnificPopup({
+							delegate: 'a',
+							type: 'image',
+							gallery: {
+								enabled:true
+							},
+							mainClass: 'mfp-fade'
+						});
+
+						console.log('Quick view initialized successfully');
+					}, 100);
+				},
+				error: function() {
+					console.error('Error loading quick view');
+					$('.quick-view-content').html('<div class="text-center p-t-50 p-b-50"><p class="stext-102 cl6">Error loading product details. Please try again.</p></div>');
+				}
+			});
+		});
+	});
+</script>
+
+<!-- Wishlist JavaScript -->
+<script th:src="@{/js/wishlist.js}"></script>
+
+</body>
+</html>
