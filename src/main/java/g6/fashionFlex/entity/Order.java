@@ -149,10 +149,6 @@ public class Order {
     // Payment method enum
     public enum PaymentMethod {
         CASH_ON_DELIVERY,
-        CREDIT_CARD,
-        DEBIT_CARD,
-        PAYPAL,
-        BANK_TRANSFER,
         VNPAY
     }
 

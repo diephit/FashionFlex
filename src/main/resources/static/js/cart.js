@@ -36,6 +36,8 @@ function removeItem(cartItemId) {
         success: function(response) {
             if (response.success) {
                 showMessage('Item removed from cart', 'success');
+                // Update cart count in header
+                updateCartCount();
                 // Reload page to reflect changes
                 setTimeout(() => location.reload(), 800);
             } else {
@@ -101,6 +103,8 @@ function updateCartItemQuantity(itemId, quantity) {
             if (response.success) {
                 // Update UI
                 refreshCartDisplay(response.cart);
+                // Update cart count in header
+                updateCartCount();
                 showMessage('Cart updated successfully', 'success');
             } else {
                 showMessage(response.message || 'Failed to update cart', 'error');
@@ -395,9 +399,13 @@ function updateCartDisplay(cart) {
     const finalTotal = cart.finalTotal || cart.total || 0;
     $('#finalTotal').text(finalTotal.toFixed(2));
 
-    // Update cart count in header
+    // Update cart count in header immediately with latest data
     if ($('.js-show-cart').length) {
         $('.js-show-cart').attr('data-notify', cart.totalItems || 0);
+    }
+    // Also update mobile cart icon
+    if ($('.header-cart-item').length) {
+        $('.header-cart-item').attr('data-notify', cart.totalItems || 0);
     }
 
     // Update checkout button state
@@ -576,17 +584,111 @@ function updateCartCount() {
         url: '/api/cart/count',
         method: 'GET',
         success: function(response) {
-            if (response.success && $('.js-show-cart').length) {
-                $('.js-show-cart').attr('data-notify', response.count);
+            if (response.success) {
+                // Update desktop cart icon
+                if ($('.js-show-cart').length) {
+                    $('.js-show-cart').attr('data-notify', response.count);
+                }
+                // Update mobile cart icon
+                if ($('.header-cart-item').length) {
+                    $('.header-cart-item').attr('data-notify', response.count);
+                }
             }
         }
     });
 }
 
 /**
+ * Add to cart function (for use across all pages)
+ */
+// Main addToCart function - also assign to window for global access
+function addToCartFunction(productId, quantity, size, color) {
+    console.log('addToCart called:', {productId, quantity, size, color});
+
+    // Check if swal function is available
+    if (typeof swal === 'undefined') {
+        alert('Please login to add items to cart');
+        if (typeof window !== 'undefined') {
+            window.location.href = '/login';
+        }
+        return;
+    }
+
+    // Check if user is authenticated
+    const isAuthenticated = $('body').data('authenticated');
+    if (!isAuthenticated) {
+        swal("Login Required", "Please login to add items to cart", "warning").then(() => {
+            window.location.href = '/login';
+        });
+        return;
+    }
+
+    // Prepare request data
+    const requestData = {
+        productId: productId,
+        quantity: quantity || 1
+    };
+
+    if (size && size !== 'Choose an option') {
+        requestData.size = size;
+    }
+    if (color && color !== 'Choose an option') {
+        requestData.color = color;
+    }
+
+    console.log('Sending add to cart request:', requestData);
+
+    // Send AJAX request
+    $.ajax({
+        url: '/api/cart/add',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(requestData),
+        success: function(response) {
+            console.log('Add to cart response:', response);
+            if (response.success) {
+                if (typeof swal !== 'undefined') {
+                    swal("Success!", "Product added to cart successfully", "success");
+                } else {
+                    alert("Product added to cart successfully");
+                }
+                // Update cart count immediately with latest data from response
+                updateCartDisplay(response.cart);
+                // Also update mobile cart icon
+                if ($('.header-cart-item').length) {
+                    $('.header-cart-item').attr('data-notify', response.cart.totalItems || 0);
+                }
+            } else {
+                if (typeof swal !== 'undefined') {
+                    swal("Error", response.message || "Failed to add product to cart", "error");
+                } else {
+                    alert("Error: " + (response.message || "Failed to add product to cart"));
+                }
+            }
+        },
+        error: function(xhr) {
+            console.error('Add to cart error:', xhr);
+            const response = xhr.responseJSON;
+            const errorMessage = response?.message || "An error occurred while adding to cart";
+            if (typeof swal !== 'undefined') {
+                swal("Error", errorMessage, "error");
+            } else {
+                alert("Error: " + errorMessage);
+            }
+        }
+    });
+}
+
+// Assign to both window and function scope for maximum compatibility
+window.addToCart = addToCartFunction;
+var addToCart = addToCartFunction;
+
+/**
  * Initialize on page load
  */
 $(document).ready(function() {
+    console.log('Cart.js loaded successfully - addToCart function available:', typeof addToCart !== 'undefined');
+
     // Update cart count on page load
     updateCartCount();
 

@@ -274,59 +274,19 @@
 <script>
 	$(document).ready(function(){
 		// Add to Cart function for quick view modal
+		// Add to Cart function for quick view modal - now uses global function from cart.js
 		function addToCartFromModal(productId, quantity, size, color) {
-			console.log('addToCartFromModal called:', {productId, quantity, size, color});
-
-			// Check if user is authenticated
-			const isAuthenticated = $('body').data('authenticated');
-			if (!isAuthenticated) {
-				swal("Login Required", "Please login to add items to cart", "warning").then(() => {
-					window.location.href = '/login';
-				});
-				return;
+			// Call the global addToCart function from cart.js
+			if (typeof addToCart === 'function') {
+				addToCart(productId, quantity, size, color);
+				// Close modal after successful call
+				setTimeout(() => {
+					$('.js-modal1').removeClass('show-modal1');
+				}, 1000);
+			} else {
+				console.error('addToCart function not found');
+				swal("Error", "Add to cart functionality not available", "error");
 			}
-
-			// Prepare request data
-			const requestData = {
-				productId: productId,
-				quantity: quantity || 1
-			};
-
-			if (size && size !== 'Choose an option') {
-				requestData.size = size;
-			}
-			if (color && color !== 'Choose an option') {
-				requestData.color = color;
-			}
-
-			console.log('Sending add to cart request:', requestData);
-
-			// Send AJAX request
-			$.ajax({
-				url: '/api/cart/add',
-				method: 'POST',
-				contentType: 'application/json',
-				data: JSON.stringify(requestData),
-				success: function(response) {
-					console.log('Add to cart response:', response);
-					if (response.success) {
-						swal("Success!", "Product added to cart successfully", "success");
-						// Update cart count in header
-						if ($('.js-show-cart').length) {
-							$('.js-show-cart').attr('data-notify', response.cart.totalItems || 0);
-						}
-						// Close modal
-						$('.js-modal1').removeClass('show-modal1');
-					} else {
-						swal("Error", response.message || "Failed to add product to cart", "error");
-					}
-				},
-				error: function(xhr) {
-					console.error('Add to cart error:', xhr);
-					const response = xhr.responseJSON;
-					swal("Error", response?.message || "An error occurred while adding to cart", "error");
-				}
-			});
 		}
 
 		// Add to wishlist function for quick view modal

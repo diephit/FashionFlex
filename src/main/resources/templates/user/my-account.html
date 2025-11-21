@@ -29,199 +29,233 @@
 	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
 	<link rel="stylesheet" type="text/css" th:href="@{/assets/css/pages/user-pages.css}">
 	<style>
-		/* Professional White-Black Profile Card */
+		/* Modern Profile Card Design - Compact Version */
 		.profile-card {
-			background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 50%, #e9ecef 100%);
-			border: 1px solid rgba(0,0,0,0.08);
-			box-shadow:
-				0 20px 60px rgba(0,0,0,0.08),
-				0 8px 24px rgba(0,0,0,0.04),
-				inset 0 1px 0 rgba(255,255,255,0.9);
-			border-radius: 24px;
-			padding: 50px 40px;
+			background: #ffffff;
+			border: 1px solid #e2e8f0;
+			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+			border-radius: 16px;
+			padding: 30px 25px;
 			text-align: center;
 			position: relative;
+			margin-bottom: 30px;
+			transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 			overflow: hidden;
-			margin-bottom: 40px;
-			transition: transform 0.3s ease, box-shadow 0.3s ease;
 		}
 
 		.profile-card:hover {
-			transform: translateY(-2px);
-			box-shadow:
-				0 25px 70px rgba(0,0,0,0.12),
-				0 10px 30px rgba(0,0,0,0.06),
-				inset 0 1px 0 rgba(255,255,255,0.9);
+			transform: translateY(-6px);
+			box-shadow: 0 16px 20px -5px rgba(0, 0, 0, 0.1), 0 8px 8px -5px rgba(0, 0, 0, 0.04);
 		}
 
-		/* Elegant Header Pattern */
+		/* Modern Gradient Top Border */
 		.profile-card::before {
 			content: '';
 			position: absolute;
 			top: 0;
 			left: 0;
 			right: 0;
-			height: 140px;
-			background:
-				linear-gradient(135deg, #2c3e50 0%, #34495e 25%, #2c3e50 50%, #1a252f 100%),
-				repeating-linear-gradient(
-					45deg,
-					transparent,
-					transparent 2px,
-					rgba(255,255,255,0.03) 2px,
-					rgba(255,255,255,0.03) 4px
-				);
-			z-index: 0;
+			height: 4px;
+			background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+			border-radius: 16px 16px 0 0;
 		}
 
-		/* Decorative overlay */
-		.profile-card::after {
-			content: '';
-			position: absolute;
-			top: 0;
-			right: -50%;
-			width: 200%;
-			height: 140px;
-			background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.05) 50%, transparent 70%);
-			z-index: 1;
+		/* Avatar Container */
+		.profile-avatar-container {
+			position: relative;
+			display: inline-block;
+			margin-bottom: 18px;
 		}
 
 		.profile-avatar {
-			width: 110px;
-			height: 110px;
+			width: 95px;
+			height: 95px;
 			border-radius: 50%;
-			border: 5px solid rgba(255,255,255,0.95);
-			box-shadow:
-				0 8px 32px rgba(0,0,0,0.12),
-				0 2px 8px rgba(0,0,0,0.08),
-				inset 0 1px 0 rgba(255,255,255,0.5);
-			margin-bottom: 25px;
-			position: relative;
-			z-index: 3;
-			transition: transform 0.3s ease;
+			border: 4px solid #ffffff;
+			box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+			transition: all 0.3s ease;
+			object-fit: cover;
 		}
 
 		.profile-avatar:hover {
 			transform: scale(1.05);
+			box-shadow: 0 16px 20px -5px rgba(0, 0, 0, 0.15), 0 8px 8px -5px rgba(0, 0, 0, 0.04);
+		}
+
+		/* Online Status Indicator */
+		.profile-avatar-container::after {
+			content: '';
+			position: absolute;
+			bottom: 6px;
+			right: 6px;
+			width: 20px;
+			height: 20px;
+			background: #10b981;
+			border: 3px solid #ffffff;
+			border-radius: 50%;
+			box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
 		}
 
 		.profile-info {
-			position: relative;
-			z-index: 2;
+			margin-bottom: 24px;
 		}
 
 		.profile-info h3 {
-			color: #1a1a1a;
-			font-size: 28px;
-			font-weight: 800;
-			margin-bottom: 8px;
-			letter-spacing: -0.5px;
-			background: linear-gradient(135deg, #1a1a1a 0%, #2d3436 50%, #1a1a1a 100%);
-			-webkit-background-clip: text;
-			-webkit-text-fill-color: transparent;
-			background-clip: text;
+			color: #1f2937;
+			font-size: 22px;
+			font-weight: 700;
+			margin-bottom: 6px;
+			letter-spacing: -0.3px;
+			line-height: 1.2;
 		}
 
 		.profile-info p {
-			color: #6c757d;
-			font-size: 15px;
-			margin-bottom: 30px;
-			font-weight: 500;
-			letter-spacing: 0.2px;
+			color: #6b7280;
+			font-size: 14px;
+			margin-bottom: 0;
+			font-weight: 400;
+			line-height: 1.5;
 		}
 
-		/* Professional Stats Container */
+		/* Modern Stats Grid */
 		.profile-stats {
-			display: flex;
-			justify-content: space-around;
-			background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,249,250,0.8) 100%);
-			border: 1px solid rgba(0,0,0,0.06);
-			border-radius: 20px;
-			padding: 28px 20px;
-			margin-top: 30px;
-			box-shadow:
-				0 8px 24px rgba(0,0,0,0.04),
-				inset 0 1px 0 rgba(255,255,255,0.8);
-			position: relative;
-			overflow: hidden;
-		}
-
-		/* Subtle stats background pattern */
-		.profile-stats::before {
-			content: '';
-			position: absolute;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			background: repeating-linear-gradient(
-				90deg,
-				transparent,
-				transparent 20px,
-				rgba(0,0,0,0.01) 20px,
-				rgba(0,0,0,0.01) 21px
-			);
-			z-index: 0;
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 16px;
+			padding: 24px 0 0 0;
+			border-top: 1px solid #f3f4f6;
 		}
 
 		.profile-stat-item {
 			text-align: center;
-			position: relative;
-			z-index: 1;
-			padding: 0 10px;
+			padding: 16px 12px;
+			border-radius: 12px;
+			background: #f9fafb;
+			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+			cursor: pointer;
+		}
+
+		.profile-stat-item:hover {
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			transform: translateY(-3px);
+			box-shadow: 0 8px 16px -5px rgba(102, 126, 234, 0.35);
+		}
+
+		.profile-stat-item:hover .profile-stat-value,
+		.profile-stat-item:hover .profile-stat-label {
+			color: #ffffff;
 		}
 
 		.profile-stat-value {
 			display: block;
 			font-size: 32px;
-			font-weight: 900;
-			color: #1a1a1a;
-			margin-bottom: 8px;
+			font-weight: 800;
+			color: #667eea;
+			margin-bottom: 6px;
 			line-height: 1;
-			background: linear-gradient(135deg, #1a1a1a 0%, #2d3436 100%);
-			-webkit-background-clip: text;
-			-webkit-text-fill-color: transparent;
-			background-clip: text;
+			transition: all 0.3s ease;
 		}
 
 		.profile-stat-label {
 			display: block;
-			font-size: 11px;
-			color: #6c757d;
-			font-weight: 700;
+			font-size: 12px;
+			color: #6b7280;
+			font-weight: 600;
 			text-transform: uppercase;
-			letter-spacing: 1.2px;
-			margin-bottom: 0;
+			letter-spacing: 0.4px;
+			transition: all 0.3s ease;
 		}
 
-		/* Enhanced Responsive Design */
+		/* Responsive Design for Compact Card */
+		@media (max-width: 1024px) {
+			.profile-card {
+				padding: 28px 22px;
+			}
+
+			.profile-avatar {
+				width: 85px;
+				height: 85px;
+			}
+
+			.profile-stat-value {
+				font-size: 30px;
+			}
+		}
+
 		@media (max-width: 768px) {
 			.profile-card {
-				padding: 40px 25px;
-				margin-bottom: 30px;
+				padding: 25px 20px;
+			}
+
+			.profile-avatar {
+				width: 80px;
+				height: 80px;
 			}
 
 			.profile-info h3 {
-				font-size: 24px;
+				font-size: 20px;
 			}
 
 			.profile-info p {
-				font-size: 14px;
+				font-size: 13px;
 			}
 
 			.profile-stats {
-				flex-wrap: wrap;
-				gap: 20px;
-				padding: 24px 15px;
+				grid-template-columns: repeat(3, 1fr);
+				gap: 14px;
+				padding: 20px 0 0 0;
 			}
 
 			.profile-stat-item {
-				flex: 1;
-				min-width: 80px;
+				padding: 14px 10px;
 			}
 
 			.profile-stat-value {
 				font-size: 28px;
+			}
+
+			.profile-stat-label {
+				font-size: 11px;
+			}
+		}
+
+		@media (max-width: 640px) {
+			.profile-card {
+				padding: 22px 18px;
+			}
+
+			.profile-avatar {
+				width: 75px;
+				height: 75px;
+			}
+
+			.profile-avatar-container::after {
+				width: 18px;
+				height: 18px;
+				bottom: 5px;
+				right: 5px;
+			}
+
+			.profile-info h3 {
+				font-size: 18px;
+			}
+
+			.profile-info p {
+				font-size: 12px;
+			}
+
+			.profile-stats {
+				grid-template-columns: repeat(3, 1fr);
+				gap: 12px;
+				padding: 18px 0 0 0;
+			}
+
+			.profile-stat-item {
+				padding: 12px 8px;
+			}
+
+			.profile-stat-value {
+				font-size: 26px;
 			}
 
 			.profile-stat-label {
@@ -230,22 +264,49 @@
 		}
 
 		@media (max-width: 480px) {
+			.profile-card {
+				padding: 18px 14px;
+			}
+
 			.profile-avatar {
-				width: 90px;
-				height: 90px;
+				width: 70px;
+				height: 70px;
+			}
+
+			.profile-avatar-container::after {
+				width: 16px;
+				height: 16px;
+			}
+
+			.profile-info h3 {
+				font-size: 18px;
+			}
+
+			.profile-info p {
+				font-size: 12px;
 			}
 
 			.profile-stats {
-				gap: 15px;
-				padding: 20px 12px;
+				grid-template-columns: 1fr;
+				gap: 10px;
+				padding: 16px 0 0 0;
+			}
+
+			.profile-stat-item {
+				padding: 12px 10px;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				text-align: left;
 			}
 
 			.profile-stat-value {
 				font-size: 24px;
+				margin-bottom: 0;
 			}
 
 			.profile-stat-label {
-				letter-spacing: 0.8px;
+				font-size: 12px;
 			}
 		}
 	</style>
@@ -272,8 +333,10 @@
 				<div class="col-md-9">
 					<!-- Profile Card -->
 					<div class="profile-card">
-						<img th:src="${user != null && user.profileImageUrl != null && !user.profileImageUrl.isEmpty() ? user.profileImageUrl : 'https://ui-avatars.com/api/?name=' + (user != null ? user.fullName : 'User') + '&size=100&background=667eea&color=fff'}"
-						     alt="Profile" class="profile-avatar">
+						<div class="profile-avatar-container">
+							<img th:src="${user != null && user.profileImageUrl != null && !user.profileImageUrl.isEmpty() ? user.profileImageUrl : 'https://ui-avatars.com/api/?name=' + (user != null ? user.fullName : 'User') + '&size=100&background=667eea&color=fff'}"
+							     alt="Profile" class="profile-avatar">
+						</div>
 						<div class="profile-info">
 							<h3 th:text="${user != null ? user.fullName : 'John Doe'}">John Doe</h3>
 							<p th:text="${user != null ? user.email : 'john.doe@example.com'}">john.doe@example.com</p>

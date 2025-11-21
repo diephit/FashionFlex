@@ -101,7 +101,7 @@ public class CheckoutController {
             model.addAttribute("paymentMethods", Order.PaymentMethod.values());
 
             log.info("Rendering checkout page");
-            return "checkout";
+            return "checkout/checkout";
 
         } catch (Exception e) {
             log.error("Error loading checkout page", e);
