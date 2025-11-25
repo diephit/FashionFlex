@@ -276,6 +276,9 @@
 			</ul>
 		</div>
 
+		<!-- Hidden cart count for JavaScript initialization -->
+		<input type="hidden" id="server-cart-count" th:data-count="${cartItemCount != null ? cartItemCount : 0}" />
+
 		<!-- Modal Search -->
 		<div class="modal-search-header flex-c-m trans-04 js-hide-modal-search">
 			<div class="container-search-header">
@@ -322,36 +325,45 @@
 				<div th:if="${headerCart != null && headerCart.totalItems > 0}" class="w-full">
 					<ul class="header-cart-wrapitem w-full">
 						<!-- Display up to 5 most recent cart items -->
-						<li th:each="item : ${headerCart.items}" class="header-cart-item flex-w flex-t m-b-12">
+						<li th:each="item : ${headerCart.items}" class="header-cart-item flex-w flex-t m-b-12" th:data-item-id="${item.id}">
 							<div class="header-cart-item-img">
 								<img th:src="${item.productImageUrl != null && !item.productImageUrl.isEmpty() ? item.productImageUrl : '/images/product-placeholder.jpg'}"
 									th:alt="${item.productName}"
 									onerror="this.onerror=null; this.src='/images/product-placeholder.jpg'">
 							</div>
 
-							<div class="header-cart-item-txt p-t-8">
-								<a th:href="@{/product/{id}(id=${item.productId})}"
-									class="header-cart-item-name m-b-18 hov-cl1 trans-04" th:text="${item.productName}">
-									Product Name
-								</a>
+							<div class="header-cart-item-txt p-t-8 flex-w flex-sb-m w-full">
+								<div class="w-full">
+									<a th:href="@{/product/{id}(id=${item.productId})}"
+										class="header-cart-item-name m-b-18 hov-cl1 trans-04" th:text="${item.productName}">
+										Product Name
+									</a>
 
-								<span class="header-cart-item-info">
-									<span th:text="${item.quantity}">1</span> x
-									<span
-										th:if="${item.discountPrice != null && item.discountPrice.compareTo(item.price) < 0}"
-										th:text="'$' + ${#numbers.formatDecimal(item.discountPrice, 1, 2)}">$19.00</span>
-									<span
-										th:unless="${item.discountPrice != null && item.discountPrice.compareTo(item.price) < 0}"
-										th:text="'$' + ${#numbers.formatDecimal(item.price, 1, 2)}">$19.00</span>
-								</span>
+									<span class="header-cart-item-info">
+										<span th:text="${item.quantity}">1</span> x
+										<span
+											th:if="${item.discountPrice != null && item.discountPrice.compareTo(item.price) < 0}"
+											th:text="'$' + ${#numbers.formatDecimal(item.discountPrice, 1, 2)}">$19.00</span>
+										<span
+											th:unless="${item.discountPrice != null && item.discountPrice.compareTo(item.price) < 0}"
+											th:text="'$' + ${#numbers.formatDecimal(item.price, 1, 2)}">$19.00</span>
+									</span>
 
-								<!-- Show size and color if available -->
-								<div th:if="${item.size != null || item.color != null}" class="stext-107 cl6"
-									style="font-size: 12px;">
-									<span th:if="${item.size != null}" th:text="'Size: ' + ${item.size}"></span>
-									<span th:if="${item.size != null && item.color != null}"> | </span>
-									<span th:if="${item.color != null}" th:text="'Color: ' + ${item.color}"></span>
+									<!-- Show size and color if available -->
+									<div th:if="${item.size != null || item.color != null}" class="stext-107 cl6"
+										style="font-size: 12px;">
+										<span th:if="${item.size != null}" th:text="'Size: ' + ${item.size}"></span>
+										<span th:if="${item.size != null && item.color != null}"> | </span>
+										<span th:if="${item.color != null}" th:text="'Color: ' + ${item.color}"></span>
+									</div>
 								</div>
+
+								<!-- Remove item button -->
+								<button class="header-cart-item-remove cl2 hov-cl1 trans-04 p-l-5 p-r-5"
+										th:onclick="'removeHeaderCartItem(' + ${item.id} + ')'"
+										title="Remove item">
+									<i class="zmdi zmdi-close" style="font-size: 16px;"></i>
+								</button>
 							</div>
 						</li>
 					</ul>
@@ -485,6 +497,47 @@
 		<!-- Cart JavaScript - included for all pages to support add to cart functionality -->
 		<script th:src="@{/js/cart.js}"></script>
 	</th:block>
+
+	<!-- Cart Item Remove Button Styles -->
+	<style>
+		.header-cart-item-remove {
+			background: none;
+			border: none;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			padding: 2px;
+			border-radius: 50%;
+			flex-shrink: 0;
+			margin-left: 5px;
+			color: #888;
+			opacity: 0.7;
+		}
+
+		.header-cart-item-remove:hover {
+			background-color: rgba(231, 76, 60, 0.1);
+			color: #e74c3c;
+			transform: scale(1.1);
+			opacity: 1;
+		}
+
+		.header-cart-item-remove:active {
+			transform: scale(0.95);
+		}
+
+		.header-cart-item {
+			position: relative;
+		}
+
+		.header-cart-item:hover .header-cart-item-remove {
+			opacity: 1;
+		}
+
+		/* Loading state */
+		.header-cart-item.loading {
+			opacity: 0.5;
+			pointer-events: none;
+		}
+	</style>
 
 </body>
 

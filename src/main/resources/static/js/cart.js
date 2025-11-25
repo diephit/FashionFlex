@@ -30,23 +30,46 @@ function removeItem(cartItemId) {
         return;
     }
 
+    // Show loading state
+    const itemRow = $(`tr[data-item-id="${cartItemId}"]`);
+    const originalContent = itemRow.html();
+    itemRow.css('opacity', '0.5');
+
     $.ajax({
         url: `/api/cart/remove/${cartItemId}`,
         method: 'DELETE',
         success: function(response) {
             if (response.success) {
                 showMessage('Item removed from cart', 'success');
-                // Update cart count in header
-                updateCartCount();
-                // Reload page to reflect changes
-                setTimeout(() => location.reload(), 800);
+
+                // Update cart display with real-time data
+                updateCartDisplay(response.cart);
+
+                // Remove the row with animation
+                itemRow.fadeOut(400, function() {
+                    $(this).remove();
+
+                    // Check if cart is empty after removal
+                    if (response.cart.totalItems === 0) {
+                        // Reload page to show empty cart message
+                        setTimeout(() => location.reload(), 500);
+                    }
+                });
+
+                // Update cart count in header immediately
+                updateCartCountDisplay(response.cart.totalItems);
+
             } else {
                 showMessage(response.message || 'Failed to remove item', 'error');
+                // Restore original state
+                itemRow.css('opacity', '1');
             }
         },
         error: function(xhr) {
             const response = xhr.responseJSON;
             showMessage(response?.message || 'An error occurred while removing item', 'error');
+            // Restore original state
+            itemRow.css('opacity', '1');
         }
     });
 }
@@ -400,13 +423,30 @@ function updateCartDisplay(cart) {
     $('#finalTotal').text(finalTotal.toFixed(2));
 
     // Update cart count in header immediately with latest data
+    const itemCount = cart.totalItems || 0;
     if ($('.js-show-cart').length) {
-        $('.js-show-cart').attr('data-notify', cart.totalItems || 0);
+        if (itemCount > 0) {
+            $('.js-show-cart').attr('data-notify', itemCount);
+        } else {
+            $('.js-show-cart').removeAttr('data-notify');
+        }
     }
-    // Also update mobile cart icon
+    // Also update mobile cart icon and all other cart icons
     if ($('.header-cart-item').length) {
-        $('.header-cart-item').attr('data-notify', cart.totalItems || 0);
+        if (itemCount > 0) {
+            $('.header-cart-item').attr('data-notify', itemCount);
+        } else {
+            $('.header-cart-item').removeAttr('data-notify');
+        }
     }
+    // Update all cart icons with icon-header-noti class
+    $('.icon-header-noti.js-show-cart').each(function() {
+        if (itemCount > 0) {
+            $(this).attr('data-notify', itemCount);
+        } else {
+            $(this).removeAttr('data-notify');
+        }
+    });
 
     // Update checkout button state
     updateCheckoutButton(cart);
@@ -577,6 +617,45 @@ function showMessage(message, type) {
 }
 
 /**
+ * Initialize cart display from server-side data
+ * This function checks if the server has already provided cart data
+ * and updates the UI accordingly before making any AJAX calls
+ */
+function initializeCartFromServerData() {
+    // Check if cart data is available in the page (via thymeleaf)
+    // This will be available if GlobalControllerAdvice has set the cartItemCount
+    try {
+        // Try to get cart count from a hidden element or data attribute
+        const serverCartCount = $('#server-cart-count').data('count') ||
+                              $('body').data('cart-count') ||
+                              window.cartItemCount;
+
+        if (serverCartCount !== undefined && serverCartCount !== null) {
+            console.log('Using server cart count:', serverCartCount);
+            updateCartCountDisplay(serverCartCount);
+        }
+    } catch (e) {
+        console.log('Could not initialize cart from server data:', e);
+    }
+}
+
+/**
+ * Update cart count display without AJAX call
+ * @param {number} count - The cart item count
+ */
+function updateCartCountDisplay(count) {
+    if (count > 0) {
+        $('.js-show-cart').attr('data-notify', count);
+        $('.header-cart-item').attr('data-notify', count);
+        $('.icon-header-noti.js-show-cart').attr('data-notify', count);
+    } else {
+        $('.js-show-cart').removeAttr('data-notify');
+        $('.header-cart-item').removeAttr('data-notify');
+        $('.icon-header-noti.js-show-cart').removeAttr('data-notify');
+    }
+}
+
+/**
  * Update cart item count in header
  */
 function updateCartCount() {
@@ -585,17 +664,105 @@ function updateCartCount() {
         method: 'GET',
         success: function(response) {
             if (response.success) {
-                // Update desktop cart icon
-                if ($('.js-show-cart').length) {
-                    $('.js-show-cart').attr('data-notify', response.count);
-                }
-                // Update mobile cart icon
-                if ($('.header-cart-item').length) {
-                    $('.header-cart-item').attr('data-notify', response.count);
-                }
+                updateCartCountDisplay(response.count);
             }
+        },
+        error: function() {
+            // If there's an error, default to 0
+            updateCartCountDisplay(0);
         }
     });
+}
+
+/**
+ * Remove item from header cart sidebar
+ */
+function removeHeaderCartItem(cartItemId) {
+    if (!confirm('Are you sure you want to remove this item from your cart?')) {
+        return;
+    }
+
+    // Find the cart item element
+    const cartItem = $(`.header-cart-item[data-item-id="${cartItemId}"]`);
+
+    if (cartItem.length === 0) {
+        console.error('Cart item not found:', cartItemId);
+        return;
+    }
+
+    // Show loading state
+    cartItem.css('opacity', '0.5');
+
+    $.ajax({
+        url: `/api/cart/remove/${cartItemId}`,
+        method: 'DELETE',
+        success: function(response) {
+            if (response.success) {
+                showMessage('Item removed from cart', 'success');
+
+                // Update cart display with real-time data
+                updateCartDisplay(response.cart);
+
+                // Remove the item with animation
+                cartItem.fadeOut(300, function() {
+                    $(this).remove();
+
+                    // Check if cart is now empty and reload to show empty state
+                    if (response.cart.totalItems === 0) {
+                        setTimeout(() => {
+                            // Reload the page to show empty cart state
+                            location.reload();
+                        }, 300);
+                    } else {
+                        // Update cart count in header immediately
+                        updateCartCountDisplay(response.cart.totalItems);
+
+                        // Update cart sidebar content without full reload
+                        updateHeaderCartSidebar(response.cart);
+                    }
+                });
+
+            } else {
+                showMessage(response.message || 'Failed to remove item', 'error');
+                cartItem.css('opacity', '1');
+            }
+        },
+        error: function(xhr) {
+            const response = xhr.responseJSON;
+            showMessage(response?.message || 'An error occurred while removing item', 'error');
+            cartItem.css('opacity', '1');
+        }
+    });
+}
+
+/**
+ * Update header cart sidebar content dynamically
+ */
+function updateHeaderCartSidebar(cart) {
+    // Update the cart data attributes for the current page
+    $('body').attr('data-cart-count', cart.totalItems);
+
+    // Update cart count in all cart icons
+    updateCartCountDisplay(cart.totalItems);
+
+    // Update subtotal in header cart if visible
+    $('.header-cart-total span').each(function() {
+        const $this = $(this);
+        const currentText = $this.text();
+        if (currentText.includes('$')) {
+            $this.text(`$${cart.subtotal ? cart.subtotal.toFixed(2) : '0.00'}`);
+        }
+    });
+
+    // Update "View more items" text if exists
+    if ($('.header-cart').length && cart.totalItems > 5) {
+        $('.header-cart').find('.stext-107 a').each(function() {
+            const $this = $(this);
+            if ($this.text().includes('View all')) {
+                $this.html(`View all <span>${cart.totalItems}</span> items in cart`);
+            }
+        });
+    }
 }
 
 /**
@@ -691,6 +858,9 @@ $(document).ready(function() {
 
     // Update cart count on page load
     updateCartCount();
+
+    // Initialize cart display from server-side data if available
+    initializeCartFromServerData();
 
     // Show shipping/tax sections if they have values on page load
     if ($('#shippingAmount').text() !== '0.00' && $('#shippingAmount').text() !== '') {

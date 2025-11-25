@@ -41,6 +41,7 @@ public class HomeController {
         // Get active categories
         List<CategoryDTO> categories = adminCategoryService.findAllByActiveTrue();
 
+        
         model.addAttribute("featuredProducts", featuredProducts);
         model.addAttribute("products", latestProducts);
         model.addAttribute("categories", categories);
