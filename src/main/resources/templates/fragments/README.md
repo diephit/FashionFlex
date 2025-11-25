@@ -142,7 +142,7 @@ Template cơ bản cho các trang, đã include sẵn tất cả fragments.
 - **Wishlist**: `@{/user/wishlist}`
 - **Order History**: `@{/user/order-history}`
 - **Order Tracking**: `@{/user/order-tracking}`
-- **Address Book**: `@{/user/address-book}`
+- **Address Book**: `@{/user/address}`
 
 ### Checkout pages
 - **Checkout**: `@{/checkout/checkout}`

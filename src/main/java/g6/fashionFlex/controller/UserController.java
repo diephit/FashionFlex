@@ -201,23 +201,7 @@ public class UserController {
         return "user/order-tracking";
     }
 
-    /**
-     * Address Book page
-     */
-    @GetMapping("/address-book")
-    public String addressBook(Model model) {
-        UserDTO user = getCurrentUser();
-        if (user == null) {
-            return "redirect:/login";
-        }
-        model.addAttribute("user", user);
-        model.addAttribute("isAuthenticated", true);
-        // TODO: Add addresses list when Address entity is implemented
-        // List<Address> addresses = addressService.getAddressesByUserId(user.getId());
-        // model.addAttribute("addresses", addresses);
-        return "user/address-book";
-    }
-
+  
     /**
      * Wishlist page
      */
