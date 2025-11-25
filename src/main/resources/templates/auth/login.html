@@ -35,56 +35,63 @@
 	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
 <!--===============================================================================================-->
 	<style>
-		/* Custom styles for login/register page */
+		/* Custom styles for login/register page - Luxury Black & White Theme */
 		.auth-container {
 			min-height: calc(100vh - 300px);
 			display: flex;
 			align-items: center;
 			justify-content: center;
 			padding: 80px 15px 80px 15px;
+			background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
 		}
 
 		.auth-box {
 			background: #fff;
-			border-radius: 10px;
-			box-shadow: 0 0 30px rgba(0,0,0,0.1);
-			max-width: 500px;
+			border-radius: 16px;
+			box-shadow: 0 20px 60px rgba(26, 26, 26, 0.08);
+			max-width: 520px;
 			width: 100%;
 			overflow: hidden;
+			border: 1px solid #e9ecef;
 		}
 
 		.auth-tabs {
 			display: flex;
-			border-bottom: 1px solid #e6e6e6;
+			border-bottom: 1px solid #e9ecef;
+			background: #fafbfc;
 		}
 
 		.auth-tab {
 			flex: 1;
-			padding: 20px;
+			padding: 24px;
 			text-align: center;
 			cursor: pointer;
-			background: #f5f5f5;
-			transition: all 0.3s;
-			font-family: Poppins-Medium;
-			font-size: 16px;
-			color: #555;
+			background: transparent;
+			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+			font-family: 'Poppins', sans-serif;
+			font-size: 15px;
+			font-weight: 500;
+			color: #6c757d;
 			border: none;
 			outline: none;
+			position: relative;
+			letter-spacing: 0.5px;
 		}
 
 		.auth-tab:hover {
-			background: #e8e8e8;
-			color: #333;
+			background: rgba(26, 26, 26, 0.04);
+			color: #1a1a1a;
 		}
 
 		.auth-tab.active {
 			background: #fff;
-			color: #717fe0;
-			border-bottom: 3px solid #717fe0;
+			color: #1a1a1a;
+			border-bottom: 3px solid #1a1a1a;
+			font-weight: 600;
 		}
 
 		.auth-form-container {
-			padding: 40px 40px 30px 40px;
+			padding: 48px 48px 36px 48px;
 		}
 
 		.auth-form {
@@ -93,103 +100,130 @@
 
 		.auth-form.active {
 			display: block;
-			animation: fadeIn 0.3s;
+			animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 		}
 
 		@keyframes fadeIn {
-			from { opacity: 0; transform: translateY(10px); }
-			to { opacity: 1; transform: translateY(0); }
+			from {
+				opacity: 0;
+				transform: translateY(12px);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
 		}
 
 		.form-group {
-			margin-bottom: 25px;
+			margin-bottom: 28px;
+			position: relative;
 		}
 
 		.form-input {
 			width: 100%;
-			height: 50px;
-			border: 1px solid #e6e6e6;
-			border-radius: 5px;
+			height: 56px;
+			border: 2px solid #e9ecef;
+			border-radius: 12px;
 			padding: 0 20px;
-			font-family: Poppins-Regular;
+			font-family: 'Poppins', sans-serif;
 			font-size: 15px;
-			color: #333;
-			transition: all 0.3s;
+			font-weight: 400;
+			color: #1a1a1a;
+			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+			background: #fafbfc;
 		}
 
 		.form-input:focus {
 			outline: none;
-			border-color: #717fe0;
-			box-shadow: 0 0 5px rgba(113, 127, 224, 0.3);
+			border-color: #1a1a1a;
+			background: #fff;
+			box-shadow: 0 0 0 4px rgba(26, 26, 26, 0.05);
 		}
 
 		.form-input::placeholder {
-			color: #999;
+			color: #6c757d;
+			font-weight: 400;
 		}
 
 		.btn-submit {
 			width: 100%;
-			height: 50px;
-			background: #717fe0;
+			height: 56px;
+			background: #1a1a1a;
 			border: none;
-			border-radius: 5px;
-			font-family: Poppins-Medium;
+			border-radius: 12px;
+			font-family: 'Poppins', sans-serif;
 			font-size: 15px;
+			font-weight: 600;
 			color: #fff;
 			cursor: pointer;
-			transition: all 0.3s;
+			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 			text-transform: uppercase;
 			letter-spacing: 1px;
+			position: relative;
+			overflow: hidden;
 		}
 
 		.btn-submit:hover {
-			background: #333;
+			background: #2d2d2d;
 			transform: translateY(-2px);
-			box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+			box-shadow: 0 12px 24px rgba(26, 26, 26, 0.15);
+		}
+
+		.btn-submit:active {
+			transform: translateY(0);
+			box-shadow: 0 4px 12px rgba(26, 26, 26, 0.1);
 		}
 
 		.form-link {
 			text-align: center;
-			margin-top: 20px;
-			font-family: Poppins-Regular;
+			margin-top: 24px;
+			font-family: 'Poppins', sans-serif;
 			font-size: 14px;
-			color: #666;
+			font-weight: 400;
+			color: #6c757d;
 		}
 
 		.form-link a {
-			color: #717fe0;
+			color: #1a1a1a;
 			text-decoration: none;
-			font-family: Poppins-Medium;
+			font-family: 'Poppins', sans-serif;
+			font-weight: 500;
+			transition: all 0.2s ease;
 		}
 
 		.form-link a:hover {
+			color: #2d2d2d;
 			text-decoration: underline;
 		}
 
 		.checkbox-container {
 			display: flex;
 			align-items: center;
-			margin-bottom: 20px;
+			margin-bottom: 24px;
 		}
 
 		.checkbox-container input[type="checkbox"] {
-			width: 18px;
-			height: 18px;
-			margin-right: 8px;
+			width: 20px;
+			height: 20px;
+			margin-right: 12px;
 			cursor: pointer;
+			accent-color: #1a1a1a;
+			border: 2px solid #e9ecef;
+			border-radius: 4px;
 		}
 
 		.checkbox-container label {
-			font-family: Poppins-Regular;
+			font-family: 'Poppins', sans-serif;
 			font-size: 14px;
-			color: #666;
+			font-weight: 400;
+			color: #6c757d;
 			cursor: pointer;
 			margin: 0;
 		}
 
 		.divider {
 			text-align: center;
-			margin: 25px 0;
+			margin: 32px 0;
 			position: relative;
 		}
 
@@ -200,43 +234,49 @@
 			top: 50%;
 			width: 100%;
 			height: 1px;
-			background: #e6e6e6;
+			background: #e9ecef;
 		}
 
 		.divider span {
 			position: relative;
 			background: #fff;
-			padding: 0 15px;
-			font-family: Poppins-Regular;
+			padding: 0 16px;
+			font-family: 'Poppins', sans-serif;
 			font-size: 13px;
-			color: #999;
+			font-weight: 500;
+			color: #6c757d;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
 		}
 
 		.social-login {
 			display: flex;
-			gap: 10px;
+			gap: 12px;
 		}
 
 		.btn-social {
 			flex: 1;
-			height: 45px;
-			border: 1px solid #e6e6e6;
-			border-radius: 5px;
+			height: 50px;
+			border: 2px solid #e9ecef;
+			border-radius: 12px;
 			background: #fff;
 			cursor: pointer;
-			transition: all 0.3s;
+			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 			display: flex;
 			align-items: center;
 			justify-content: center;
 			gap: 8px;
-			font-family: Poppins-Regular;
+			font-family: 'Poppins', sans-serif;
 			font-size: 14px;
-			color: #333;
+			font-weight: 500;
+			color: #2d2d2d;
 		}
 
 		.btn-social:hover {
-			background: #f5f5f5;
-			border-color: #333;
+			background: #fafbfc;
+			border-color: #1a1a1a;
+			transform: translateY(-1px);
+			box-shadow: 0 4px 12px rgba(26, 26, 26, 0.08);
 		}
 
 		.btn-social i {
