@@ -4,6 +4,7 @@ import g6.fashionFlex.dto.AddressDTO;
 import g6.fashionFlex.entity.User;
 import g6.fashionFlex.service.AddressService;
 import g6.fashionFlex.service.UserService;
+import g6.fashionFlex.util.CountryValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -32,13 +33,17 @@ public class AddressController {
 
     @GetMapping("/add")
     public String showAddAddressForm(Model model, @AuthenticationPrincipal(expression = "user") User currentUser) {
-        model.addAttribute("address", new AddressDTO());
+        AddressDTO addressDTO = new AddressDTO();
+        addressDTO.setCountry(CountryValidator.getDefaultCountry());
+        model.addAttribute("address", addressDTO);
         model.addAttribute("user", currentUser);
         return "user/address-form";
     }
 
     @PostMapping("/add")
     public String addAddress(@ModelAttribute("address") AddressDTO addressDTO, @AuthenticationPrincipal(expression = "user") User currentUser) {
+        // Force country to Vietnam for all addresses
+        addressDTO.setCountry(CountryValidator.getDefaultCountry());
         addressService.save(addressDTO, currentUser.getId());
         return "redirect:/user/address";
     }
@@ -52,6 +57,8 @@ public class AddressController {
 
     @PostMapping("/edit/{id}")
     public String editAddress(@PathVariable("id") Long id, @ModelAttribute("address") AddressDTO addressDTO, @AuthenticationPrincipal(expression = "user") User currentUser) {
+        // Force country to Vietnam for all addresses
+        addressDTO.setCountry(CountryValidator.getDefaultCountry());
         addressDTO.setId(id);
         addressService.save(addressDTO, currentUser.getId());
         return "redirect:/user/address";

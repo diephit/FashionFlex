@@ -36,6 +36,7 @@ import g6.fashionFlex.service.OrderService;
 import g6.fashionFlex.service.ShippingService;
 import g6.fashionFlex.service.UserService;
 import g6.fashionFlex.service.VNPayService;
+import g6.fashionFlex.util.CountryValidator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -103,7 +104,11 @@ public class CheckoutController {
             model.addAttribute("cart", cart);
             model.addAttribute("addresses", addresses);
             model.addAttribute("user", currentUser);
-            model.addAttribute("checkoutRequest", new CheckoutRequest());
+
+            // Pre-populate checkout request with default country
+            CheckoutRequest checkoutRequest = new CheckoutRequest();
+            checkoutRequest.setCountry(CountryValidator.getDefaultCountry());
+            model.addAttribute("checkoutRequest", checkoutRequest);
             model.addAttribute("paymentMethods", Order.PaymentMethod.values());
 
             // Add supported countries for shipping calculation
@@ -159,6 +164,10 @@ public class CheckoutController {
             // Get cart
             CartDTO cart = cartService.getCartByUserId(currentUser.getId());
             log.info("Cart retrieved: items={}, total={}", cart.getTotalItems(), cart.getTotal());
+
+            // Validate and set country to Vietnam only
+            String validatedCountry = CountryValidator.getValidatedCountry(request.getCountry());
+            request.setCountry(validatedCountry);
 
             // Build place order request
             PlaceOrderRequest placeOrderRequest = buildPlaceOrderRequest(request, cart, currentUser);
@@ -273,7 +282,8 @@ public class CheckoutController {
             placeOrderRequest.setShippingCity(savedAddress.getCity());
             placeOrderRequest.setShippingState(savedAddress.getState());
             placeOrderRequest.setShippingZipCode(savedAddress.getZipCode());
-            placeOrderRequest.setShippingCountry(savedAddress.getCountry());
+            // Force country to Vietnam even for saved addresses
+            placeOrderRequest.setShippingCountry(CountryValidator.getDefaultCountry());
         } else {
             // Use new address from form
             placeOrderRequest.setShippingName(request.getFullName());
@@ -282,7 +292,8 @@ public class CheckoutController {
             placeOrderRequest.setShippingCity(request.getCity());
             placeOrderRequest.setShippingState(request.getState());
             placeOrderRequest.setShippingZipCode(request.getZipCode());
-            placeOrderRequest.setShippingCountry(request.getCountry());
+            // Force country to Vietnam for new addresses
+            placeOrderRequest.setShippingCountry(CountryValidator.getDefaultCountry());
 
             // Save address if requested
             if (request.isSaveAddress()) {
@@ -293,7 +304,8 @@ public class CheckoutController {
                 placeOrderRequest.setCity(request.getCity());
                 placeOrderRequest.setState(request.getState());
                 placeOrderRequest.setZipCode(request.getZipCode());
-                placeOrderRequest.setCountry(request.getCountry());
+                // Force country to Vietnam for saved addresses
+                placeOrderRequest.setCountry(CountryValidator.getDefaultCountry());
             }
         }
 

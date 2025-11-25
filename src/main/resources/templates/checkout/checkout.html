@@ -127,12 +127,9 @@
 									<label for="country" class="required">Country</label>
 									<select id="country" th:field="*{country}" class="checkout-form-control" required>
 										<option value="">Select a country</option>
-										<option value="Vietnam" selected>Vietnam</option>
-										<option value="United States">United States</option>
-										<option value="United Kingdom">United Kingdom</option>
-										<option value="Canada">Canada</option>
-										<option value="Australia">Australia</option>
+										<option value="Vietnam" selected>Vietnam 🇻🇳</option>
 									</select>
+									<small class="form-text text-muted">Currently serving Vietnam only</small>
 									<div class="text-danger" th:if="${#fields.hasErrors('country')}" th:errors="*{country}"></div>
 								</div>
 							</div>
@@ -240,8 +237,11 @@
 						</div>
 						<!-- Default Shipping Cost -->
 						<div class="order-summary-row">
-							<span>Shipping <small>(Standard)</small></span>
+							<span>Shipping</span>
 							<span>$1.50</span>
+						</div>
+						<div class="order-summary-note">
+							<small class="form-text text-muted">Average shipping rate from carriers in Vietnam</small>
 						</div>
 
 						<!-- Dynamic Tax Row -->
@@ -338,7 +338,8 @@
 			document.getElementById('city').value = option.getAttribute('data-city') || '';
 			document.getElementById('state').value = option.getAttribute('data-state') || '';
 			document.getElementById('zipCode').value = option.getAttribute('data-zipcode') || '';
-			document.getElementById('country').value = option.getAttribute('data-country') || '';
+			// Always set country to Vietnam regardless of saved address
+		document.getElementById('country').value = 'Vietnam';
 
 			// Disable fields when using saved address (optional - can keep enabled for editing)
 			// document.getElementById('addressFormFields').style.display = 'none';

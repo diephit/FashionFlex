@@ -22,7 +22,8 @@
       "Bash(powershell -Command \"Stop-Process -Id 3328 -Force\")",
       "Bash(./mvnw:*)",
       "Bash(powershell -Command \"Stop-Process -Id 24276 -Force\")",
-      "Bash(powershell:*)"
+      "Bash(powershell:*)",
+      "Bash(./mvnw.cmd:*)"
     ],
     "deny": [],
     "ask": []
