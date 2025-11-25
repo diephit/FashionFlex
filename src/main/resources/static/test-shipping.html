@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipping API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .success {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+        .error {
+            border-color: #dc3545;
+            background-color: #f8d7da;
+        }
+    </style>
+</head>
+<body>
+    <h1>Shipping API Test Page</h1>
+
+    <div class="test-section">
+        <h2>Calculate Shipping Rates</h2>
+        <div class="form-group">
+            <label for="country">Country:</label>
+            <select id="country">
+                <option value="">Select a country</option>
+                <option value="US">United States</option>
+                <option value="CA">Canada</option>
+                <option value="GB">United Kingdom</option>
+                <option value="AU">Australia</option>
+                <option value="VN">Vietnam</option>
+                <option value="DE">Germany</option>
+                <option value="FR">France</option>
+                <option value="JP">Japan</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="state">State/Province:</label>
+            <input type="text" id="state" placeholder="e.g., CA, NY, Texas">
+        </div>
+        <div class="form-group">
+            <label for="postcode">Postcode/Zip:</label>
+            <input type="text" id="postcode" placeholder="e.g., 90210, SW1A 1AA">
+        </div>
+        <button onclick="testCalculateShipping()">Test Calculate Shipping</button>
+        <button onclick="clearResults('calculateResult')">Clear Results</button>
+        <div id="calculateResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Select Shipping Method</h2>
+        <div class="form-group">
+            <label for="shippingMethod">Shipping Method:</label>
+            <select id="shippingMethod">
+                <option value="">Select a method</option>
+                <option value="Standard Shipping">Standard Shipping</option>
+                <option value="Express Shipping">Express Shipping</option>
+                <option value="Overnight Shipping">Overnight Shipping</option>
+                <option value="Free Shipping">Free Shipping</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="shippingCost">Shipping Cost:</label>
+            <input type="number" id="shippingCost" step="0.01" placeholder="e.g., 5.00">
+        </div>
+        <button onclick="testSelectShipping()">Test Select Shipping</button>
+        <button onclick="clearResults('selectResult')">Clear Results</button>
+        <div id="selectResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Clear Shipping Selection</h2>
+        <button onclick="testClearShipping()">Test Clear Shipping</button>
+        <button onclick="clearResults('clearResult')">Clear Results</button>
+        <div id="clearResult" class="result"></div>
+    </div>
+
+    <script>
+        function getAuthHeaders() {
+            // Try to get CSRF token if available
+            const csrfToken = document.querySelector('meta[name="_csrf"]');
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]');
+
+            const headers = {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            };
+
+            if (csrfToken && csrfHeader) {
+                headers[csrfHeader.getAttribute('content')] = csrfToken.getAttribute('content');
+            }
+
+            return headers;
+        }
+
+        function displayResult(elementId, data, isSuccess = true) {
+            const element = document.getElementById(elementId);
+            element.className = 'result ' + (isSuccess ? 'success' : 'error');
+            element.textContent = JSON.stringify(data, null, 2);
+        }
+
+        function clearResults(elementId) {
+            document.getElementById(elementId).textContent = '';
+            document.getElementById(elementId).className = 'result';
+        }
+
+        async function testCalculateShipping() {
+            const country = document.getElementById('country').value;
+            const state = document.getElementById('state').value;
+            const postcode = document.getElementById('postcode').value;
+
+            if (!country || !state || !postcode) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            const requestData = {
+                country: country,
+                state: state,
+                postcode: postcode
+            };
+
+            console.log('Testing calculate shipping:', requestData);
+
+            try {
+                const response = await fetch('/api/checkout/shipping/calculate', {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify(requestData)
+                });
+
+                const responseText = await response.text();
+                console.log('Calculate shipping response:', response.status, responseText);
+
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch (e) {
+                    data = { error: 'Invalid JSON response', rawResponse: responseText };
+                }
+
+                if (response.ok && data.success) {
+                    displayResult('calculateResult', data, true);
+                } else {
+                    displayResult('calculateResult', {
+                        status: response.status,
+                        statusText: response.statusText,
+                        data: data
+                    }, false);
+                }
+            } catch (error) {
+                console.error('Calculate shipping error:', error);
+                displayResult('calculateResult', {
+                    error: error.message,
+                    stack: error.stack
+                }, false);
+            }
+        }
+
+        async function testSelectShipping() {
+            const shippingMethod = document.getElementById('shippingMethod').value;
+            const shippingCost = parseFloat(document.getElementById('shippingCost').value);
+            const country = document.getElementById('country').value;
+            const state = document.getElementById('state').value;
+            const postcode = document.getElementById('postcode').value;
+
+            if (!shippingMethod || !shippingCost || !country || !state || !postcode) {
+                alert('Please fill in all fields including shipping method and cost');
+                return;
+            }
+
+            const requestData = {
+                shippingMethod: shippingMethod,
+                shippingCost: shippingCost,
+                country: country,
+                state: state,
+                postcode: postcode
+            };
+
+            console.log('Testing select shipping:', requestData);
+
+            try {
+                const response = await fetch('/api/checkout/shipping/select', {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify(requestData)
+                });
+
+                const responseText = await response.text();
+                console.log('Select shipping response:', response.status, responseText);
+
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch (e) {
+                    data = { error: 'Invalid JSON response', rawResponse: responseText };
+                }
+
+                if (response.ok && data.success) {
+                    displayResult('selectResult', data, true);
+                } else {
+                    displayResult('selectResult', {
+                        status: response.status,
+                        statusText: response.statusText,
+                        data: data
+                    }, false);
+                }
+            } catch (error) {
+                console.error('Select shipping error:', error);
+                displayResult('selectResult', {
+                    error: error.message,
+                    stack: error.stack
+                }, false);
+            }
+        }
+
+        async function testClearShipping() {
+            console.log('Testing clear shipping');
+
+            try {
+                const response = await fetch('/api/checkout/shipping/clear', {
+                    method: 'DELETE',
+                    headers: getAuthHeaders()
+                });
+
+                const responseText = await response.text();
+                console.log('Clear shipping response:', response.status, responseText);
+
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch (e) {
+                    data = { error: 'Invalid JSON response', rawResponse: responseText };
+                }
+
+                if (response.ok && data.success) {
+                    displayResult('clearResult', data, true);
+                } else {
+                    displayResult('clearResult', {
+                        status: response.status,
+                        statusText: response.statusText,
+                        data: data
+                    }, false);
+                }
+            } catch (error) {
+                console.error('Clear shipping error:', error);
+                displayResult('clearResult', {
+                    error: error.message,
+                    stack: error.stack
+                }, false);
+            }
+        }
+
+        // Check if user is authenticated
+        async function checkAuthentication() {
+            try {
+                const response = await fetch('/api/cart/count');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (!data.success) {
+                        document.body.innerHTML = '<div style="padding: 20px; background-color: #f8d7da; border: 1px solid #dc3545; border-radius: 5px;"><h2>Authentication Required</h2><p>Please <a href="/login">login</a> to test the shipping API.</p></div>';
+                    }
+                }
+            } catch (error) {
+                console.log('Could not check authentication status');
+            }
+        }
+
+        // Check authentication on page load
+        window.addEventListener('load', checkAuthentication);
+    </script>
+</body>
+</html>

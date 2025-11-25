@@ -221,112 +221,22 @@
                                 </div>
                             </div>
 
-                            <!-- Shipping Calculator -->
-                            <div class="flex-w flex-t bor12 p-t-15 p-b-30">
-                                <div class="size-208 w-full-ssm">
+                                                      <!-- Shipping Information -->
+                            <div class="flex-w flex-t bor12 p-t-15 p-b-13">
+                                <div class="size-208">
                                     <span class="stext-110 cl2">Shipping:</span>
-                                    <span th:if="${cart.hasShippingMethod == null or not cart.hasShippingMethod}"
-                                          class="badge badge-warning m-l-10"
-                                          style="font-size: 10px; padding: 3px 8px; vertical-align: middle;">
-                                        Required
-                                    </span>
                                 </div>
-
-                                <div class="size-209 p-r-18 p-r-0-sm w-full-ssm">
+                                <div class="size-209">
                                     <p class="stext-111 cl6 p-t-2">
-                                        <i class="fa fa-truck"></i> Calculate shipping cost and tax
+                                        <i class="fa fa-truck"></i> Calculated at checkout
                                     </p>
-
-                                    <div class="p-t-15">
-                                        <span class="stext-112 cl8">Calculate Shipping</span>
-
-                                        <!-- Country Selection -->
-                                        <div class="rs1-select2 rs2-select2 bor8 bg0 m-b-12 m-t-9">
-                                            <select class="js-select2" id="shippingCountry" name="country">
-                                                <option value="">Select a country...</option>
-                                                <option th:each="country : ${supportedCountries}"
-                                                        th:value="${country}"
-                                                        th:text="${country}">
-                                                </option>
-                                            </select>
-                                            <div class="dropDownSelect2"></div>
-                                        </div>
-
-                                        <!-- State -->
-                                        <div class="bor8 bg0 m-b-12">
-                                            <input class="stext-111 cl8 plh3 size-111 p-lr-15"
-                                                   type="text"
-                                                   id="shippingState"
-                                                   name="state"
-                                                   placeholder="State / Province">
-                                        </div>
-
-                                        <!-- Postcode -->
-                                        <div class="bor8 bg0 m-b-22">
-                                            <input class="stext-111 cl8 plh3 size-111 p-lr-15"
-                                                   type="text"
-                                                   id="shippingPostcode"
-                                                   name="postcode"
-                                                   placeholder="Postcode / Zip">
-                                        </div>
-
-                                        <!-- Calculate Button -->
-                                        <div class="flex-w">
-                                            <button class="flex-c-m stext-101 cl2 size-115 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer"
-                                                    onclick="calculateShipping()">
-                                                Calculate Shipping
-                                            </button>
-                                        </div>
-
-                                        <!-- Shipping Results -->
-                                        <div id="shippingResults" class="m-t-15" style="display: none;">
-                                            <div class="stext-111 cl2">
-                                                <strong>Available Shipping Methods:</strong>
-                                            </div>
-                                            <div id="shippingRates" class="p-t-10"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Selected Shipping Method -->
-                            <div id="shippingSelectedSection"
-                                 th:if="${cart.hasShippingMethod != null and cart.hasShippingMethod}"
-                                 class="flex-w flex-t bor12 p-t-15 p-b-13">
-                                <div class="size-208">
-                                    <span class="stext-110 cl2">Shipping:</span>
-                                </div>
-                                <div class="size-209">
-                                    <div class="stext-111 cl2">
-                                        <strong id="selectedShippingMethod" th:text="${cart.selectedShippingMethod}">Standard Shipping</strong>
-                                    </div>
-                                    <span class="mtext-110 cl2">
-                                        $<span id="shippingAmount" th:text="${#numbers.formatDecimal(cart.shippingCost ?: 0, 1, 2)}">0.00</span>
-                                    </span>
-                                </div>
-                            </div>
-
-                            <!-- Tax -->
-                            <div id="taxSection"
-                                 th:if="${cart.taxAmount != null and cart.taxAmount > 0}"
-                                 class="flex-w flex-t bor12 p-t-15 p-b-13">
-                                <div class="size-208">
-                                    <span class="stext-110 cl2">Tax:</span>
-                                    <br>
-                                    <small class="stext-107 cl6" th:if="${cart.shippingState != null}">
-                                        <span th:text="${cart.shippingState}"></span>, <span th:text="${cart.shippingCountry}"></span>
-                                    </small>
-                                </div>
-                                <div class="size-209">
-                                    <span class="mtext-110 cl2">
-                                        $<span id="taxAmount" th:text="${#numbers.formatDecimal(cart.taxAmount ?: 0, 1, 2)}">0.00</span>
-                                    </span>
-                                    <br>
                                     <small class="stext-107 cl6">
-                                        <i class="fa fa-info-circle"></i> Tax on discounted total
+                                        Shipping costs and taxes will be calculated on the checkout page
                                     </small>
                                 </div>
                             </div>
+
+                            <!-- Note: Shipping and tax will be calculated at checkout -->
 
                             <!-- Final Total -->
                             <div class="flex-w flex-t p-t-27 p-b-33">
@@ -335,26 +245,20 @@
                                 </div>
                                 <div class="size-209 p-t-1">
                                     <span class="mtext-110 cl2">
-                                        $<span id="finalTotal" th:text="${#numbers.formatDecimal(cart.finalTotal ?: cart.total, 1, 2)}">0.00</span>
+                                        $<span id="finalTotal" th:text="${#numbers.formatDecimal(cart.subtotal, 1, 2)}">0.00</span>
+                                        <small class="stext-107 cl6" style="display: block; margin-top: 5px;">
+                                            + shipping & tax at checkout
+                                        </small>
                                     </span>
                                 </div>
                             </div>
 
-                            <!-- Shipping Warning -->
-                            <div th:if="${cart.hasShippingMethod == null or not cart.hasShippingMethod}"
-                                 class="alert alert-info text-center p-t-10 p-b-10 m-b-15"
-                                 style="font-size: 13px;">
-                                <i class="fa fa-info-circle"></i>
-                                Please calculate and select a shipping method before checkout
-                            </div>
-
                             <!-- Checkout Button -->
                             <button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer"
-                                    th:disabled="${cart.hasOutOfStockItems or cart.hasShippingMethod == null or not cart.hasShippingMethod}"
+                                    th:disabled="${cart.hasOutOfStockItems}"
                                     onclick="proceedToCheckout()">
                                 <span th:if="${cart.hasOutOfStockItems}">Cannot Checkout - Out of Stock Items</span>
-                                <span th:if="${not cart.hasOutOfStockItems and (cart.hasShippingMethod == null or not cart.hasShippingMethod)}">Select Shipping Method First</span>
-                                <span th:if="${not cart.hasOutOfStockItems and cart.hasShippingMethod != null and cart.hasShippingMethod}">Proceed to Checkout</span>
+                                <span th:if="${not cart.hasOutOfStockItems}">Proceed to Checkout</span>
                             </button>
                         </div>
                     </div>

@@ -25,7 +25,8 @@ public class ShippingService {
             "DE", new BigDecimal("9.00"),
             "FR", new BigDecimal("9.00"),
             "JP", new BigDecimal("15.00"),
-            "VN", new BigDecimal("3.00")
+            "VIETNAM", new BigDecimal("1.50"),
+            "VN", new BigDecimal("1.50")
     );
 
     // State/region multipliers for US

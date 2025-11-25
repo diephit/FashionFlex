@@ -12,7 +12,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import g6.fashionFlex.dto.AddressDTO;
@@ -20,12 +24,16 @@ import g6.fashionFlex.dto.CartDTO;
 import g6.fashionFlex.dto.CheckoutRequest;
 import g6.fashionFlex.dto.OrderConfirmationDTO;
 import g6.fashionFlex.dto.PlaceOrderRequest;
+import g6.fashionFlex.dto.ShippingCalculationRequest;
+import g6.fashionFlex.dto.ShippingRateDTO;
+import g6.fashionFlex.dto.ShippingSelectionRequest;
 import g6.fashionFlex.dto.UserDTO;
 import g6.fashionFlex.entity.Order;
 import g6.fashionFlex.repository.OrderRepository;
 import g6.fashionFlex.service.AddressService;
 import g6.fashionFlex.service.CartService;
 import g6.fashionFlex.service.OrderService;
+import g6.fashionFlex.service.ShippingService;
 import g6.fashionFlex.service.UserService;
 import g6.fashionFlex.service.VNPayService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,6 +54,7 @@ public class CheckoutController {
     private final UserService userService;
     private final VNPayService vnPayService;
     private final OrderRepository orderRepository;
+    private final ShippingService shippingService;
 
     /**
      * Display checkout page
@@ -77,11 +86,8 @@ public class CheckoutController {
             return "redirect:/shopping-cart";
         }
 
-        // Validate shipping method is selected
-        if (cart.getHasShippingMethod() == null || !cart.getHasShippingMethod()) {
-            redirectAttributes.addFlashAttribute("error", "Please select a shipping method first");
-            return "redirect:/shopping-cart";
-        }
+        // Note: Shipping method selection moved to checkout page
+        // No longer require shipping method to be pre-selected
 
         // Validate no out of stock items
         if (cart.getHasOutOfStockItems() != null && cart.getHasOutOfStockItems()) {
@@ -99,6 +105,13 @@ public class CheckoutController {
             model.addAttribute("user", currentUser);
             model.addAttribute("checkoutRequest", new CheckoutRequest());
             model.addAttribute("paymentMethods", Order.PaymentMethod.values());
+
+            // Add supported countries for shipping calculation
+            try {
+                model.addAttribute("supportedCountries", shippingService.getSupportedCountries());
+            } catch (Exception e) {
+                model.addAttribute("supportedCountries", new java.util.ArrayList<>());
+            }
 
             log.info("Rendering checkout page");
             return "checkout/checkout";
@@ -289,10 +302,18 @@ public class CheckoutController {
 
         // Order totals from cart
         placeOrderRequest.setSubtotal(cart.getSubtotal());
-        placeOrderRequest.setShippingCost(cart.getShippingCost() != null ? cart.getShippingCost() : java.math.BigDecimal.ZERO);
+        // Set default shipping cost of $1.50 for all orders
+        java.math.BigDecimal defaultShippingCost = new java.math.BigDecimal("1.50");
+        placeOrderRequest.setShippingCost(defaultShippingCost);
         placeOrderRequest.setTax(cart.getTaxAmount() != null ? cart.getTaxAmount() : java.math.BigDecimal.ZERO);
         placeOrderRequest.setDiscount(cart.getDiscountAmount() != null ? cart.getDiscountAmount() : java.math.BigDecimal.ZERO);
-        placeOrderRequest.setTotalAmount(cart.getFinalTotal() != null ? cart.getFinalTotal() : cart.getTotal());
+
+        // Calculate total amount with default shipping
+        java.math.BigDecimal subtotal = cart.getSubtotal() != null ? cart.getSubtotal() : java.math.BigDecimal.ZERO;
+        java.math.BigDecimal discount = cart.getDiscountAmount() != null ? cart.getDiscountAmount() : java.math.BigDecimal.ZERO;
+        java.math.BigDecimal tax = cart.getTaxAmount() != null ? cart.getTaxAmount() : java.math.BigDecimal.ZERO;
+        java.math.BigDecimal totalAmount = subtotal.add(defaultShippingCost).add(tax).subtract(discount);
+        placeOrderRequest.setTotalAmount(totalAmount);
 
         // Coupon
         placeOrderRequest.setCouponCode(cart.getCouponCode());
@@ -301,6 +322,141 @@ public class CheckoutController {
         placeOrderRequest.setNotes(request.getNotes());
 
         return placeOrderRequest;
+    }
+
+    /**
+     * Calculate shipping rates (AJAX)
+     */
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping("/api/checkout/shipping/calculate")
+    @ResponseBody
+    public ResponseEntity<?> calculateShipping(@Valid @RequestBody ShippingCalculationRequest request) {
+        try {
+            List<ShippingRateDTO> rates = shippingService.calculateShippingRates(
+                    request.getCountry(),
+                    request.getState(),
+                    request.getPostcode()
+            );
+
+            UserDTO user = getCurrentUser();
+            if (user == null) {
+                java.util.Map<String, Object> response = new java.util.HashMap<>();
+                response.put("success", false);
+                response.put("message", "User not authenticated");
+                return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).body(response);
+            }
+
+            Long userId = user.getId();
+            CartDTO cart = cartService.getCartByUserId(userId);
+
+            // Calculate tax
+            java.math.BigDecimal tax = shippingService.calculateTax(
+                    cart.getSubtotal(),
+                    request.getCountry(),
+                    request.getState()
+            );
+
+            java.util.Map<String, Object> response = new java.util.HashMap<>();
+            response.put("success", true);
+            response.put("shippingRates", rates);
+            response.put("tax", tax);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            java.util.Map<String, Object> response = new java.util.HashMap<>();
+            response.put("success", false);
+            response.put("message", "An error occurred while calculating shipping");
+            return ResponseEntity.status(org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    /**
+     * Select shipping method (AJAX)
+     */
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping("/api/checkout/shipping/select")
+    @ResponseBody
+    public ResponseEntity<?> selectShippingMethod(@Valid @RequestBody ShippingSelectionRequest request) {
+        try {
+            UserDTO user = getCurrentUser();
+            if (user == null) {
+                java.util.Map<String, Object> response = new java.util.HashMap<>();
+                response.put("success", false);
+                response.put("message", "User not authenticated");
+                return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).body(response);
+            }
+
+            Long userId = user.getId();
+            CartDTO cart = cartService.getCartByUserId(userId);
+
+            // Calculate tax based on shipping address
+            java.math.BigDecimal tax = shippingService.calculateTax(
+                    cart.getTotal(), // Use total after discount
+                    request.getCountry(),
+                    request.getState()
+            );
+
+            // Select shipping method with correct parameter order
+            cart = cartService.selectShippingMethod(
+                    userId,
+                    request.getShippingMethod(),
+                    request.getShippingCost(),
+                    request.getCountry(),
+                    request.getState(),
+                    request.getPostcode(),
+                    tax
+            );
+
+            java.util.Map<String, Object> response = new java.util.HashMap<>();
+            response.put("success", true);
+            response.put("message", "Shipping method selected successfully");
+            response.put("cart", cart);
+
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            java.util.Map<String, Object> response = new java.util.HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        } catch (Exception e) {
+            java.util.Map<String, Object> response = new java.util.HashMap<>();
+            response.put("success", false);
+            response.put("message", "An error occurred while selecting shipping method");
+            return ResponseEntity.status(org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    /**
+     * Clear shipping selection (AJAX)
+     */
+    @PreAuthorize("hasRole('USER')")
+    @DeleteMapping("/api/checkout/shipping/clear")
+    @ResponseBody
+    public ResponseEntity<?> clearShippingMethod() {
+        try {
+            UserDTO user = getCurrentUser();
+            if (user == null) {
+                java.util.Map<String, Object> response = new java.util.HashMap<>();
+                response.put("success", false);
+                response.put("message", "User not authenticated");
+                return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).body(response);
+            }
+
+            Long userId = user.getId();
+            CartDTO cart = cartService.clearShippingSelection(userId);
+
+            java.util.Map<String, Object> response = new java.util.HashMap<>();
+            response.put("success", true);
+            response.put("message", "Shipping method cleared");
+            response.put("cart", cart);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            java.util.Map<String, Object> response = new java.util.HashMap<>();
+            response.put("success", false);
+            response.put("message", "An error occurred while clearing shipping method");
+            return ResponseEntity.status(org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 
     /**

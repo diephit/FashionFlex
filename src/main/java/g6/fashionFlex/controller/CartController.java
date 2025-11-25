@@ -22,7 +22,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -261,119 +260,11 @@ public class CartController {
         }
     }
 
-    /**
-     * Calculate shipping rates (AJAX)
-     */
-    @PreAuthorize("hasRole('USER')")
-    @PostMapping("/api/cart/shipping/calculate")
-    @ResponseBody
-    public ResponseEntity<?> calculateShipping(@Valid @RequestBody ShippingCalculationRequest request) {
-        try {
-            List<ShippingRateDTO> rates = shippingService.calculateShippingRates(
-                    request.getCountry(),
-                    request.getState(),
-                    request.getPostcode()
-            );
+    // Shipping calculation moved to CheckoutController for better user experience
 
-           UserDTO user = getCurrentUser();
-            Long userId = user.getId();
-            CartDTO cart = cartService.getCartByUserId(userId);
+    // Shipping method selection moved to CheckoutController for better user experience
 
-            // Calculate tax
-            BigDecimal tax = shippingService.calculateTax(
-                    cart.getSubtotal(),
-                    request.getCountry(),
-                    request.getState()
-            );
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("shippingRates", rates);
-            response.put("tax", tax);
-
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", false);
-            response.put("message", "An error occurred while calculating shipping");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
-    }
-
-    /**
-     * Select shipping method (AJAX)
-     */
-    @PreAuthorize("hasRole('USER')")
-    @PostMapping("/api/cart/shipping/select")
-    @ResponseBody
-    public ResponseEntity<?> selectShippingMethod(@Valid @RequestBody ShippingSelectionRequest request) {
-        try {
-            UserDTO user = getCurrentUser();
-            Long userId = user.getId();
-            CartDTO cart = cartService.getCartByUserId(userId);
-
-            // Calculate tax based on shipping address
-            BigDecimal tax = shippingService.calculateTax(
-                    cart.getTotal(), // Use total after discount
-                    request.getCountry(),
-                    request.getState()
-            );
-
-            // Select shipping method
-            cart = cartService.selectShippingMethod(
-                    userId,
-                    request.getShippingMethod(),
-                    request.getShippingCost(),
-                    request.getCountry(),
-                    request.getState(),
-                    request.getPostcode(),
-                    tax
-            );
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("message", "Shipping method selected successfully");
-            response.put("cart", cart);
-
-            return ResponseEntity.ok(response);
-        } catch (IllegalArgumentException e) {
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", false);
-            response.put("message", e.getMessage());
-            return ResponseEntity.badRequest().body(response);
-        } catch (Exception e) {
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", false);
-            response.put("message", "An error occurred while selecting shipping method");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
-    }
-
-    /**
-     * Clear shipping selection (AJAX)
-     */
-    @PreAuthorize("hasRole('USER')")
-    @DeleteMapping("/api/cart/shipping/clear")
-    @ResponseBody
-    public ResponseEntity<?> clearShippingMethod() {
-        try {
-            UserDTO user = getCurrentUser();
-            Long userId = user.getId();
-            CartDTO cart = cartService.clearShippingSelection(userId);
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("message", "Shipping method cleared");
-            response.put("cart", cart);
-
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", false);
-            response.put("message", "An error occurred while clearing shipping method");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
-    }
+    // Shipping selection clearing moved to CheckoutController for better user experience
 
     /**
      * Validate cart stock before checkout (AJAX)
@@ -429,15 +320,8 @@ public class CartController {
                 return ResponseEntity.ok(response);
             }
 
-            // Check if shipping method is selected
-            if (cart.getSelectedShippingMethod() == null || cart.getSelectedShippingMethod().isEmpty()) {
-                errors.add("Please select a shipping method");
-                response.put("success", false);
-                response.put("valid", false);
-                response.put("errors", errors);
-                response.put("message", "Please select a shipping method before checkout");
-                return ResponseEntity.ok(response);
-            }
+            // Note: Shipping method validation moved to checkout page
+            // No longer require pre-selected shipping method for cart validation
 
             // Validate stock availability
             List<String> stockWarnings = cartService.validateCartStock(userId);

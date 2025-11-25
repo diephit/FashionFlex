@@ -127,11 +127,11 @@
 									<label for="country" class="required">Country</label>
 									<select id="country" th:field="*{country}" class="checkout-form-control" required>
 										<option value="">Select a country</option>
+										<option value="Vietnam" selected>Vietnam</option>
 										<option value="United States">United States</option>
 										<option value="United Kingdom">United Kingdom</option>
 										<option value="Canada">Canada</option>
 										<option value="Australia">Australia</option>
-										<option value="Vietnam">Vietnam</option>
 									</select>
 									<div class="text-danger" th:if="${#fields.hasErrors('country')}" th:errors="*{country}"></div>
 								</div>
@@ -139,13 +139,13 @@
 
 							<div class="checkout-form-row">
 								<div class="checkout-form-group">
-									<label for="state" class="required">State / Province</label>
-									<input type="text" id="state" th:field="*{state}" class="checkout-form-control" required>
+									<label for="state">State / Province</label>
+									<input type="text" id="state" th:field="*{state}" class="checkout-form-control" placeholder="Optional">
 									<div class="text-danger" th:if="${#fields.hasErrors('state')}" th:errors="*{state}"></div>
 								</div>
 								<div class="checkout-form-group">
-									<label for="zipCode" class="required">Postal Code</label>
-									<input type="text" id="zipCode" th:field="*{zipCode}" class="checkout-form-control" required>
+									<label for="zipCode">Postal Code</label>
+									<input type="text" id="zipCode" th:field="*{zipCode}" class="checkout-form-control" placeholder="Optional">
 									<div class="text-danger" th:if="${#fields.hasErrors('zipCode')}" th:errors="*{zipCode}"></div>
 								</div>
 							</div>
@@ -238,17 +238,21 @@
 							<span>Discount <small th:if="${cart.couponCode != null}" th:text="'(' + ${cart.couponCode} + ')'"></small></span>
 							<span style="color: #28a745;" th:text="'-$' + ${#numbers.formatDecimal(cart.discountAmount, 1, 2)}">-$10.00</span>
 						</div>
+						<!-- Default Shipping Cost -->
 						<div class="order-summary-row">
-							<span>Shipping <small th:if="${cart.selectedShippingMethod != null}" th:text="'(' + ${cart.selectedShippingMethod} + ')'"></small></span>
-							<span th:text="${'$' + #numbers.formatDecimal(cart.shippingCost ?: 0, 1, 2)}">$5.00</span>
+							<span>Shipping <small>(Standard)</small></span>
+							<span>$1.50</span>
 						</div>
-						<div class="order-summary-row" th:if="${cart.taxAmount != null and cart.taxAmount > 0}">
+
+						<!-- Dynamic Tax Row -->
+						<div id="checkoutTaxRow" class="order-summary-row" style="display: none;">
 							<span>Tax</span>
-							<span th:text="${'$' + #numbers.formatDecimal(cart.taxAmount, 1, 2)}">$7.75</span>
+							<span id="checkoutTaxAmount">$0.00</span>
 						</div>
+
 						<div class="order-summary-row total">
 							<span>Total</span>
-							<span th:text="${'$' + #numbers.formatDecimal(cart.finalTotal ?: cart.total, 1, 2)}">$90.20</span>
+							<span id="checkoutTotalAmount" th:text="${'$' + #numbers.formatDecimal(cart.subtotal + 1.50, 1, 2)}">$78.95</span>
 						</div>
 					</div>
 
@@ -306,6 +310,7 @@
 	</script>
 <!--===============================================================================================-->
 	<script th:src="@{/js/main.js}"></script>
+	<script th:src="@{/js/checkout.js}"></script>
 	<script>
 		// Fill address form when saved address is selected
 		function fillAddressForm(addressId) {

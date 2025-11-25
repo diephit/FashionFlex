@@ -20,7 +20,8 @@
       "Bash(./mvnw spring-boot:run:*)",
       "Bash(cmd:*)",
       "Bash(powershell -Command \"Stop-Process -Id 3328 -Force\")",
-      "Bash(./mvnw:*)"
+      "Bash(./mvnw:*)",
+      "Bash(powershell -Command \"Stop-Process -Id 24276 -Force\")"
     ],
     "deny": [],
     "ask": []
