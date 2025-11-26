@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Return Policy - FashionFlex</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" href="../../images/icons/favicon.png"/>
+	<link rel="stylesheet" type="text/css" href="../../vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="../../fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="../../fonts/iconic/css/material-design-iconic-font.min.css">
+	<link rel="stylesheet" type="text/css" href="../../fonts/linearicons-v1.0.0/icon-font.min.css">
+	<link rel="stylesheet" type="text/css" href="../../vendor/animate/animate.css">
+	<link rel="stylesheet" type="text/css" href="../../vendor/css-hamburgers/hamburgers.min.css">
+	<link rel="stylesheet" type="text/css" href="../../vendor/animsition/css/animsition.min.css">
+	<link rel="stylesheet" type="text/css" href="../../vendor/select2/select2.min.css">
+	<link rel="stylesheet" type="text/css" href="../../vendor/perfect-scrollbar/perfect-scrollbar.css">
+	<link rel="stylesheet" type="text/css" href="../../css/util.css">
+	<link rel="stylesheet" type="text/css" href="../../css/main.css">
+	<style>
+		.policy-wrapper {
+			padding: 80px 0;
+			background: #f8f9fa;
+			min-height: calc(100vh - 200px);
+		}
+		.policy-container {
+			background: #ffffff;
+			border-radius: 8px;
+			padding: 50px;
+			box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+			border: 1px solid #f0f0f0;
+		}
+		.policy-header {
+			text-align: center;
+			margin-bottom: 40px;
+			padding-bottom: 30px;
+			border-bottom: 2px solid #e6e6e6;
+		}
+		.policy-header h1 {
+			font-family: Poppins-Bold;
+			font-size: 36px;
+			color: #333333;
+			margin-bottom: 10px;
+		}
+		.policy-header .last-updated {
+			font-family: Poppins-Regular;
+			font-size: 14px;
+			color: #999999;
+		}
+		.policy-section {
+			margin-bottom: 35px;
+		}
+		.policy-section h2 {
+			font-family: Poppins-Medium;
+			font-size: 24px;
+			color: #333333;
+			margin-bottom: 15px;
+			padding-bottom: 10px;
+			border-bottom: 2px solid #717fe0;
+		}
+		.policy-section h3 {
+			font-family: Poppins-Medium;
+			font-size: 18px;
+			color: #333333;
+			margin: 20px 0 10px 0;
+		}
+		.policy-section p {
+			font-family: Poppins-Regular;
+			font-size: 15px;
+			color: #666666;
+			line-height: 1.8;
+			margin-bottom: 15px;
+		}
+		.policy-section ul,
+		.policy-section ol {
+			margin-bottom: 15px;
+			padding-left: 30px;
+		}
+		.policy-section li {
+			font-family: Poppins-Regular;
+			font-size: 15px;
+			color: #666666;
+			line-height: 1.8;
+			margin-bottom: 8px;
+		}
+		.policy-highlight {
+			background: #f8f9ff;
+			border-left: 4px solid #717fe0;
+			padding: 20px;
+			border-radius: 4px;
+			margin: 20px 0;
+		}
+		.policy-highlight p {
+			margin: 0;
+		}
+		.return-steps {
+			display: flex;
+			justify-content: space-between;
+			margin: 30px 0;
+			gap: 20px;
+		}
+		.return-step {
+			flex: 1;
+			text-align: center;
+			padding: 25px 15px;
+			background: #f8f9fa;
+			border-radius: 8px;
+			border: 1px solid #e6e6e6;
+			transition: all 0.4s;
+			-webkit-transition: all 0.4s;
+			-o-transition: all 0.4s;
+			-moz-transition: all 0.4s;
+		}
+		.return-step:hover {
+			box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+			transform: translateY(-3px);
+			-webkit-transform: translateY(-3px);
+			-moz-transform: translateY(-3px);
+			-ms-transform: translateY(-3px);
+			-o-transform: translateY(-3px);
+		}
+		.return-step-number {
+			width: 50px;
+			height: 50px;
+			border-radius: 50%;
+			background: #717fe0;
+			color: #ffffff;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-family: Poppins-Bold;
+			font-size: 20px;
+			margin: 0 auto 15px;
+		}
+		.return-step h3 {
+			font-family: Poppins-Medium;
+			font-size: 16px;
+			color: #333333;
+			margin: 0 0 10px 0;
+		}
+		.return-step p {
+			font-family: Poppins-Regular;
+			font-size: 14px;
+			color: #666666;
+			margin: 0;
+		}
+		.policy-contact {
+			background: #717fe0;
+			border-radius: 8px;
+			padding: 30px;
+			text-align: center;
+			color: #ffffff;
+			margin-top: 40px;
+		}
+		.policy-contact h3 {
+			font-family: Poppins-Bold;
+			font-size: 22px;
+			margin: 0 0 10px 0;
+		}
+		.policy-contact p {
+			font-family: Poppins-Regular;
+			font-size: 15px;
+			margin: 0 0 20px 0;
+			opacity: 0.9;
+		}
+		.policy-contact a {
+			color: #ffffff;
+			text-decoration: underline;
+		}
+		.policy-contact .btn {
+			background: #ffffff;
+			color: #717fe0;
+			padding: 12px 30px;
+			border-radius: 4px;
+			font-family: Poppins-Medium;
+			font-size: 14px;
+			text-decoration: none;
+			display: inline-block;
+			transition: all 0.4s;
+			-webkit-transition: all 0.4s;
+			-o-transition: all 0.4s;
+			-moz-transition: all 0.4s;
+		}
+		.policy-contact .btn:hover {
+			transform: translateY(-2px);
+			-webkit-transform: translateY(-2px);
+			-moz-transform: translateY(-2px);
+			-ms-transform: translateY(-2px);
+			-o-transform: translateY(-2px);
+			box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+		}
+		@media (max-width: 768px) {
+			.policy-wrapper {
+				padding: 40px 0;
+			}
+			.policy-container {
+				padding: 30px 20px;
+			}
+			.policy-header h1 {
+				font-size: 28px;
+			}
+			.policy-section h2 {
+				font-size: 20px;
+			}
+			.return-steps {
+				flex-direction: column;
+			}
+		}
+	</style>
+</head>
+<body class="animsition">
+
+	<!-- Header -->
+	<header>
+		<!-- Header desktop -->
+		<div class="container-menu-desktop">
+			<!-- Topbar -->
+			<div class="top-bar">
+				<div class="content-topbar flex-sb-m h-full container">
+					<div class="left-top-bar">
+						Free shipping for standard order over $100
+					</div>
+					<div class="right-top-bar flex-w h-full">
+						<a href="faq.html" class="flex-c-m trans-04 p-lr-25">Help & FAQs</a>
+						<a href="../user/my-account.html" class="flex-c-m trans-04 p-lr-25">My Account</a>
+						<a href="../../login.html" class="flex-c-m trans-04 p-lr-25">Login</a>
+					</div>
+				</div>
+			</div>
+
+			<div class="wrap-menu-desktop">
+				<nav class="limiter-menu-desktop container">
+					<a href="../../index.html" class="logo">
+						<img src="../../images/icons/logo-01.png" alt="IMG-LOGO">
+					</a>
+
+					<div class="menu-desktop">
+						<ul class="main-menu">
+							<li><a href="../../index.html">Home</a></li>
+							<li><a href="../../product.html">Shop</a></li>
+							<li><a href="../../about.html">About</a></li>
+							<li><a href="../../contact.html">Contact</a></li>
+						</ul>
+					</div>
+
+					<div class="wrap-icon-header flex-w flex-r-m">
+						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
+							<i class="zmdi zmdi-search"></i>
+						</div>
+						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="2">
+							<i class="zmdi zmdi-shopping-cart"></i>
+						</div>
+						<a href="../user/wishlist.html" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti" data-notify="0">
+							<i class="zmdi zmdi-favorite-outline"></i>
+						</a>
+					</div>
+				</nav>
+			</div>
+		</div>
+
+		<!-- Header Mobile -->
+		<div class="wrap-header-mobile">
+			<div class="logo-mobile">
+				<a href="../../index.html"><img src="../../images/icons/logo-01.png" alt="IMG-LOGO"></a>
+			</div>
+
+			<div class="wrap-icon-header flex-w flex-r-m m-r-15">
+				<div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 js-show-modal-search">
+					<i class="zmdi zmdi-search"></i>
+				</div>
+				<div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart" data-notify="2">
+					<i class="zmdi zmdi-shopping-cart"></i>
+				</div>
+				<a href="../user/wishlist.html" class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti" data-notify="0">
+					<i class="zmdi zmdi-favorite-outline"></i>
+				</a>
+			</div>
+
+			<div class="btn-show-menu-mobile hamburger hamburger--squeeze">
+				<span class="hamburger-box">
+					<span class="hamburger-inner"></span>
+				</span>
+			</div>
+		</div>
+
+		<!-- Menu Mobile -->
+		<div class="menu-mobile">
+			<ul class="main-menu-m">
+				<li><a href="../../index.html">Home</a></li>
+				<li><a href="../../product.html">Shop</a></li>
+				<li><a href="../../about.html">About</a></li>
+				<li><a href="../../contact.html">Contact</a></li>
+			</ul>
+		</div>
+	</header>
+
+	<!-- Policy Content -->
+	<div class="policy-wrapper">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-10 offset-lg-1">
+					<div class="policy-container">
+						<div class="policy-header">
+							<h1>Return Policy</h1>
+							<p class="last-updated">Last Updated: November 4, 2024</p>
+						</div>
+
+						<div class="policy-highlight">
+							<p><strong>Our Promise:</strong> We want you to love your FashionFlex purchase! If you're not completely satisfied, we offer a hassle-free 30-day return policy.</p>
+						</div>
+
+						<div class="policy-section">
+							<h2>How to Return</h2>
+							<div class="return-steps">
+								<div class="return-step">
+									<div class="return-step-number">1</div>
+									<h3>Log In</h3>
+									<p>Sign into your account and go to Order History</p>
+								</div>
+								<div class="return-step">
+									<div class="return-step-number">2</div>
+									<h3>Request Return</h3>
+									<p>Select the items you'd like to return and reason</p>
+								</div>
+								<div class="return-step">
+									<div class="return-step-number">3</div>
+									<h3>Print Label</h3>
+									<p>Print your prepaid return shipping label</p>
+								</div>
+								<div class="return-step">
+									<div class="return-step-number">4</div>
+									<h3>Ship It</h3>
+									<p>Pack items securely and drop off at carrier location</p>
+								</div>
+							</div>
+						</div>
+
+						<div class="policy-section">
+							<h2>1. Return Timeframe</h2>
+							<p>You have <strong>30 days</strong> from the date of delivery to initiate a return. Returns requested after 30 days cannot be accepted.</p>
+							<p>The 30-day window begins on the date you receive your order, not the date it was shipped.</p>
+						</div>
+
+						<div class="policy-section">
+							<h2>2. Return Eligibility</h2>
+							<p>To be eligible for a return, items must meet the following conditions:</p>
+							<ul>
+								<li><strong>Unworn and unwashed:</strong> Items must be in their original condition</li>
+								<li><strong>Tags attached:</strong> All original tags must be intact and attached</li>
+								<li><strong>Original packaging:</strong> If applicable, items should include original packaging</li>
+								<li><strong>No damage:</strong> Items must be free from stains, odors, pet hair, or damage</li>
+							</ul>
+
+							<h3>Non-Returnable Items</h3>
+							<p>For hygiene and safety reasons, the following items cannot be returned:</p>
+							<ul>
+								<li>Underwear and intimates</li>
+								<li>Swimwear (if hygiene liner has been removed)</li>
+								<li>Earrings</li>
+								<li>Beauty products and cosmetics</li>
+								<li>Final sale items (marked as such at time of purchase)</li>
+								<li>Gift cards</li>
+							</ul>
+						</div>
+
+						<div class="policy-section">
+							<h2>3. Return Shipping</h2>
+							<h3>Domestic Returns (US)</h3>
+							<p>Returns within the United States are <strong>FREE</strong>! We provide a prepaid return shipping label with your return authorization. Simply print the label, attach it to your package, and drop it off at any carrier location.</p>
+
+							<h3>International Returns</h3>
+							<p>For international returns, customers are responsible for return shipping costs. We recommend using a trackable shipping method and purchasing shipping insurance for valuable items.</p>
+						</div>
+
+						<div class="policy-section">
+							<h2>4. Refunds</h2>
+							<h3>Processing Time</h3>
+							<p>Once we receive your return, please allow:</p>
+							<ul>
+								<li>2-3 business days for inspection</li>
+								<li>5-7 business days for refund processing</li>
+							</ul>
+							<p>You will receive an email confirmation when your refund has been processed.</p>
+
+							<h3>Refund Method</h3>
+							<p>Refunds will be issued to the original form of payment:</p>
+							<ul>
+								<li><strong>Credit/Debit Cards:</strong> Refund will appear on your statement within 5-7 business days</li>
+								<li><strong>PayPal:</strong> Refund will be credited to your PayPal account within 2-3 business days</li>
+								<li><strong>Gift Cards:</strong> Refund will be issued as store credit</li>
+							</ul>
+
+							<h3>Shipping Costs</h3>
+							<p>Original shipping charges are non-refundable unless the return is due to our error (e.g., wrong item shipped, defective product).</p>
+						</div>
+
+						<div class="policy-section">
+							<h2>5. Exchanges</h2>
+							<p>We offer FREE exchanges for different sizes or colors of the same item!</p>
+
+							<h3>How to Exchange</h3>
+							<ol>
+								<li>Initiate a return and select "Exchange" as your reason</li>
+								<li>Choose the size or color you'd like to receive</li>
+								<li>Ship your original item back using the prepaid label</li>
+								<li>We'll ship your exchange item as soon as we receive your return</li>
+							</ol>
+
+							<p>If the exchange item is a different price, we'll refund or charge the difference.</p>
+						</div>
+
+						<div class="policy-section">
+							<h2>6. Damaged or Defective Items</h2>
+							<p>We inspect all items before shipping, but if you receive a damaged or defective item, please contact us immediately.</p>
+
+							<h3>What to Do</h3>
+							<ul>
+								<li>Contact customer service within 48 hours of delivery</li>
+								<li>Provide photos of the damage or defect</li>
+								<li>Include your order number</li>
+							</ul>
+
+							<p>We'll arrange for a replacement or full refund, including original shipping costs. You won't need to return the damaged item unless we specifically request it.</p>
+						</div>
+
+						<div class="policy-section">
+							<h2>7. Wrong Item Received</h2>
+							<p>If you received the wrong item, please contact us immediately. We'll send you the correct item at no additional cost and provide a prepaid label to return the incorrect item.</p>
+						</div>
+
+						<div class="policy-section">
+							<h2>8. Sale and Promotional Items</h2>
+							<h3>Sale Items</h3>
+							<p>Items purchased on sale are eligible for return or exchange within the standard 30-day window, unless marked as "Final Sale."</p>
+
+							<h3>Final Sale Items</h3>
+							<p>Items marked as "Final Sale" cannot be returned or exchanged. These items are clearly marked on the product page and at checkout.</p>
+
+							<h3>Promotional Items</h3>
+							<p>If you received a promotional gift with your order and you return your purchase, the promotional item must also be returned.</p>
+						</div>
+
+						<div class="policy-section">
+							<h2>9. Store Credit</h2>
+							<p>Instead of a refund, you may opt to receive store credit. Store credit benefits include:</p>
+							<ul>
+								<li>Receive 10% additional credit (e.g., $100 refund = $110 store credit)</li>
+								<li>Store credit never expires</li>
+								<li>Can be used on any future purchase</li>
+							</ul>
+						</div>
+
+						<div class="policy-section">
+							<h2>10. Partial Returns</h2>
+							<p>If you received free shipping due to meeting a minimum order threshold and you return part of your order, resulting in the remaining items falling below that threshold, the original shipping fee will be deducted from your refund.</p>
+						</div>
+
+						<div class="policy-section">
+							<h2>11. Return Tips</h2>
+							<ul>
+								<li><strong>Keep tracking number:</strong> Save your return tracking number until your refund is processed</li>
+								<li><strong>Pack securely:</strong> Use sturdy packaging to prevent damage during transit</li>
+								<li><strong>Include paperwork:</strong> Include your return authorization form (emailed to you)</li>
+								<li><strong>Remove old labels:</strong> Cover or remove any old shipping labels from the box</li>
+							</ul>
+						</div>
+
+						<div class="policy-contact">
+							<h3>Need Help with a Return?</h3>
+							<p>Our customer service team is here to help make your return as easy as possible.</p>
+							<p><a href="mailto:returns@fashionflex.com">returns@fashionflex.com</a></p>
+							<a href="/user/orders" class="btn">Start a Return</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Footer -->
+	<footer class="bg3 p-t-75 p-b-32">
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-6 col-lg-3 p-b-50">
+					<h4 class="stext-301 cl0 p-b-30">Categories</h4>
+					<ul>
+						<li class="p-b-10"><a href="#" class="stext-107 cl7 hov-cl1 trans-04">Women</a></li>
+						<li class="p-b-10"><a href="#" class="stext-107 cl7 hov-cl1 trans-04">Men</a></li>
+						<li class="p-b-10"><a href="#" class="stext-107 cl7 hov-cl1 trans-04">Shoes</a></li>
+						<li class="p-b-10"><a href="#" class="stext-107 cl7 hov-cl1 trans-04">Accessories</a></li>
+					</ul>
+				</div>
+
+				<div class="col-sm-6 col-lg-3 p-b-50">
+					<h4 class="stext-301 cl0 p-b-30">Help</h4>
+					<ul>
+						<li class="p-b-10"><a href="privacy-policy.html" class="stext-107 cl7 hov-cl1 trans-04">Privacy Policy</a></li>
+						<li class="p-b-10"><a href="terms-conditions.html" class="stext-107 cl7 hov-cl1 trans-04">Terms & Conditions</a></li>
+						<li class="p-b-10"><a href="return-policy.html" class="stext-107 cl7 hov-cl1 trans-04">Return Policy</a></li>
+						<li class="p-b-10"><a href="faq.html" class="stext-107 cl7 hov-cl1 trans-04">FAQs</a></li>
+					</ul>
+				</div>
+
+				<div class="col-sm-6 col-lg-3 p-b-50">
+					<h4 class="stext-301 cl0 p-b-30">Get In Touch</h4>
+					<p class="stext-107 cl7 size-201">
+						Any questions? Let us know at support@fashionflex.com
+					</p>
+					<div class="p-t-27">
+						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16"><i class="fa fa-facebook"></i></a>
+						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16"><i class="fa fa-instagram"></i></a>
+						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16"><i class="fa fa-pinterest-p"></i></a>
+					</div>
+				</div>
+
+				<div class="col-sm-6 col-lg-3 p-b-50">
+					<h4 class="stext-301 cl0 p-b-30">Newsletter</h4>
+					<form>
+						<div class="wrap-input1 w-full p-b-4">
+							<input class="input1 bg-none plh1 stext-107 cl7" type="text" name="email" placeholder="email@example.com">
+							<div class="focus-input1 trans-04"></div>
+						</div>
+						<div class="p-t-18">
+							<button class="flex-c-m stext-101 cl0 size-103 bg1 bor1 hov-btn2 p-lr-15 trans-04">Subscribe</button>
+						</div>
+					</form>
+				</div>
+			</div>
+
+			<div class="p-t-40">
+				<p class="stext-107 cl6 txt-center">
+					Copyright &copy; 2024 FashionFlex. All rights reserved.
+				</p>
+			</div>
+		</div>
+	</footer>
+
+	<!-- Back to top -->
+	<div class="btn-back-to-top" id="myBtn">
+		<span class="symbol-btn-back-to-top">
+			<i class="zmdi zmdi-chevron-up"></i>
+		</span>
+	</div>
+
+	<script src="../../vendor/jquery/jquery-3.2.1.min.js"></script>
+	<script src="../../vendor/animsition/js/animsition.min.js"></script>
+	<script src="../../vendor/bootstrap/js/popper.js"></script>
+	<script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="../../vendor/select2/select2.min.js"></script>
+	<script src="../../vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+	<script src="../../js/main.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Address Form - FashionFlex</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--===============================================================================================-->
+    <link rel="icon" type="image/png" th:href="@{/images/icons/favicon.png}"/>
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" th:href="@{/vendor/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/fonts/font-awesome-4.7.0/css/font-awesome.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/fonts/iconic/css/material-design-iconic-font.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/fonts/linearicons-v1.0.0/icon-font.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/vendor/animate/animate.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/vendor/css-hamburgers/hamburgers.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/vendor/animsition/css/animsition.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/vendor/select2/select2.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/vendor/perfect-scrollbar/perfect-scrollbar.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/util.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/pages/user-pages.css}">
+    <!--===============================================================================================-->
+</head>
+<body class="animsition">
+
+<!-- Header -->
+<div th:replace="~{fragments/header :: header('home')}"></div>
+
+<!-- Cart -->
+<div th:replace="~{fragments/header :: cart}"></div>
+
+<!-- Main Content -->
+<div class="user-account-wrapper">
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar Navigation -->
+            <div class="col-md-3">
+                <div th:replace="~{fragments/user-sidebar :: sidebar('addresses')}"></div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9">
+                <div class="user-account-content">
+                    <div class="user-account-header">
+                        <h2 th:if="${address.id == null}">Add New Address</h2>
+                        <h2 th:if="${address.id != null}">Edit Address</h2>
+                    </div>
+
+                    <form th:action="@{${address.id == null} ? '/user/address/add' : '/user/address/edit/' + ${address.id}}" th:object="${address}" method="post">
+                        <div class="form-group">
+                            <label for="fullName">Full Name</label>
+                            <input type="text" class="form-control" id="fullName" th:field="*{fullName}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phoneNumber">Phone Number</label>
+                            <input type="text" class="form-control" id="phoneNumber" th:field="*{phoneNumber}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="street">Street Address</label>
+                            <input type="text" class="form-control" id="street" th:field="*{street}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="city">City</label>
+                            <input type="text" class="form-control" id="city" th:field="*{city}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="state">State</label>
+                            <input type="text" class="form-control" id="state" th:field="*{state}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="zipCode">Zip Code</label>
+                            <input type="text" class="form-control" id="zipCode" th:field="*{zipCode}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="country">Country</label>
+                            <input type="text" class="form-control" id="country" th:field="*{country}" required>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="isDefault" th:field="*{default}">
+                            <label class="form-check-label" for="isDefault">Set as default address</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3">Save Address</button>
+                        <a th:href="@{/user/address}" class="btn btn-secondary mt-3">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<!-- Back to top -->
+<div class="btn-back-to-top" id="myBtn">
+		<span class="symbol-btn-back-to-top">
+			<i class="zmdi zmdi-chevron-up"></i>
+		</span>
+</div>
+
+<!--===============================================================================================-->
+<script th:src="@{/vendor/jquery/jquery-3.2.1.min.js}"></script>
+<script th:src="@{/vendor/animsition/js/animsition.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/popper.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{/vendor/select2/select2.min.js}"></script>
+<script th:src="@{/vendor/perfect-scrollbar/perfect-scrollbar.min.js}"></script>
+<script>
+    $('.js-pscroll').each(function(){
+        $(this).css('position','relative');
+        $(this).css('overflow','hidden');
+        var ps = new PerfectScrollbar(this, {
+            wheelSpeed: 1,
+            scrollingThreshold: 1000,
+            wheelPropagation: false,
+        });
+
+        $(window).on('resize', function(){
+            ps.update();
+        })
+    });
+</script>
+<script th:src="@{/js/main.js}"></script>
+
+</body>
+</html>

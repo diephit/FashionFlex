@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Address Book - FashionFlex</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--===============================================================================================-->
+	<link rel="icon" type="image/png" th:href="@{/images/icons/favicon.png}"/>
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/bootstrap/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/font-awesome-4.7.0/css/font-awesome.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/iconic/css/material-design-iconic-font.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/linearicons-v1.0.0/icon-font.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/animate/animate.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/css-hamburgers/hamburgers.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/animsition/css/animsition.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/select2/select2.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/perfect-scrollbar/perfect-scrollbar.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/util.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/assets/css/pages/user-pages.css}">
+<!--===============================================================================================-->
+<style>
+.btn-add-address {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 25px;
+    background: #717fe0;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-family: Poppins-Medium;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    margin-bottom: 25px;
+}
+
+.btn-add-address:hover {
+    background: #5a67d8;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(113, 127, 224, 0.3);
+}
+
+.btn-set-default {
+    background: transparent;
+    color: #717fe0;
+    padding: 8px 18px;
+    border: 2px solid #717fe0;
+    border-radius: 4px;
+    font-family: Poppins-Medium;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-set-default:hover {
+    background: #717fe0;
+    color: #fff;
+}
+
+.btn-edit {
+    background: transparent;
+    color: #28a745;
+    padding: 8px 18px;
+    border: 2px solid #28a745;
+    border-radius: 4px;
+    font-family: Poppins-Medium;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-edit:hover {
+    background: #28a745;
+    color: #fff;
+}
+
+.btn-delete {
+    background: transparent;
+    color: #dc3545;
+    padding: 8px 18px;
+    border: 2px solid #dc3545;
+    border-radius: 4px;
+    font-family: Poppins-Medium;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-delete:hover {
+    background: #dc3545;
+    color: #fff;
+}
+</style>
+</head>
+<body class="animsition">
+
+	<!-- Header -->
+	<div th:replace="~{fragments/header :: header('home')}"></div>
+
+	<!-- Cart -->
+	<div th:replace="~{fragments/header :: cart}"></div>
+
+	<!-- Main Content -->
+	<div class="user-account-wrapper">
+		<div class="container">
+			<div class="row">
+				<!-- Sidebar Navigation -->
+				<div class="col-md-3">
+					<div th:replace="~{fragments/user-sidebar :: sidebar('addresses')}"></div>
+				</div>
+
+				<!-- Main Content -->
+				<div class="col-md-9">
+					<div class="user-account-content">
+						<div class="user-account-header">
+							<h2>Address Book</h2>
+							<p>Manage your shipping addresses</p>
+						</div>
+
+						<!-- Add New Address Button -->
+						<a th:href="@{/user/address/add}" class="btn-add-address">
+							<i class="fa fa-plus"></i>
+							Add New Address
+						</a>
+
+						<div th:if="${#lists.isEmpty(addresses)}">
+							<p>You have no saved addresses.</p>
+						</div>
+
+						<!-- Address Cards -->
+						<div th:each="address : ${addresses}" class="address-card" th:classappend="${address.isDefault} ? 'default' : ''">
+							<span th:if="${address.isDefault}" class="address-badge">Default</span>
+							<h4 th:text="${address.fullName}"></h4>
+							<p>
+								<span th:text="${address.street}"></span><br>
+								<span th:text="${address.city} + ', ' + ${address.state} + ' ' + ${address.zipCode}"></span><br>
+								<span th:text="${address.country}"></span><br>
+								Phone: <span th:text="${address.phoneNumber}"></span>
+							</p>
+							<div class="address-card-actions">
+								<a th:if="${!address.isDefault}" th:href="@{/user/address/set-default/{id}(id=${address.id})}" class="btn-set-default">
+									<i class="fa fa-check"></i> Set as Default
+								</a>
+								<a th:href="@{/user/address/edit/{id}(id=${address.id})}" class="btn-edit">
+									<i class="fa fa-edit"></i> Edit
+								</a>
+								<a th:href="@{/user/address/delete/{id}(id=${address.id})}" class="btn-delete">
+									<i class="fa fa-trash"></i> Delete
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Footer -->
+	<div th:replace="~{fragments/footer :: footer}"></div>
+
+	<!-- Back to top -->
+	<div class="btn-back-to-top" id="myBtn">
+		<span class="symbol-btn-back-to-top">
+			<i class="zmdi zmdi-chevron-up"></i>
+		</span>
+	</div>
+
+<!--===============================================================================================-->
+	<script th:src="@{/vendor/jquery/jquery-3.2.1.min.js}"></script>
+	<script th:src="@{/vendor/animsition/js/animsition.min.js}"></script>
+	<script th:src="@{/vendor/bootstrap/js/popper.js}"></script>
+	<script th:src="@{/vendor/bootstrap/js/bootstrap.min.js}"></script>
+	<script th:src="@{/vendor/select2/select2.min.js}"></script>
+	<script th:src="@{/vendor/perfect-scrollbar/perfect-scrollbar.min.js}"></script>
+	<script>
+		$('.js-pscroll').each(function(){
+			$(this).css('position','relative');
+			$(this).css('overflow','hidden');
+			var ps = new PerfectScrollbar(this, {
+				wheelSpeed: 1,
+				scrollingThreshold: 1000,
+				wheelPropagation: false,
+			});
+
+			$(window).on('resize', function(){
+				ps.update();
+			})
+		});
+	</script>
+	<script th:src="@{/js/main.js}"></script>
+
+</body>
+</html>

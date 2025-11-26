@@ -2122,7 +2122,7 @@ input.num-product::-webkit-inner-spin-button {
 /*==================================================================
     TEXT TEXT TEXT TEXT TEXT TEXT TEXT TEXT TEXT TEXT TEXT TEXT TEXT
 ==================================================================*/
-.cl0 {color: #fff;}
+.cl0 {color: #ffffff;}
 .cl1 {color: #717fe0;}
 .cl2 {color: #333;}
 .cl3 {color: #666;}
@@ -2647,8 +2647,9 @@ input.num-product::-webkit-inner-spin-button {
 .bg5 {background-color: rgba(0,0,0,0.5);}
 .bg6 {background-color: #f2f2f2;}
 .bg7 {background-color: #333;}
-.bg8 {background-color: #f3f3f3;}
+.bg8 {background-color: #eb8406;}
 .bg9 {background-color: rgba(255,255,255,0.9);}
+
 
 /*---------------------------------------------*/
 .bg-overlay1::before {
@@ -3329,4 +3330,10 @@ input.num-product::-webkit-inner-spin-button {
     padding: 20px;
   }
 
+}
+
+/*==================================================================
+[ Hide cart icon on shopping cart page ]*/
+body[data-page="shopping-cart"] .js-show-cart {
+  display: none !important;
 }

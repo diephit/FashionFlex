@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:fragment="head(pageTitle)">
+	<title th:text="${pageTitle} + ' - FashionFlex'">FashionFlex</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" th:href="@{/images/icons/favicon.png}" />
+
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/bootstrap/css/bootstrap.min.css}">
+
+	<!-- Font Awesome -->
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/font-awesome-4.7.0/css/font-awesome.min.css}">
+
+	<!-- Material Design Iconic Font -->
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/iconic/css/material-design-iconic-font.min.css}">
+
+	<!-- Linearicons -->
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/linearicons-v1.0.0/icon-font.min.css}">
+
+	<!-- Animate CSS -->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/animate/animate.css}">
+
+	<!-- Hamburgers CSS -->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/css-hamburgers/hamburgers.min.css}">
+
+	<!-- Animsition CSS -->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/animsition/css/animsition.min.css}">
+
+	<!-- Select2 CSS -->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/select2/select2.min.css}">
+
+	<!-- Daterangepicker CSS -->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/daterangepicker/daterangepicker.css}">
+
+	<!-- Slick CSS -->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/slick/slick.css}">
+
+	<!-- Magnific Popup CSS -->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/MagnificPopup/magnific-popup.css}">
+
+	<!-- Perfect Scrollbar CSS -->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/perfect-scrollbar/perfect-scrollbar.css}">
+
+	<!-- Main CSS -->
+	<link rel="stylesheet" type="text/css" th:href="@{/css/util.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
+</head>
+
+<body>
+
+	<!-- Header Fragment -->
+	<!-- Usage: <div th:replace="~{fragments/header :: header('home')}"></div> -->
+	<!-- activeMenu options: 'home', 'shop', 'cart', 'blog', 'about', 'contact' -->
+
+	<header th:fragment="header(activeMenu)">
+		<!-- Header desktop -->
+		<div class="container-menu-desktop">
+			<!-- Topbar -->
+			<div class="top-bar">
+				<div class="content-topbar flex-sb-m h-full container">
+					<div class="left-top-bar">
+						Free shipping for standard order over $100
+					</div>
+
+					<div class="right-top-bar flex-w h-full">
+						<a th:href="@{/info/faq}" class="flex-c-m trans-04 p-lr-25">
+							Help & FAQs
+						</a>
+
+						<!-- Show user name if logged in, otherwise "My Account" -->
+						<a th:if="${isAuthenticated}" th:href="@{/user/my-account}" class="flex-c-m trans-04 p-lr-25">
+							<i class="fa fa-user"></i> <span th:text="${user.fullName}"></span>
+						</a>
+
+						<a th:unless="${isAuthenticated}" th:href="@{/login}" class="flex-c-m trans-04 p-lr-25">
+							My Account
+						</a>
+
+						<!-- Logout button if logged in -->
+						<form th:if="${isAuthenticated}" th:action="@{/logout}" method="post"
+							style="display: inline; margin:auto;">
+							<button type="submit" class="flex-c-m trans-04 p-lr-25"
+								style="background: none; border: none; cursor: pointer; font-family: inherit; font-size: inherit; color: inherit;">
+								Logout
+							</button>
+						</form>
+
+						<a href="#" class="flex-c-m trans-04 p-lr-25">
+							EN
+						</a>
+
+						<a href="#" class="flex-c-m trans-04 p-lr-25">
+							USD
+						</a>
+
+						<!-- <a sec:authorize="isAuthenticated() and hasRole('ADMIN')" th:href="@{/admin}"
+							class="flex-c-m trans-04 p-lr-25">
+							<i class="fa fa-user"></i>
+							<div>ADMIN DASHBOARD</div>
+						</a> -->
+					</div>
+				</div>
+			</div>
+
+			<div class="wrap-menu-desktop">
+				<nav class="limiter-menu-desktop container">
+
+					<!-- Logo desktop -->
+					<a th:href="@{/}" class="logo">
+						<img th:src="@{/images/icons/logo-01.png}" alt="IMG-LOGO">
+					</a>
+
+					<!-- Menu desktop -->
+					<div class="menu-desktop">
+						<ul class="main-menu">
+							<li th:classappend="${activeMenu == 'home'} ? 'active-menu' : ''">
+								<a th:href="@{/}">Home</a>
+							</li>
+
+							<li th:classappend="${activeMenu == 'shop'} ? 'active-menu' : ''">
+								<a th:href="@{/product}">Shop</a>
+							</li>
+
+							<li th:classappend="${activeMenu == 'cart'} ? 'active-menu' : ''" class="label1"
+								data-label1="hot">
+								<a th:href="@{/shopping-cart}">Cart</a>
+							</li>
+
+							<li th:classappend="${activeMenu == 'blog'} ? 'active-menu' : ''">
+								<a th:href="@{/blog}">Blog</a>
+							</li>
+
+							<li th:classappend="${activeMenu == 'about'} ? 'active-menu' : ''">
+								<a th:href="@{/about}">About</a>
+							</li>
+
+							<li th:classappend="${activeMenu == 'contact'} ? 'active-menu' : ''">
+								<a th:href="@{/contact}">Contact</a>
+							</li>
+						</ul>
+					</div>
+
+					<!-- Icon header -->
+					<div class="wrap-icon-header flex-w flex-r-m">
+						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
+							<i class="zmdi zmdi-search"></i>
+						</div>
+
+						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart"
+							th:attr="data-notify=${cartItemCount != null && cartItemCount > 0 ? cartItemCount : null}">
+							<i class="zmdi zmdi-shopping-cart"></i>
+						</div>
+
+						<a th:href="@{/user/wishlist}"
+							class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti wishlist-icon"
+							data-notify="0">
+							<i class="zmdi zmdi-favorite-outline"></i>
+						</a>
+					</div>
+				</nav>
+			</div>
+		</div>
+
+		<!-- Header Mobile -->
+		<div class="wrap-header-mobile">
+			<!-- Logo moblie -->
+			<div class="logo-mobile">
+				<a th:href="@{/}"><img th:src="@{/images/icons/logo-01.png}" alt="IMG-LOGO"></a>
+			</div>
+
+			<!-- Icon header -->
+			<div class="wrap-icon-header flex-w flex-r-m m-r-15">
+				<div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 js-show-modal-search">
+					<i class="zmdi zmdi-search"></i>
+				</div>
+
+				<div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart"
+					th:attr="data-notify=${cartItemCount != null && cartItemCount > 0 ? cartItemCount : null}">
+					<i class="zmdi zmdi-shopping-cart"></i>
+				</div>
+
+				<a th:href="@{/user/wishlist}"
+					class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti wishlist-icon"
+					data-notify="0">
+					<i class="zmdi zmdi-favorite-outline"></i>
+				</a>
+			</div>
+
+			<!-- Button show menu -->
+			<div class="btn-show-menu-mobile hamburger hamburger--squeeze">
+				<span class="hamburger-box">
+					<span class="hamburger-inner"></span>
+				</span>
+			</div>
+		</div>
+
+
+		<!-- Menu Mobile -->
+		<div class="menu-mobile">
+			<ul class="topbar-mobile">
+				<li>
+					<div class="left-top-bar">
+						Free shipping for standard order over $100
+					</div>
+				</li>
+
+				<li>
+					<div class="right-top-bar flex-w h-full">
+						<a th:href="@{/info/faq}" class="flex-c-m p-lr-10 trans-04">
+							Help & FAQs
+						</a>
+
+						<!-- Show user name if logged in, otherwise "My Account" -->
+						<a th:if="${isAuthenticated}" th:href="@{/user/my-account}" class="flex-c-m p-lr-10 trans-04">
+							<i class="fa fa-user"></i> <span th:text="${user.fullName}"></span>
+						</a>
+
+						<a th:unless="${isAuthenticated}" th:href="@{/login}" class="flex-c-m p-lr-10 trans-04">
+							My Account
+						</a>
+
+						<!-- Logout button if logged in -->
+						<form th:if="${isAuthenticated}" th:action="@{/logout}" method="post"
+							style="display: inline; margin-top:9px;">
+							<button type="submit" class="flex-c-m p-lr-10 trans-04"
+								style="background: none; border: none; cursor: pointer; font-family: inherit; font-size: inherit; color: inherit;">
+								Logout
+							</button>
+						</form>
+
+						<a href="#" class="flex-c-m p-lr-10 trans-04">
+							EN
+						</a>
+
+						<a href="#" class="flex-c-m p-lr-10 trans-04">
+							USD
+						</a>
+
+						<!-- Admin link - only visible for admin users -->
+						<a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}" class="flex-c-m p-lr-10 trans-04">
+							ADMIN
+						</a>
+					</div>
+				</li>
+			</ul>
+
+			<ul class="main-menu-m">
+				<li th:classappend="${activeMenu == 'home'} ? 'active-menu' : ''">
+					<a th:href="@{/}">Home</a>
+				</li>
+
+				<li th:classappend="${activeMenu == 'shop'} ? 'active-menu' : ''">
+					<a th:href="@{/product}">Shop</a>
+				</li>
+
+				<li th:classappend="${activeMenu == 'cart'} ? 'active-menu' : ''">
+					<a th:href="@{/shoping-cart}" class="label1 rs1" data-label1="hot">Cart</a>
+				</li>
+
+				<li th:classappend="${activeMenu == 'blog'} ? 'active-menu' : ''">
+					<a th:href="@{/blog}">Blog</a>
+				</li>
+
+				<li th:classappend="${activeMenu == 'about'} ? 'active-menu' : ''">
+					<a th:href="@{/about}">About</a>
+				</li>
+
+				<li th:classappend="${activeMenu == 'contact'} ? 'active-menu' : ''">
+					<a th:href="@{/contact}">Contact</a>
+				</li>
+			</ul>
+		</div>
+
+		<!-- Modal Search -->
+		<div class="modal-search-header flex-c-m trans-04 js-hide-modal-search">
+			<div class="container-search-header">
+				<button class="flex-c-m btn-hide-modal-search trans-04 js-hide-modal-search">
+					<img th:src="@{/images/icons/icon-close2.png}" alt="CLOSE">
+				</button>
+
+				<form class="wrap-search-header flex-w p-l-15">
+					<button class="flex-c-m trans-04">
+						<i class="zmdi zmdi-search"></i>
+					</button>
+					<input class="plh3" type="text" name="search" placeholder="Search...">
+				</form>
+			</div>
+		</div>
+	</header>
+
+	<!-- Cart Sidebar Fragment -->
+	<!-- Usage: <div th:replace="~{fragments/header :: cart}"></div> -->
+	<div th:fragment="cart" class="wrap-header-cart js-panel-cart">
+		<div class="s-full js-hide-cart"></div>
+
+		<div class="header-cart flex-col-l p-l-65 p-r-25">
+			<div class="header-cart-title flex-w flex-sb-m p-b-8">
+				<span class="mtext-103 cl2">
+					Your Cart
+				</span>
+
+				<div class="fs-35 lh-10 cl2 p-lr-5 pointer hov-cl1 trans-04 js-hide-cart">
+					<i class="zmdi zmdi-close"></i>
+				</div>
+			</div>
+
+			<div class="header-cart-content flex-w js-pscroll">
+				<!-- Guest user / Not logged in message -->
+				<div th:if="${headerCart == null}" class="w-full p-t-20 p-b-20 text-center">
+					<p class="stext-102 cl6 p-b-20">Please login to view your cart</p>
+					<a th:href="@{/login}" class="flex-c-m stext-101 cl0 size-107 bg1 bor2 hov-btn1 p-lr-15 trans-04">
+						Login
+					</a>
+				</div>
+
+				<!-- Logged in user with items -->
+				<div th:if="${headerCart != null && headerCart.totalItems > 0}" class="w-full">
+					<ul class="header-cart-wrapitem w-full">
+						<!-- Display up to 5 most recent cart items -->
+						<li th:each="item : ${headerCart.items}" class="header-cart-item flex-w flex-t m-b-12">
+							<div class="header-cart-item-img">
+								<img th:src="${item.productImageUrl != null && !item.productImageUrl.isEmpty() ? item.productImageUrl : '/images/product-placeholder.jpg'}"
+									th:alt="${item.productName}"
+									onerror="this.onerror=null; this.src='/images/product-placeholder.jpg'">
+							</div>
+
+							<div class="header-cart-item-txt p-t-8">
+								<a th:href="@{/product/{id}(id=${item.productId})}"
+									class="header-cart-item-name m-b-18 hov-cl1 trans-04" th:text="${item.productName}">
+									Product Name
+								</a>
+
+								<span class="header-cart-item-info">
+									<span th:text="${item.quantity}">1</span> x
+									<span
+										th:if="${item.discountPrice != null && item.discountPrice.compareTo(item.price) < 0}"
+										th:text="'$' + ${#numbers.formatDecimal(item.discountPrice, 1, 2)}">$19.00</span>
+									<span
+										th:unless="${item.discountPrice != null && item.discountPrice.compareTo(item.price) < 0}"
+										th:text="'$' + ${#numbers.formatDecimal(item.price, 1, 2)}">$19.00</span>
+								</span>
+
+								<!-- Show size and color if available -->
+								<div th:if="${item.size != null || item.color != null}" class="stext-107 cl6"
+									style="font-size: 12px;">
+									<span th:if="${item.size != null}" th:text="'Size: ' + ${item.size}"></span>
+									<span th:if="${item.size != null && item.color != null}"> | </span>
+									<span th:if="${item.color != null}" th:text="'Color: ' + ${item.color}"></span>
+								</div>
+							</div>
+						</li>
+					</ul>
+
+					<!-- "View more items" message if cart has more than 5 items -->
+					<div th:if="${headerCart.hasMoreItems}" class="w-full text-center p-t-10 p-b-10">
+						<p class="stext-107 cl6">
+							<a th:href="@{/shopping-cart}" class="hov-cl1">
+								View all <span th:text="${headerCart.totalItems}">10</span> items in cart
+							</a>
+						</p>
+					</div>
+
+					<div class="w-full">
+						<div class="header-cart-total w-full p-tb-40">
+							Subtotal: <span
+								th:text="'$' + ${#numbers.formatDecimal(headerCart.subtotal, 1, 2)}">$75.00</span>
+						</div>
+
+						<div class="header-cart-buttons flex-w w-full">
+							<a th:href="@{/shopping-cart}"
+								class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-r-8 m-b-10">
+								View Cart
+							</a>
+
+							<a th:href="@{/checkout/checkout}"
+								class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-b-10">
+								Check Out
+							</a>
+						</div>
+					</div>
+				</div>
+
+				<!-- Logged in user with empty cart -->
+				<div th:if="${headerCart != null && headerCart.totalItems == 0}"
+					class="w-full p-t-40 p-b-40 text-center">
+					<p class="stext-102 cl6 p-b-20">Your cart is empty</p>
+					<a th:href="@{/product}" class="flex-c-m stext-101 cl0 size-107 bg1 bor2 hov-btn1 p-lr-15 trans-04">
+						Continue Shopping
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Scripts Fragment -->
+	<!-- Usage: <div th:replace="~{fragments/header :: scripts}"></div> -->
+	<th:block th:fragment="scripts">
+		<script th:src="@{/vendor/jquery/jquery-3.2.1.min.js}"></script>
+		<script th:src="@{/vendor/animsition/js/animsition.min.js}"></script>
+		<script th:src="@{/vendor/bootstrap/js/popper.js}"></script>
+		<script th:src="@{/vendor/bootstrap/js/bootstrap.min.js}"></script>
+		<script th:src="@{/vendor/select2/select2.min.js}"></script>
+		<script>
+			$(".js-select2").each(function () {
+				$(this).select2({
+					minimumResultsForSearch: 20,
+					dropdownParent: $(this).next('.dropDownSelect2')
+				});
+			})
+		</script>
+		<script th:src="@{/vendor/daterangepicker/moment.min.js}"></script>
+		<script th:src="@{/vendor/daterangepicker/daterangepicker.js}"></script>
+		<script th:src="@{/vendor/slick/slick.min.js}"></script>
+		<script th:src="@{/js/slick-custom.js}"></script>
+		<script th:src="@{/vendor/parallax100/parallax100.js}"></script>
+		<script>
+			$('.parallax100').parallax100();
+		</script>
+		<script th:src="@{/vendor/MagnificPopup/jquery.magnific-popup.min.js}"></script>
+		<script>
+			$('.gallery-lb').each(function () {
+				$(this).magnificPopup({
+					delegate: 'a',
+					type: 'image',
+					gallery: {
+						enabled: true
+					},
+					mainClass: 'mfp-fade'
+				});
+			});
+		</script>
+		<script th:src="@{/vendor/isotope/isotope.pkgd.min.js}"></script>
+		<script th:src="@{/vendor/sweetalert/sweetalert.min.js}"></script>
+		<script>
+			$('.js-addwish-b2').on('click', function (e) {
+				e.preventDefault();
+			});
+
+			$('.js-addwish-b2').each(function () {
+				var nameProduct = $(this).parent().parent().find('.js-name-b2').html();
+				$(this).on('click', function () {
+					swal(nameProduct, "is added to wishlist !", "success");
+
+					$(this).addClass('js-addedwish-b2');
+					$(this).off('click');
+				});
+			});
+
+			$('.js-addwish-detail').each(function () {
+				var nameProduct = $(this).parent().parent().parent().find('.js-name-detail').html();
+
+				$(this).on('click', function () {
+					swal(nameProduct, "is added to wishlist !", "success");
+
+					$(this).addClass('js-addedwish-detail');
+					$(this).off('click');
+				});
+			});
+
+			// Add to cart functionality - moved to individual pages (product-detail.html)
+			// to allow for proper handling of size/color variants and AJAX requests
+		</script>
+		<script th:src="@{/vendor/perfect-scrollbar/perfect-scrollbar.min.js}"></script>
+		<script>
+			$('.js-pscroll').each(function () {
+				$(this).css('position', 'relative');
+				$(this).css('overflow', 'hidden');
+				var ps = new PerfectScrollbar(this, {
+					wheelSpeed: 1,
+					scrollingThreshold: 1000,
+					wheelPropagation: false,
+				});
+
+				$(window).on('resize', function () {
+					ps.update();
+				})
+			});
+		</script>
+		<script th:src="@{/js/main.js}"></script>
+	</th:block>
+
+</body>
+
+</html>

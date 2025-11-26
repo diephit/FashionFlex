@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Order Tracking - FashionFlex</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--===============================================================================================-->
+	<link rel="icon" type="image/png" th:href="@{/images/icons/favicon.png}"/>
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/bootstrap/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/font-awesome-4.7.0/css/font-awesome.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/iconic/css/material-design-iconic-font.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/linearicons-v1.0.0/icon-font.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/animate/animate.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/css-hamburgers/hamburgers.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/animsition/css/animsition.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/select2/select2.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/perfect-scrollbar/perfect-scrollbar.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/util.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/assets/css/pages/user-pages.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/assets/css/pages/checkout-styles.css}">
+<!--===============================================================================================-->
+<style>
+.tracking-form-section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 40px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    text-align: center;
+}
+
+.tracking-form-section h3 {
+    font-family: Poppins-Medium;
+    font-size: 20px;
+    color: #333;
+    margin: 0 0 10px 0;
+}
+
+.tracking-form-section p {
+    font-family: Poppins-Regular;
+    font-size: 14px;
+    color: #999;
+    margin: 0 0 30px 0;
+}
+
+.tracking-form {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.tracking-result-section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.tracking-order-info {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 8px;
+    padding: 25px;
+    color: #fff;
+    margin-bottom: 30px;
+}
+
+.tracking-order-info h4 {
+    font-family: Poppins-Medium;
+    font-size: 18px;
+    margin: 0 0 15px 0;
+}
+
+.tracking-info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-family: Poppins-Regular;
+    font-size: 14px;
+}
+
+.tracking-info-row:last-child {
+    margin-bottom: 0;
+}
+
+.tracking-info-label {
+    opacity: 0.9;
+}
+
+.tracking-info-value {
+    font-family: Poppins-Medium;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-family: Poppins-Medium;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.status-badge.processing {
+    background: #fff3cd;
+    color: #856404;
+}
+
+@media (max-width: 768px) {
+    .tracking-form-section {
+        padding: 30px 20px;
+    }
+
+    .tracking-info-row {
+        flex-direction: column;
+        gap: 5px;
+    }
+}
+</style>
+</head>
+<body class="animsition">
+
+	<!-- Header -->
+	<div th:replace="~{fragments/header :: header('home')}"></div>
+
+	<!-- Cart -->
+	<div th:replace="~{fragments/header :: cart}"></div>
+
+	<!-- Main Content -->
+	<div class="user-account-wrapper">
+		<div class="container">
+			<div class="row">
+				<!-- Sidebar Navigation -->
+				<div class="col-md-3">
+					<div th:replace="~{fragments/user-sidebar :: sidebar('tracking')}"></div>
+				</div>
+
+				<!-- Main Content -->
+				<div class="col-md-9">
+					<!-- Error/Success Messages -->
+					<div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+						<i class="fa fa-exclamation-triangle"></i> <span th:text="${error}"></span>
+						<button type="button" class="close" data-dismiss="alert">&times;</button>
+					</div>
+
+					<!-- Tracking Form Section (Show if no tracking data) -->
+					<div class="tracking-form-section" id="trackingForm" th:style="${tracking != null ? 'display:none;' : ''}">
+						<h3>Track Your Order</h3>
+						<p>Enter your order number and email address to track your order</p>
+
+						<form class="tracking-form" th:action="@{/user/orders/track}" method="post">
+							<div class="user-form-group" style="text-align: left;">
+								<label>Order Number</label>
+								<input type="text" class="user-form-control" name="orderNumber" placeholder="e.g., ORD-2024-001" required>
+							</div>
+							<div class="user-form-group" style="text-align: left;">
+								<label>Email Address</label>
+								<input type="email" class="user-form-control" name="email" placeholder="john.doe@example.com" th:value="${user != null ? user.email : ''}" required>
+							</div>
+							<button type="submit" class="btn-user-primary">
+								<i class="fa fa-search"></i> Track Order
+							</button>
+						</form>
+					</div>
+
+					<!-- Tracking Result Section (Show if tracking data exists) -->
+					<div class="tracking-result-section" id="trackingResult" th:if="${tracking != null}" th:style="${tracking != null ? 'display:block;' : 'display:none;'}">
+						<div class="user-account-header">
+							<h2>Order Tracking</h2>
+							<p>Track the status of your order</p>
+						</div>
+
+						<!-- Order Info -->
+						<div class="tracking-order-info">
+							<h4>Order #<span th:text="${tracking.orderNumber}">ORD-2024-001</span></h4>
+							<div class="tracking-info-row" th:if="${tracking.estimatedDelivery != null}">
+								<span class="tracking-info-label">Expected Delivery:</span>
+								<span class="tracking-info-value" th:text="${tracking.estimatedDelivery}">January 22, 2024</span>
+							</div>
+							<div class="tracking-info-row" th:if="${tracking.shippingMethod != null}">
+								<span class="tracking-info-label">Shipping Method:</span>
+								<span class="tracking-info-value" th:text="${tracking.shippingMethod}">Standard Shipping</span>
+							</div>
+							<div class="tracking-info-row" th:if="${tracking.trackingNumber != null}">
+								<span class="tracking-info-label">Tracking Number:</span>
+								<span class="tracking-info-value" th:text="${tracking.trackingNumber}">TRACK123456</span>
+							</div>
+							<div class="tracking-info-row">
+								<span class="tracking-info-label">Current Status:</span>
+								<span class="tracking-info-value">
+									<span class="status-badge"
+									      th:classappend="${tracking.currentStatus.toLowerCase()}"
+									      th:text="${tracking.currentStatus}">Processing</span>
+								</span>
+							</div>
+							<div class="tracking-info-row" th:if="${tracking.shippingAddress != null}">
+								<span class="tracking-info-label">Shipping To:</span>
+								<span class="tracking-info-value" th:text="${tracking.shippingAddress}">123 Main St, City</span>
+							</div>
+						</div>
+
+						<!-- Tracking Timeline -->
+						<div class="tracking-timeline" th:if="${tracking != null and tracking.timeline != null}">
+							<!-- Dynamic Timeline Steps -->
+							<div th:each="event : ${tracking.timeline}"
+							     class="tracking-step"
+							     th:classappend="${event.completed ? 'completed' : ''} + ' ' + ${event.active ? 'active' : ''}">
+								<div class="tracking-step-title">
+									<i class="fa"
+									   th:classappend="${event.completed ? 'fa-check-circle' : (event.active ? 'fa-spinner' : 'fa-circle-o')}"></i>
+									<span th:text="${event.title}">Event Title</span>
+								</div>
+								<div class="tracking-step-time"
+								     th:text="${event.timestamp != null ? #temporals.format(event.timestamp, 'MMMM dd, yyyy - HH:mm a') : 'Pending'}">
+								     January 15, 2024 - 10:30 AM
+								</div>
+								<div class="tracking-step-description" th:text="${event.description}">
+									Event description text
+								</div>
+							</div>
+						</div>
+
+						<!-- Order Items -->
+						<div style="margin-top: 40px; padding-top: 30px; border-top: 2px solid #e6e6e6;">
+							<h4 style="font-family: Poppins-Medium; font-size: 16px; margin-bottom: 20px;">Order Items</h4>
+
+							<div class="order-item" style="display: flex; gap: 15px; margin-bottom: 15px; padding: 15px; border: 1px solid #e6e6e6; border-radius: 8px;">
+								<img th:src="@{/images/product-01.jpg}" alt="Product" class="order-item-image">
+								<div class="order-item-info">
+									<h4>Esprit Ruffle Shirt</h4>
+									<p>Size: M, Color: White, Qty: 1</p>
+								</div>
+								<div style="margin-left: auto; font-family: Poppins-Medium; font-size: 16px; color: #717fe0;">
+									$16.64
+								</div>
+							</div>
+
+							<div class="order-item" style="display: flex; gap: 15px; margin-bottom: 15px; padding: 15px; border: 1px solid #e6e6e6; border-radius: 8px;">
+								<img th:src="@{/images/product-02.jpg}" alt="Product" class="order-item-image">
+								<div class="order-item-info">
+									<h4>Herschel supply</h4>
+									<p>Size: L, Color: Black, Qty: 2</p>
+								</div>
+								<div style="margin-left: auto; font-family: Poppins-Medium; font-size: 16px; color: #717fe0;">
+									$70.62
+								</div>
+							</div>
+						</div>
+
+						<!-- Action Buttons -->
+						<div style="margin-top: 30px; text-align: center;">
+							<a th:href="@{/user/orders/track}" class="btn-user-outline" style="margin-right: 10px;">
+								<i class="fa fa-search"></i> Track Another Order
+							</a>
+							<a th:href="@{/user/orders}" class="btn-user-primary">
+								<i class="fa fa-list"></i> View All Orders
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Footer -->
+	<div th:replace="~{fragments/footer :: footer}"></div>
+
+	<!-- Back to top -->
+	<div class="btn-back-to-top" id="myBtn">
+		<span class="symbol-btn-back-to-top">
+			<i class="zmdi zmdi-chevron-up"></i>
+		</span>
+	</div>
+
+<!--===============================================================================================-->
+	<script th:src="@{/vendor/jquery/jquery-3.2.1.min.js}"></script>
+	<script th:src="@{/vendor/animsition/js/animsition.min.js}"></script>
+	<script th:src="@{/vendor/bootstrap/js/popper.js}"></script>
+	<script th:src="@{/vendor/bootstrap/js/bootstrap.min.js}"></script>
+	<script th:src="@{/vendor/select2/select2.min.js}"></script>
+	<script th:src="@{/vendor/perfect-scrollbar/perfect-scrollbar.min.js}"></script>
+	<script>
+		$('.js-pscroll').each(function(){
+			$(this).css('position','relative');
+			$(this).css('overflow','hidden');
+			var ps = new PerfectScrollbar(this, {
+				wheelSpeed: 1,
+				scrollingThreshold: 1000,
+				wheelPropagation: false,
+			});
+
+			$(window).on('resize', function(){
+				ps.update();
+			})
+		});
+	</script>
+	<script th:src="@{/js/main.js}"></script>
+
+</body>
+</html>

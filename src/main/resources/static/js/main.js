@@ -214,12 +214,14 @@
 
     /*==================================================================
     [ +/- num product ]*/
-    $('.btn-num-product-down').on('click', function(){
+    // Only apply to non-cart pages (product detail, etc.)
+    // Cart page has its own event handlers in cart.js to handle AJAX updates
+    $('.btn-num-product-down').not('.btn-cart-update').on('click', function(){
         var numProduct = Number($(this).next().val());
         if(numProduct > 0) $(this).next().val(numProduct - 1);
     });
 
-    $('.btn-num-product-up').on('click', function(){
+    $('.btn-num-product-up').not('.btn-cart-update').on('click', function(){
         var numProduct = Number($(this).prev().val());
         $(this).prev().val(numProduct + 1);
     });
@@ -268,10 +270,12 @@
     
     /*==================================================================
     [ Show modal1 ]*/
-    $('.js-show-modal1').on('click',function(e){
-        e.preventDefault();
-        $('.js-modal1').addClass('show-modal1');
-    });
+    // NOTE: Quick View modal handler moved to product-detail.html to support AJAX loading
+    // The handler below is commented out to prevent conflicts with page-specific implementations
+    // $('.js-show-modal1').on('click',function(e){
+    //     e.preventDefault();
+    //     $('.js-modal1').addClass('show-modal1');
+    // });
 
     $('.js-hide-modal1').on('click',function(){
         $('.js-modal1').removeClass('show-modal1');

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - FashionFlex</title>
+    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .sidebar {
+            min-height: 100vh;
+            background: #343a40;
+            color: white;
+            padding: 20px 0;
+        }
+        .sidebar a {
+            color: #fff;
+            padding: 10px 20px;
+            display: block;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        .sidebar a:hover, .sidebar a.active {
+            background: #495057;
+        }
+        .main-content {
+            padding: 30px;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .stat-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .stat-card p {
+            margin: 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 sidebar">
+                <h4 class="text-center mb-4">FashionFlex Admin</h4>
+                <a href="/admin" class="active"><i class="fa fa-dashboard"></i> Dashboard</a>
+                <a href="/admin/products"><i class="fa fa-shopping-bag"></i> Products</a>
+                <a href="/admin/categories"><i class="fa fa-list"></i> Categories</a>
+                <a href="/admin/brands"><i class="fa fa-tag"></i> Brands</a>
+                <a href="/admin/orders"><i class="fa fa-shopping-cart"></i> Orders</a>
+                <a href="/admin/users"><i class="fa fa-users"></i> Users</a>
+                <a href="/admin/coupons"><i class="fa fa-ticket"></i> Coupons</a>
+                <hr style="border-color: #495057;">
+                <a href="/"><i class="fa fa-home"></i> Back to Site</a>
+                <a href="/logout"><i class="fa fa-sign-out"></i> Logout</a>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10 main-content">
+                <h1 class="mb-4">Dashboard</h1>
+
+                <!-- Success/Error Messages -->
+                <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <span th:text="${success}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <span th:text="${error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <h3 th:text="${stats?.totalUsers ?: 0}">0</h3>
+                            <p>Total Users</p>
+                            <i class="fa fa-users fa-2x text-primary"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <h3 th:text="${stats?.totalProducts ?: 0}">0</h3>
+                            <p>Total Products</p>
+                            <i class="fa fa-shopping-bag fa-2x text-success"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <h3 th:text="${stats?.totalOrders ?: 0}">0</h3>
+                            <p>Total Orders</p>
+                            <i class="fa fa-shopping-cart fa-2x text-warning"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <h3 th:text="${stats?.totalCategories ?: 0}">0</h3>
+                            <p>Total Categories</p>
+                            <i class="fa fa-list fa-2x text-info"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Second Row of Stats -->
+                <div class="row mt-3">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <h3 th:text="${stats?.totalBrands ?: 0}">0</h3>
+                            <p>Total Brands</p>
+                            <i class="fa fa-tag fa-2x text-danger"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Revenue Stats -->
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <div class="stat-card">
+                            <h3 th:text="${#numbers.formatDecimal(stats?.totalRevenue ?: 0, 1, 2)} + ' $'">$0.00</h3>
+                            <p>Total Revenue</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card">
+                            <h3 th:text="${#numbers.formatDecimal(stats?.todayRevenue ?: 0, 1, 2)} + ' $'">$0.00</h3>
+                            <p>Today's Revenue</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card">
+                            <h3 th:text="${#numbers.formatDecimal(stats?.monthRevenue ?: 0, 1, 2)} + ' $'">$0.00</h3>
+                            <p>This Month's Revenue</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Status -->
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="stat-card">
+                            <h4>Order Status</h4>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td>Pending:</td>
+                                    <td th:text="${stats?.pendingOrders ?: 0}">0</td>
+                                </tr>
+                                <tr>
+                                    <td>Processing:</td>
+                                    <td th:text="${stats?.processingOrders ?: 0}">0</td>
+                                </tr>
+                                <tr>
+                                    <td>Shipped:</td>
+                                    <td th:text="${stats?.shippedOrders ?: 0}">0</td>
+                                </tr>
+                                <tr>
+                                    <td>Delivered:</td>
+                                    <td th:text="${stats?.deliveredOrders ?: 0}">0</td>
+                                </tr>
+                                <tr>
+                                    <td>Cancelled:</td>
+                                    <td th:text="${stats?.cancelledOrders ?: 0}">0</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stock Alerts -->
+                <div class="row mt-4" th:if="${stats?.lowStockProducts > 0 || stats?.outOfStockProducts > 0}">
+                    <div class="col-md-12">
+                        <div class="stat-card">
+                            <h4 class="text-danger">Stock Alerts</h4>
+                            <p th:if="${stats?.lowStockProducts > 0}">
+                                <i class="fa fa-warning text-warning"></i>
+                                <span th:text="${stats.lowStockProducts}">0</span> products with low stock
+                            </p>
+                            <p th:if="${stats?.outOfStockProducts > 0}">
+                                <i class="fa fa-times-circle text-danger"></i>
+                                <span th:text="${stats.outOfStockProducts}">0</span> products out of stock
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/vendor/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>

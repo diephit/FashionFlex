@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Orders Management - FashionFlex Staff</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" href="../../images/icons/favicon.png"/>
+	<link rel="stylesheet" href="../../vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../../fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="../../fonts/iconic/css/material-design-iconic-font.min.css">
+	<link rel="stylesheet" href="../../css/util.css">
+	<link rel="stylesheet" href="../../css/main.css">
+	<link rel="stylesheet" href="../../assets/css/pages/admin-styles.css">
+</head>
+<body>
+
+	<div class="admin-wrapper">
+		<aside class="admin-sidebar">
+			<div class="admin-sidebar-header">
+				<h3><i class="zmdi zmdi-badge-check"></i> Staff Panel</h3>
+			</div>
+			<ul class="admin-sidebar-menu">
+				<li><a href="dashboard.html"><i class="fa fa-tachometer"></i> Dashboard</a></li>
+				<li><a href="orders.html" class="active"><i class="fa fa-shopping-cart"></i> Orders</a></li>
+				<li><a href="inventory.html"><i class="fa fa-cubes"></i> Inventory</a></li>
+				<li><a href="customers.html"><i class="fa fa-users"></i> Customers</a></li>
+				<li><a href="../../index.html"><i class="fa fa-sign-out"></i> Back to Store</a></li>
+			</ul>
+		</aside>
+
+		<main class="admin-main">
+			<div class="admin-topbar">
+				<h2>Orders Management</h2>
+				<div class="admin-user-info">
+					<span>Staff Member</span>
+					<img src="https://ui-avatars.com/api/?name=Staff+User&size=40&background=28a745&color=fff" alt="Staff">
+				</div>
+			</div>
+
+			<div class="admin-content">
+				<div class="dashboard-cards">
+					<div class="dashboard-card">
+						<div class="dashboard-card-icon pending"><i class="fa fa-clock-o"></i></div>
+						<h4>Pending</h4>
+						<div class="value">45</div>
+					</div>
+					<div class="dashboard-card">
+						<div class="dashboard-card-icon processing"><i class="fa fa-refresh"></i></div>
+						<h4>Processing</h4>
+						<div class="value">32</div>
+					</div>
+					<div class="dashboard-card">
+						<div class="dashboard-card-icon completed"><i class="fa fa-check-circle"></i></div>
+						<h4>Completed Today</h4>
+						<div class="value">18</div>
+					</div>
+					<div class="dashboard-card">
+						<div class="dashboard-card-icon info"><i class="fa fa-truck"></i></div>
+						<h4>Ready to Ship</h4>
+						<div class="value">12</div>
+					</div>
+				</div>
+
+				<div class="admin-table-wrapper">
+					<div class="admin-table-header">
+						<h3>All Orders</h3>
+						<select class="status-select">
+							<option>All Status</option>
+							<option>Pending</option>
+							<option>Processing</option>
+							<option>Completed</option>
+							<option>Cancelled</option>
+						</select>
+					</div>
+
+					<table class="admin-table">
+						<thead>
+							<tr>
+								<th><input type="checkbox"></th>
+								<th>Order ID</th>
+								<th>Customer</th>
+								<th>Products</th>
+								<th>Total</th>
+								<th>Payment</th>
+								<th>Date</th>
+								<th>Status</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td><strong>#ORD-2458</strong></td>
+								<td>Sarah Johnson</td>
+								<td>3 items</td>
+								<td>$156.00</td>
+								<td>Credit Card</td>
+								<td>Nov 4, 2024</td>
+								<td><span class="status-badge pending">Pending</span></td>
+								<td>
+									<button class="action-btn view" title="View Details"><i class="fa fa-eye"></i></button>
+									<select class="status-select" style="padding: 4px 8px; font-size: 12px;">
+										<option>Update Status</option>
+										<option>Processing</option>
+										<option>Completed</option>
+										<option>Cancelled</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td><strong>#ORD-2457</strong></td>
+								<td>Mike Chen</td>
+								<td>2 items</td>
+								<td>$89.50</td>
+								<td>PayPal</td>
+								<td>Nov 4, 2024</td>
+								<td><span class="status-badge processing">Processing</span></td>
+								<td>
+									<button class="action-btn view" title="View Details"><i class="fa fa-eye"></i></button>
+									<select class="status-select" style="padding: 4px 8px; font-size: 12px;">
+										<option>Update Status</option>
+										<option>Completed</option>
+										<option>Cancelled</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td><strong>#ORD-2456</strong></td>
+								<td>Emily White</td>
+								<td>1 item</td>
+								<td>$45.00</td>
+								<td>Credit Card</td>
+								<td>Nov 3, 2024</td>
+								<td><span class="status-badge completed">Completed</span></td>
+								<td>
+									<button class="action-btn view" title="View Details"><i class="fa fa-eye"></i></button>
+									<button class="action-btn edit" title="Print Invoice"><i class="fa fa-print"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td><strong>#ORD-2455</strong></td>
+								<td>John Davis</td>
+								<td>4 items</td>
+								<td>$234.99</td>
+								<td>PayPal</td>
+								<td>Nov 3, 2024</td>
+								<td><span class="status-badge processing">Processing</span></td>
+								<td>
+									<button class="action-btn view" title="View Details"><i class="fa fa-eye"></i></button>
+									<select class="status-select" style="padding: 4px 8px; font-size: 12px;">
+										<option>Update Status</option>
+										<option>Completed</option>
+										<option>Cancelled</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td><strong>#ORD-2454</strong></td>
+								<td>Lisa Brown</td>
+								<td>2 items</td>
+								<td>$125.00</td>
+								<td>Credit Card</td>
+								<td>Nov 2, 2024</td>
+								<td><span class="status-badge pending">Pending</span></td>
+								<td>
+									<button class="action-btn view" title="View Details"><i class="fa fa-eye"></i></button>
+									<select class="status-select" style="padding: 4px 8px; font-size: 12px;">
+										<option>Update Status</option>
+										<option>Processing</option>
+										<option>Completed</option>
+										<option>Cancelled</option>
+									</select>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+					<div class="admin-pagination">
+						<div class="admin-pagination-info">Showing 1 to 5 of 95 entries</div>
+						<div class="admin-pagination-buttons">
+							<button disabled>Previous</button>
+							<button class="active">1</button>
+							<button>2</button>
+							<button>3</button>
+							<button>Next</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<button class="admin-mobile-toggle"><i class="fa fa-bars"></i></button>
+
+	<script src="../../vendor/jquery/jquery-3.2.1.min.js"></script>
+	<script src="../../vendor/bootstrap/js/popper.js"></script>
+	<script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="../../assets/js/pages/admin.js"></script>
+
+</body>
+</html>
