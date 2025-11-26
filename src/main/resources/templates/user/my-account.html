@@ -365,70 +365,52 @@
 							<p>View and manage your recent orders</p>
 						</div>
 
-						<!-- Order Card 1 -->
-						<div class="order-card">
-							<div class="order-card-header">
-								<div>
-									<div class="order-number">#ORD-2024-001</div>
-									<div class="order-date">Ordered on January 15, 2024</div>
+						<!-- Dynamic Order Cards -->
+						<div th:if="${recentOrders != null and !recentOrders.empty}">
+							<div th:each="order : ${recentOrders}" class="order-card">
+								<div class="order-card-header">
+									<div>
+										<div class="order-number" th:text="${order.orderNumber}">#ORD-2024-001</div>
+										<div class="order-date"
+											 th:text="'Ordered on ' + ${#temporals.format(order.createdAt, 'MMMM dd, yyyy')}">Ordered on January 15, 2024</div>
+									</div>
+									<span class="status-badge"
+										  th:classappend="${order.status == 'DELIVERED'} ? 'completed' : (${order.status == 'SHIPPED'} ? 'shipped' : (${order.status == 'PROCESSING'} ? 'processing' : (${order.status == 'CONFIRMED'} ? 'confirmed' : (${order.status == 'CANCELLED'} ? 'cancelled' : 'pending'))))"
+										  th:text="${#strings.capitalize(order.status.toLowerCase())}">Processing</span>
 								</div>
-								<span class="status-badge processing">Processing</span>
-							</div>
-							<div class="order-items">
-								<div class="order-item">
-									<img th:src="@{/images/product-01.jpg}" alt="Product" class="order-item-image">
-									<div class="order-item-info">
-										<h4>Esprit Ruffle Shirt</h4>
-										<p>Size: M, Color: White, Qty: 1</p>
+								<div class="order-items">
+									<div th:each="item : ${order.orderItems}" class="order-item">
+										<img th:src="${item.productImageUrl != null ? item.productImageUrl : '/images/product-placeholder.jpg'}"
+											 th:alt="${item.productName}" class="order-item-image">
+										<div class="order-item-info">
+											<h4 th:text="${item.productName}">Product Name</h4>
+											<p th:text="${item.size != null ? 'Size: ' + item.size + ', ' : ''} +
+													   ${item.color != null ? 'Color: ' + item.color + ', ' : ''} +
+													   'Qty: ' + ${item.quantity}">Size: M, Color: White, Qty: 1</p>
+										</div>
 									</div>
 								</div>
-								<div class="order-item">
-									<img th:src="@{/images/product-02.jpg}" alt="Product" class="order-item-image">
-									<div class="order-item-info">
-										<h4>Herschel supply</h4>
-										<p>Size: L, Color: Black, Qty: 2</p>
+								<div class="order-card-footer">
+									<div class="order-total" th:text="'Total: $' + ${order.totalAmount}">Total: $156.40</div>
+									<div class="order-actions">
+										<a th:href="@{/user/order-tracking(orderNumber=${order.orderNumber})}" class="btn-user-outline">Track Order</a>
+										<a th:href="@{/user/orders/{orderId}(orderId=${order.id})}" class="btn-user-primary">View Details</a>
 									</div>
-								</div>
-							</div>
-							<div class="order-card-footer">
-								<div class="order-total">Total: $156.40</div>
-								<div class="order-actions">
-									<a th:href="@{/user/order-tracking}" class="btn-user-outline">Track Order</a>
-									<a th:href="@{/user/orders}" class="btn-user-primary">View Details</a>
 								</div>
 							</div>
 						</div>
 
-						<!-- Order Card 2 -->
-						<div class="order-card">
-							<div class="order-card-header">
-								<div>
-									<div class="order-number">#ORD-2024-002</div>
-									<div class="order-date">Ordered on January 10, 2024</div>
-								</div>
-								<span class="status-badge completed">Delivered</span>
-							</div>
-							<div class="order-items">
-								<div class="order-item">
-									<img th:src="@{/images/product-03.jpg}" alt="Product" class="order-item-image">
-									<div class="order-item-info">
-										<h4>Only Check Trouser</h4>
-										<p>Size: L, Color: Blue, Qty: 1</p>
-									</div>
-								</div>
-							</div>
-							<div class="order-card-footer">
-								<div class="order-total">Total: $75.00</div>
-								<div class="order-actions">
-									<a href="#" class="btn-user-outline">Review Product</a>
-									<a href="#" class="btn-user-primary">Buy Again</a>
-								</div>
-							</div>
+						<!-- No Orders Message -->
+						<div th:if="${recentOrders == null or recentOrders.empty}" class="text-center" style="padding: 40px;">
+							<p class="stext-107 cl6">You haven't placed any orders yet.</p>
+							<a th:href="@{/}" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer" style="margin-top: 15px;">
+								Start Shopping
+							</a>
 						</div>
 
 						<!-- View All Button -->
-						<div class="text-center" style="margin-top: 30px;">
-							<a th:href="@{/user/orders}" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
+						<div class="text-center" style="margin-top: 30px;" th:if="${orderCount > 0}">
+							<a th:href="@{/user/order-history}" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
 								View All Orders
 							</a>
 						</div>

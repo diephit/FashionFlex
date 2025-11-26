@@ -619,6 +619,16 @@ textarea.user-form-control {
     color: #721c24;
 }
 
+.status-badge.shipped {
+    background: #e2e3e5;
+    color: #383d41;
+}
+
+.status-badge.confirmed {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
 /* ==================== RESPONSIVE ==================== */
 @media (max-width: 992px) {
     .wishlist-grid {

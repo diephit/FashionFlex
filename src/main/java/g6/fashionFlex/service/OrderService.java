@@ -80,4 +80,12 @@ public interface OrderService {
      * @return Total number of orders for the user
      */
     long getUserOrderCount(Long userId);
+
+    /**
+     * Get recent orders for a specific user (for dashboard display)
+     * @param userId User ID
+     * @param limit Maximum number of orders to return
+     * @return List of recent orders for the user
+     */
+    List<OrderDTO> getRecentOrdersByUserId(Long userId, int limit);
 }

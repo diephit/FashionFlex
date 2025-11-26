@@ -77,11 +77,16 @@ public class UserController {
             model.addAttribute("orderCount", orderCount);
             model.addAttribute("wishlistCount", wishlistCount);
             model.addAttribute("addressCount", addressCount);
+
+            // Get recent orders for display (max 5 orders)
+            List<OrderDTO> recentOrders = orderService.getRecentOrdersByUserId(user.getId(), 5);
+            model.addAttribute("recentOrders", recentOrders);
         } catch (Exception e) {
             // Fallback to 0 if services are not available
             model.addAttribute("orderCount", 0);
             model.addAttribute("wishlistCount", 0);
             model.addAttribute("addressCount", 0);
+            model.addAttribute("recentOrders", List.of());
         }
 
         return "user/my-account";

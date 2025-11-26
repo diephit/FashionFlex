@@ -509,6 +509,15 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.countByUserId(userId);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<OrderDTO> getRecentOrdersByUserId(Long userId, int limit) {
+        return orderRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
+                .limit(limit)
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
     private OrderItemDTO convertOrderItemToDTO(OrderItem item) {
         OrderItemDTO dto = new OrderItemDTO();
         dto.setId(item.getId());
