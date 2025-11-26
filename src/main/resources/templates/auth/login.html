@@ -517,6 +517,16 @@
 			</div>
 
 			<div class="header-cart-content flex-w js-pscroll">
+			<!-- Guest user / Not logged in message -->
+			<div th:if="${!isAuthenticated}" class="w-full p-t-20 p-b-20 text-center">
+				<p class="stext-102 cl6 p-b-20">Please login to view your cart</p>
+				<a th:href="@{/login}" class="flex-c-m stext-101 cl0 size-107 bg1 bor2 hov-btn1 p-lr-15 trans-04">
+					Login
+				</a>
+			</div>
+
+			<!-- Logged in user with cart items (if any) -->
+			<div th:if="${isAuthenticated}" class="w-full">
 				<ul class="header-cart-wrapitem w-full">
 					<li class="header-cart-item flex-w flex-t m-b-12">
 						<div class="header-cart-item-img">
@@ -583,6 +593,7 @@
 					</div>
 				</div>
 			</div>
+		</div>
 		</div>
 	</div>
 
