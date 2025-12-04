@@ -22,6 +22,9 @@ public class Product {
     @JoinColumn(name = "categoryID")
     private Category category;
 
+    @Column(name = "stockQuantity")
+    private Integer stockQuantity;
+
     @ManyToOne
     @JoinColumn(name = "createdByAdminID")
     private Admin createdByAdmin;
@@ -93,6 +96,14 @@ public class Product {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public Integer getStockQuantity() {
+        return stockQuantity;
+    }
+
+    public void setStockQuantity(Integer stockQuantity) {
+        this.stockQuantity = stockQuantity;
     }
 
     public LocalDateTime getCreatedAt() {

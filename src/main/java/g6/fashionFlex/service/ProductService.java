@@ -32,6 +32,17 @@ public class ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found: " + productId));
 
+        // Only allow viewing active products
+        if (product.getStatus() != Product.ProductStatus.active) {
+            throw new ResourceNotFoundException("Product not available: " + productId);
+        }
+
+        // Check if category is active
+        if (product.getCategory() != null && product.getCategory().getStatus() != null 
+                && product.getCategory().getStatus() != g6.fashionFlex.entity.Category.CategoryStatus.active) {
+            throw new ResourceNotFoundException("Product not available: " + productId);
+        }
+
         List<ProductVariant> activeVariants = variantRepository.findByProductProductIDAndStatus(
                 productId,
                 ProductVariant.VariantStatus.active

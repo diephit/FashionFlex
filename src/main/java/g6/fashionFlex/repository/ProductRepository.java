@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -31,22 +32,43 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                                          @Param("status") ProductStatus status, 
                                          Pageable pageable);
     
+    @Query("SELECT p FROM Product p " +
+           "WHERE p.status = g6.fashionFlex.entity.Product.ProductStatus.active " +
+           "AND (LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+           "OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%')))")
+    List<Product> searchActiveProducts(@Param("keyword") String keyword);
+    
     List<Product> findByCategoryCategoryID(Integer categoryID);
     
     List<Product> findByStatus(ProductStatus status);
+
+    List<Product> findByCategoryCategoryIDIn(Collection<Integer> categoryIds);
+
+    long countByStatus(ProductStatus status);
 
     @Query("SELECT p FROM Product p " +
            "LEFT JOIN p.category c " +
            "LEFT JOIN c.parentCategory cp " +
            "LEFT JOIN cp.parentCategory cpp " +
-           "WHERE c.categoryID = :topId OR cp.categoryID = :topId OR cpp.categoryID = :topId")
+           "WHERE (c.categoryID = :topId OR cp.categoryID = :topId OR cpp.categoryID = :topId) " +
+           "AND p.status = g6.fashionFlex.entity.Product.ProductStatus.active " +
+           "AND (c.status = g6.fashionFlex.entity.Category.CategoryStatus.active OR c.status IS NULL) " +
+           "AND (cp.status = g6.fashionFlex.entity.Category.CategoryStatus.active OR cp.status IS NULL) " +
+           "AND (cpp.status = g6.fashionFlex.entity.Category.CategoryStatus.active OR cpp.status IS NULL)")
     List<Product> findByTopLevelCategory(@Param("topId") Integer topCategoryId);
 
     @Query("SELECT p FROM Product p " +
            "LEFT JOIN p.category c " +
            "LEFT JOIN c.parentCategory cp " +
            "LEFT JOIN cp.parentCategory cpp " +
-           "WHERE c.categoryID IN :topIds OR cp.categoryID IN :topIds OR cpp.categoryID IN :topIds")
+           "WHERE (c.categoryID IN :topIds OR cp.categoryID IN :topIds OR cpp.categoryID IN :topIds) " +
+           "AND p.status = g6.fashionFlex.entity.Product.ProductStatus.active " +
+           "AND (c.status = g6.fashionFlex.entity.Category.CategoryStatus.active OR c.status IS NULL) " +
+           "AND (cp.status = g6.fashionFlex.entity.Category.CategoryStatus.active OR cp.status IS NULL) " +
+           "AND (cpp.status = g6.fashionFlex.entity.Category.CategoryStatus.active OR cpp.status IS NULL)")
     List<Product> findByTopLevelCategories(@Param("topIds") List<Integer> topCategoryIds);
+
+    @Query("SELECT p FROM Product p WHERE p.status = g6.fashionFlex.entity.Product.ProductStatus.active")
+    List<Product> findAllActive();
 }
 

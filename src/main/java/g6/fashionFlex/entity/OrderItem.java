@@ -29,6 +29,9 @@ public class OrderItem {
     @Column(name = "totalPrice", precision = 12, scale = 2)
     private BigDecimal totalPrice;
 
+    @Column(name = "selectedSize", length = 10)
+    private String selectedSize;
+
     public OrderItem() {
     }
 
@@ -78,5 +81,13 @@ public class OrderItem {
 
     public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public String getSelectedSize() {
+        return selectedSize;
+    }
+
+    public void setSelectedSize(String selectedSize) {
+        this.selectedSize = selectedSize;
     }
 }

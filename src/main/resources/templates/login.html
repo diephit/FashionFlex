@@ -1,39 +1,40 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
 	<title>Login - Fashion Flex</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-<!--===============================================================================================-->
-	<link rel="icon" type="image/png" th:href="@{/images/icons/favicon.png}"/>
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
+	<link rel="icon" type="image/png" th:href="@{/images/icons/favicon.png}" />
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" th:href="@{/vendor/bootstrap/css/bootstrap.min.css}">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" th:href="@{/fonts/font-awesome-4.7.0/css/font-awesome.min.css}">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" th:href="@{/fonts/iconic/css/material-design-iconic-font.min.css}">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" th:href="@{/fonts/linearicons-v1.0.0/icon-font.min.css}">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" th:href="@{/vendor/animate/animate.css}">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" th:href="@{/vendor/css-hamburgers/hamburgers.min.css}">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" th:href="@{/vendor/animsition/css/animsition.min.css}">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" th:href="@{/vendor/select2/select2.min.css}">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" th:href="@{/vendor/daterangepicker/daterangepicker.css}">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" th:href="@{/vendor/slick/slick.css}">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" th:href="@{/vendor/MagnificPopup/magnific-popup.css}">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" th:href="@{/vendor/perfect-scrollbar/perfect-scrollbar.css}">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" th:href="@{/css/util.css}">
 	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
-<!--===============================================================================================-->
+	<!--===============================================================================================-->
 	<style>
 		/* Custom styles for login/register page */
 		.auth-container {
@@ -47,7 +48,7 @@
 		.auth-box {
 			background: #fff;
 			border-radius: 10px;
-			box-shadow: 0 0 30px rgba(0,0,0,0.1);
+			box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
 			max-width: 500px;
 			width: 100%;
 			overflow: hidden;
@@ -97,8 +98,15 @@
 		}
 
 		@keyframes fadeIn {
-			from { opacity: 0; transform: translateY(10px); }
-			to { opacity: 1; transform: translateY(0); }
+			from {
+				opacity: 0;
+				transform: translateY(10px);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
 		}
 
 		.form-group {
@@ -145,7 +153,7 @@
 		.btn-submit:hover {
 			background: #333;
 			transform: translateY(-2px);
-			box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+			box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 		}
 
 		.form-link {
@@ -254,7 +262,81 @@
 			}
 		}
 	</style>
+	<script th:inline="javascript">
+		function switchTab(target) {
+			var loginForm = document.getElementById('loginForm');
+			var registerForm = document.getElementById('registerForm');
+			var tabs = document.querySelectorAll('.auth-tab');
+			if (!loginForm || !registerForm) {
+				return;
+			}
+			var showLogin = target === 'login';
+			loginForm.classList.toggle('active', showLogin);
+			registerForm.classList.toggle('active', !showLogin);
+			tabs.forEach(function (tab) {
+				var tabTarget = tab.getAttribute('data-tab');
+				tab.classList.toggle('active', tabTarget === target);
+			});
+		}
+	</script>
+	<script>
+		function validateRegisterForm(event) {
+			var passwordInput = document.getElementById('registerPassword');
+			var confirmPasswordInput = document.getElementById('confirmPassword');
+			var passwordError = document.getElementById('passwordStrengthError');
+			var passwordMatchError = document.getElementById('passwordMatchError');
+			var phoneInput = document.getElementById('registerPhone');
+			var phoneError = document.getElementById('phoneError');
+
+			if (!passwordInput || !confirmPasswordInput || !phoneInput) {
+				return true;
+			}
+
+			var passwordValue = passwordInput.value || '';
+			var confirmPasswordValue = confirmPasswordInput.value || '';
+			var phoneValue = (phoneInput.value || '').trim();
+			var passwordPattern = /^(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
+			var phonePattern = /^0\d{9}$/;
+			var isValid = true;
+
+			if (!passwordPattern.test(passwordValue)) {
+				if (passwordError) {
+					passwordError.style.display = 'block';
+					passwordError.textContent = 'Password must be at least 8 characters with an uppercase letter and special character.';
+				}
+				isValid = false;
+			} else if (passwordError) {
+				passwordError.style.display = 'none';
+			}
+
+			if (passwordValue !== confirmPasswordValue) {
+				if (passwordMatchError) {
+					passwordMatchError.style.display = 'block';
+				}
+				isValid = false;
+			} else if (passwordMatchError) {
+				passwordMatchError.style.display = 'none';
+			}
+
+			if (!phonePattern.test(phoneValue)) {
+				if (phoneError) {
+					phoneError.style.display = 'block';
+					phoneError.textContent = 'Phone number must start with 0 and contain exactly 10 digits.';
+				}
+				isValid = false;
+			} else if (phoneError) {
+				phoneError.style.display = 'none';
+			}
+
+			if (!isValid && event) {
+				event.preventDefault();
+			}
+
+			return isValid;
+		}
+	</script>
 </head>
+
 <body>
 
 	<!-- Header -->
@@ -293,8 +375,8 @@
 
 					<!-- Logo desktop -->
 					<a href="/index" class="logo" style="font-family: Poppins-Bold; font-size: 2rem; color: #333;">
-    Fashion Flex
-</a>
+						Fashion Flex
+					</a>
 
 					<!-- Menu desktop -->
 					<div class="menu-desktop">
@@ -336,11 +418,14 @@
 							<i class="zmdi zmdi-search"></i>
 						</div>
 
-						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="2">
+						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart"
+							data-notify="2">
 							<i class="zmdi zmdi-shopping-cart"></i>
 						</div>
 
-						<a href="#" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti" data-notify="0">
+						<a th:href="@{/wishlist}"
+							class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti wishlist-nav-link"
+							data-notify="0">
 							<i class="zmdi zmdi-favorite-outline"></i>
 						</a>
 					</div>
@@ -361,11 +446,13 @@
 					<i class="zmdi zmdi-search"></i>
 				</div>
 
-				<div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart" data-notify="2">
+				<div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart"
+					data-notify="2">
 					<i class="zmdi zmdi-shopping-cart"></i>
 				</div>
 
-				<a href="#" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti" data-notify="0">
+				<a th:href="@{/wishlist}" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti wishlist-nav-link"
+					data-notify="0">
 					<i class="zmdi zmdi-favorite-outline"></i>
 				</a>
 			</div>
@@ -533,11 +620,13 @@
 					</div>
 
 					<div class="header-cart-buttons flex-w w-full">
-						<a href="/shopping-cart" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-r-8 m-b-10">
+						<a href="/shopping-cart"
+							class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-r-8 m-b-10">
 							View Cart
 						</a>
 
-						<a href="/shopping-cart" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-b-10">
+						<a href="/shopping-cart"
+							class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-b-10">
 							Check Out
 						</a>
 					</div>
@@ -550,27 +639,43 @@
 	<div class="auth-container">
 		<div class="auth-box">
 			<div class="auth-tabs">
-				<button type="button" class="auth-tab" th:classappend="${showRegister == null || !showRegister ? 'active' : ''}" onclick="switchTab('login')">
+				<button type="button" class="auth-tab" data-tab="login"
+					th:classappend="${showRegister == null || !showRegister ? 'active' : ''}"
+					onclick="switchTab('login')">
 					LOGIN
 				</button>
-				<button type="button" class="auth-tab" th:classappend="${showRegister != null && showRegister ? 'active' : ''}" onclick="switchTab('register')">
+				<button type="button" class="auth-tab" data-tab="register"
+					th:classappend="${showRegister != null && showRegister ? 'active' : ''}"
+					onclick="switchTab('register')">
 					REGISTER
 				</button>
 			</div>
 
 			<div class="auth-form-container">
 				<!-- Login Form -->
-				<form id="loginForm" class="auth-form" th:classappend="${showRegister == null || !showRegister ? 'active' : ''}" th:action="@{/login}" method="post">
+				<form id="loginForm" class="auth-form"
+					th:classappend="${showRegister == null || !showRegister ? 'active' : ''}" th:action="@{/login}"
+					method="post">
 					<!-- Error Messages -->
-					<div th:if="${error}" class="alert alert-danger" style="padding: 12px 20px; margin-bottom: 20px; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 4px;" th:text="${error}"></div>
-					<div th:if="${logout}" class="alert alert-success" style="padding: 12px 20px; margin-bottom: 20px; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 4px;" th:text="${logout}"></div>
-					<div th:if="${success}" class="alert alert-success" style="padding: 12px 20px; margin-bottom: 20px; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 4px;" th:text="${success}"></div>
-					<div th:if="${message}" class="alert alert-info" style="padding: 12px 20px; margin-bottom: 20px; background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; border-radius: 4px;" th:text="${message}"></div>
-					
+					<div th:if="${error}" class="alert alert-danger"
+						style="padding: 12px 20px; margin-bottom: 20px; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 4px;"
+						th:text="${error}"></div>
+					<div th:if="${logout}" class="alert alert-success"
+						style="padding: 12px 20px; margin-bottom: 20px; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 4px;"
+						th:text="${logout}"></div>
+					<div th:if="${success}" class="alert alert-success"
+						style="padding: 12px 20px; margin-bottom: 20px; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 4px;"
+						th:text="${success}"></div>
+					<div th:if="${message}" class="alert alert-info"
+						style="padding: 12px 20px; margin-bottom: 20px; background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; border-radius: 4px;"
+						th:text="${message}"></div>
+
 					<div class="form-group">
 						<input type="email" name="email" class="form-input" placeholder="Email Address" required>
 					</div>
-
+					<div th:if="${loginMessage}" class="alert alert-info"
+						style="padding: 12px 20px; margin-bottom: 20px; background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; border-radius: 4px;"
+						th:text="${loginMessage}"></div>
 					<div class="form-group">
 						<input type="password" name="password" class="form-input" placeholder="Password" required>
 					</div>
@@ -593,40 +698,63 @@
 					</div>
 
 					<div class="social-login">
-						<button type="button" class="btn-social" onclick="alert('Facebook login not implemented yet')">
-							<i class="fa fa-facebook"></i>
-							Facebook
-						</button>
-						<button type="button" class="btn-social" onclick="alert('Google login not implemented yet')">
+						<a href="/oauth2/authorization/google" class="btn-social"
+							style="text-decoration: none; color: #333;">
 							<i class="fa fa-google"></i>
 							Google
-						</button>
+						</a>
 					</div>
 				</form>
 
 				<!-- Register Form -->
-				<form id="registerForm" class="auth-form" th:classappend="${showRegister != null && showRegister ? 'active' : ''}" th:action="@{/api/auth/register}" method="post" th:object="${user}" onsubmit="return validateRegisterForm(event)">
+				<form id="registerForm" class="auth-form"
+					th:classappend="${showRegister != null && showRegister ? 'active' : ''}"
+					th:action="@{/api/auth/register}" method="post" th:object="${user}"
+					onsubmit="return validateRegisterForm(event)">
 					<!-- Error Messages -->
-					<div th:if="${registerError}" class="alert alert-danger" style="padding: 12px 20px; margin-bottom: 20px; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 4px;" th:text="${registerError}"></div>
-					
+					<div th:if="${registerError}" class="alert alert-danger"
+						style="padding: 12px 20px; margin-bottom: 20px; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 4px;"
+						th:text="${registerError}"></div>
+
 					<div class="form-group">
-						<input type="text" name="fullName" th:field="*{fullName}" class="form-input" placeholder="Full Name" required>
-						<div th:if="${#fields.hasErrors('fullName')}" class="error-message" style="color: #721c24; font-size: 12px; margin-top: 5px;" th:errors="*{fullName}"></div>
+						<input type="text" name="fullName" th:field="*{fullName}" class="form-input"
+							placeholder="Full Name" required>
+						<div th:if="${#fields.hasErrors('fullName')}" class="error-message"
+							style="color: #721c24; font-size: 12px; margin-top: 5px;" th:errors="*{fullName}"></div>
 					</div>
 
 					<div class="form-group">
-						<input type="email" name="email" th:field="*{email}" class="form-input" placeholder="Email Address" required>
-						<div th:if="${#fields.hasErrors('email')}" class="error-message" style="color: #721c24; font-size: 12px; margin-top: 5px;" th:errors="*{email}"></div>
+						<input type="email" name="email" th:field="*{email}" class="form-input"
+							placeholder="Email Address" required>
+						<div th:if="${#fields.hasErrors('email')}" class="error-message"
+							style="color: #721c24; font-size: 12px; margin-top: 5px;" th:errors="*{email}"></div>
 					</div>
 
 					<div class="form-group">
-						<input type="password" name="password" th:field="*{password}" id="registerPassword" class="form-input" placeholder="Password" required minlength="6">
-						<div th:if="${#fields.hasErrors('password')}" class="error-message" style="color: #721c24; font-size: 12px; margin-top: 5px;" th:errors="*{password}"></div>
+						<input type="tel" name="phone" th:field="*{phone}" id="registerPhone" class="form-input"
+							placeholder="Phone Number (0XXXXXXXXX)" required pattern="^0\d{9}$"
+							title="Phone number must start with 0 and contain exactly 10 digits.">
+						<small style="color: #777; display: block; margin-top: 5px;">Phone number must start with 0 and
+							have exactly 10 digits.</small>
+						<div id="phoneError"
+							style="color: #721c24; font-size: 12px; margin-top: 5px; display: none;"></div>
 					</div>
 
 					<div class="form-group">
-						<input type="password" id="confirmPassword" class="form-input" placeholder="Confirm Password" required minlength="6">
-						<div id="passwordMatchError" class="error-message" style="color: #721c24; font-size: 12px; margin-top: 5px; display: none;">Passwords do not match</div>
+						<input type="password" name="password" th:field="*{password}" id="registerPassword"
+							class="form-input" placeholder="Password" required minlength="8">
+						<div th:if="${#fields.hasErrors('password')}" class="error-message"
+							style="color: #721c24; font-size: 12px; margin-top: 5px;" th:errors="*{password}"></div>
+						<div id="passwordStrengthError"
+							style="color: #721c24; font-size: 12px; margin-top: 5px; display: none;"></div>
+					</div>
+
+					<div class="form-group">
+						<input type="password" id="confirmPassword" class="form-input" placeholder="Confirm Password"
+							required minlength="8">
+						<div id="passwordMatchError" class="error-message"
+							style="color: #721c24; font-size: 12px; margin-top: 5px; display: none;">Passwords do not
+							match</div>
 					</div>
 
 					<div class="checkbox-container">
@@ -643,14 +771,11 @@
 					</div>
 
 					<div class="social-login">
-						<button type="button" class="btn-social" onclick="alert('Facebook signup not implemented yet')">
-							<i class="fa fa-facebook"></i>
-							Facebook
-						</button>
-						<button type="button" class="btn-social" onclick="alert('Google signup not implemented yet')">
+						<a href="/oauth2/authorization/google" class="btn-social"
+							style="text-decoration: none; color: #333;">
 							<i class="fa fa-google"></i>
 							Google
-						</button>
+						</a>
 					</div>
 				</form>
 			</div>
@@ -731,7 +856,8 @@
 					</h4>
 
 					<p class="stext-107 cl7 size-201">
-						Any questions? Let us know in store at 8th floor, 379 Hudson St, New York, NY 10018 or call us on (+1) 96 716 6879
+						Any questions? Let us know in store at 8th floor, 379 Hudson St, New York, NY 10018 or call us
+						on (+1) 96 716 6879
 					</p>
 
 					<div class="p-t-27">
@@ -756,7 +882,8 @@
 
 					<form>
 						<div class="wrap-input1 w-full p-b-4">
-							<input class="input1 bg-none plh1 stext-107 cl7" type="text" name="email" placeholder="email@example.com">
+							<input class="input1 bg-none plh1 stext-107 cl7" type="text" name="email"
+								placeholder="email@example.com">
 							<div class="focus-input1 trans-04"></div>
 						</div>
 
@@ -771,119 +898,3 @@
 
 			<div class="p-t-40">
 				<div class="flex-c-m flex-w p-b-18">
-					<a href="#" class="m-all-1">
-						<img th:src="@{/images/icons/icon-pay-01.png}" alt="ICON-PAY">
-					</a>
-
-					<a href="#" class="m-all-1">
-						<img th:src="@{/images/icons/icon-pay-02.png}" alt="ICON-PAY">
-					</a>
-
-					<a href="#" class="m-all-1">
-						<img th:src="@{/images/icons/icon-pay-03.png}" alt="ICON-PAY">
-					</a>
-
-					<a href="#" class="m-all-1">
-						<img th:src="@{/images/icons/icon-pay-04.png}" alt="ICON-PAY">
-					</a>
-
-					<a href="#" class="m-all-1">
-						<img th:src="@{/images/icons/icon-pay-05.png}" alt="ICON-PAY">
-					</a>
-				</div>
-
-				<p class="stext-107 cl6 txt-center">
-					Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | Made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a> &amp; distributed by <a href="https://themewagon.com" target="_blank">ThemeWagon</a>
-				</p>
-			</div>
-		</div>
-	</footer>
-
-
-	<!-- Back to top -->
-	<div class="btn-back-to-top" id="myBtn">
-		<span class="symbol-btn-back-to-top">
-			<i class="zmdi zmdi-chevron-up"></i>
-		</span>
-	</div>
-
-<!--===============================================================================================-->
-	<script th:src="@{/vendor/jquery/jquery-3.2.1.min.js}"></script>
-<!--===============================================================================================-->
-	<script th:src="@{/vendor/animsition/js/animsition.min.js}"></script>
-<!--===============================================================================================-->
-	<script th:src="@{/vendor/bootstrap/js/popper.js}"></script>
-	<script th:src="@{/vendor/bootstrap/js/bootstrap.min.js}"></script>
-<!--===============================================================================================-->
-	<script th:src="@{/vendor/select2/select2.min.js}"></script>
-<!--===============================================================================================-->
-	<script th:src="@{/vendor/MagnificPopup/jquery.magnific-popup.min.js}"></script>
-<!--===============================================================================================-->
-	<script th:src="@{/vendor/perfect-scrollbar/perfect-scrollbar.min.js}"></script>
-	<script>
-		$('.js-pscroll').each(function(){
-			$(this).css('position','relative');
-			$(this).css('overflow','hidden');
-			var ps = new PerfectScrollbar(this, {
-				wheelSpeed: 1,
-				scrollingThreshold: 1000,
-				wheelPropagation: false,
-			});
-
-			$(window).on('resize', function(){
-				ps.update();
-			})
-		});
-	</script>
-<!--===============================================================================================-->
-	<script th:src="@{/vendor/sweetalert/sweetalert.min.js}"></script>
-<!--===============================================================================================-->
-	<script th:src="@{/js/main.js}"></script>
-
-	<!-- Custom Auth Script -->
-	<script>
-		// Switch between Login and Register tabs
-		function switchTab(tab) {
-			const loginForm = document.getElementById('loginForm');
-			const registerForm = document.getElementById('registerForm');
-			const tabs = document.querySelectorAll('.auth-tab');
-
-			if (tab === 'login') {
-				loginForm.classList.add('active');
-				registerForm.classList.remove('active');
-				tabs[0].classList.add('active');
-				tabs[1].classList.remove('active');
-			} else {
-				registerForm.classList.add('active');
-				loginForm.classList.remove('active');
-				tabs[1].classList.add('active');
-				tabs[0].classList.remove('active');
-			}
-		}
-
-		// Handle Login Form Submission - Form now submits directly to /login
-		// No need for JavaScript handling, Spring Security handles it
-
-		// Validate Register Form before submission
-		function validateRegisterForm(event) {
-			const password = document.getElementById('registerPassword').value;
-			const confirmPassword = document.getElementById('confirmPassword').value;
-			const passwordMatchError = document.getElementById('passwordMatchError');
-
-			// Validate password match
-			if (password !== confirmPassword) {
-				event.preventDefault();
-				passwordMatchError.style.display = 'block';
-				passwordMatchError.textContent = 'Passwords do not match';
-				return false;
-			} else {
-				passwordMatchError.style.display = 'none';
-			}
-
-			// Form will submit to /api/auth/register if validation passes
-			return true;
-		}
-	</script>
-
-</body>
-</html>

@@ -44,7 +44,6 @@ public class UserService {
 
     @Transactional
     public UserDTO registerUser(RegisterRequest registerRequest) {
-        // Normalize email to lowercase for consistency
         String normalizedEmail = registerRequest.getEmail() != null ? 
                                  registerRequest.getEmail().toLowerCase().trim() : "";
         
@@ -52,12 +51,9 @@ public class UserService {
             throw new IllegalArgumentException("Email cannot be empty");
         }
         
-        // Double check: Check if email already exists in database
-        // This is a safety check even though controller already checked
         boolean emailExists = userRepository.existsByEmail(normalizedEmail);
         
         if (!emailExists) {
-            // Also check with findByEmail to be absolutely sure
             emailExists = userRepository.findByEmail(normalizedEmail).isPresent();
         }
         
@@ -65,14 +61,27 @@ public class UserService {
             throw new UserAlreadyExistsException("This email has been used, please try another one");
         }
 
-        // Create new user
+        String normalizedPhone = registerRequest.getPhone() != null ?
+                registerRequest.getPhone().trim() : "";
+
+        if (normalizedPhone.isEmpty()) {
+            throw new IllegalArgumentException("Phone number is required");
+        }
+
+        if (!normalizedPhone.matches("^0\\d{9}$")) {
+            throw new IllegalArgumentException("Phone number must start with 0 and contain exactly 10 digits");
+        }
+
+        if (customerRepository.existsByPhone(normalizedPhone)) {
+            throw new IllegalArgumentException("This phone number has been used, please try another one");
+        }
+
         User user = new User();
         user.setName(registerRequest.getFullName());
         user.setEmail(normalizedEmail);
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setStatus(User.UserStatus.active);
 
-        // Assign default role (customer)
         Role userRole = roleRepository.findByRoleName(RoleName.customer)
                 .orElseGet(() -> {
                     Role newRole = new Role();
@@ -81,27 +90,76 @@ public class UserService {
                 });
 
         user.setRole(userRole);
-
-        // Save user
         User savedUser = userRepository.save(user);
 
-        // Ensure customer profile is created for the new user
+        createCustomerProfile(savedUser, normalizedPhone);
+
+        return convertToDTO(savedUser);
+    }
+
+    @Transactional
+    public User createOrUpdateOAuth2User(String provider, String providerId, String email, String fullName) {
+        String normalizedEmail = email.toLowerCase().trim();
+        
+        Optional<User> existingUser = userRepository.findByEmail(normalizedEmail);
+        
+        if (existingUser.isPresent()) {
+            User user = existingUser.get();
+            if (fullName != null && !fullName.isBlank() && !fullName.equals(user.getName())) {
+                user.setName(fullName);
+                userRepository.save(user);
+            }
+            return user;
+        }
+        
+        User newUser = new User();
+        newUser.setEmail(normalizedEmail);
+        newUser.setName(fullName);
+        // OAuth-based signups start with a placeholder password so the DB constraint is satisfied.
+        newUser.setPassword(PasswordSetupService.buildPlaceholderPassword());
+        newUser.setStatus(User.UserStatus.active);
+
+        Role userRole = roleRepository.findByRoleName(RoleName.customer)
+                .orElseGet(() -> {
+                    Role r = new Role();
+                    r.setRoleName(RoleName.customer);
+                    return roleRepository.save(r);
+                });
+
+        newUser.setRole(userRole);
+        User savedUser = userRepository.save(newUser);
+        
+        createCustomerProfile(savedUser, null);
+        
+        return savedUser;
+    }
+
+    private Customer createCustomerProfile(User user, String phone) {
+        Optional<Customer> existingCustomer = customerRepository.findByUser(user);
+        if (existingCustomer.isPresent()) {
+            Customer customer = existingCustomer.get();
+            if (phone != null && !phone.isBlank() && (customer.getPhone() == null || !customer.getPhone().equals(phone))) {
+                customer.setPhone(phone);
+                return customerRepository.save(customer);
+            }
+            return customer;
+        }
+        
         Customer customer = new Customer();
-        customer.setUser(savedUser);
+        customer.setUser(user);
         customer.setLoyaltyPoints(0);
         customer.setTotalSpent(BigDecimal.ZERO);
+        if (phone != null && !phone.isBlank()) {
+            customer.setPhone(phone);
+        }
 
-        // Assign default membership level (Bronze / lowest minSpent)
         Optional<MembershipLevel> defaultLevel = membershipLevelRepository.findByLevelName("Bronze");
         if (defaultLevel.isEmpty()) {
             defaultLevel = membershipLevelRepository.findAllOrderByMinSpentAsc().stream().findFirst();
         }
         defaultLevel.ifPresent(customer::setLevel);
 
-        customerRepository.save(customer);
-
-        // Convert to DTO and return
-        return convertToDTO(savedUser);
+        return customerRepository.save(customer);
     }
 
     @Transactional(readOnly = true)
@@ -113,10 +171,8 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserDTO getUserByEmail(String email) {
-        // Normalize email to lowercase for case-insensitive lookup
         String normalizedEmail = email.toLowerCase().trim();
         
-        // Try normalized email first, then fallback to original
         User user = userRepository.findByEmail(normalizedEmail)
                 .orElseGet(() -> userRepository.findByEmail(email)
                         .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email)));
@@ -133,7 +189,6 @@ public class UserService {
         dto.setId(user.getUserID() == null ? null : user.getUserID().longValue());
         dto.setFullName(user.getName());
         dto.setEmail(user.getEmail());
-        // Fields not present in the new schema are left null (phone, address, provider)
         dto.setEnabled(user.getStatus() == User.UserStatus.active);
         dto.setCreatedAt(user.getCreatedAt());
 
@@ -142,28 +197,5 @@ public class UserService {
         dto.setRoles(roleNames);
 
         return dto;
-    }
-
-    @Transactional
-    public User createOrUpdateOAuth2User(String provider, String providerId, String email, String fullName) {
-        // Since provider fields are not part of the new schema, fall back to email-based lookup
-        return userRepository.findByEmail(email)
-                .orElseGet(() -> {
-                    User newUser = new User();
-                    newUser.setEmail(email);
-                    newUser.setName(fullName);
-                    newUser.setPassword(passwordEncoder.encode("OAUTH2_USER_" + System.currentTimeMillis()));
-                    newUser.setStatus(User.UserStatus.active);
-
-                    Role userRole = roleRepository.findByRoleName(RoleName.customer)
-                            .orElseGet(() -> {
-                                Role r = new Role();
-                                r.setRoleName(RoleName.customer);
-                                return roleRepository.save(r);
-                            });
-
-                    newUser.setRole(userRole);
-                    return userRepository.save(newUser);
-                });
     }
 }

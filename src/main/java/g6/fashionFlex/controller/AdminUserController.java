@@ -1,6 +1,5 @@
 package g6.fashionFlex.controller;
 
-import g6.fashionFlex.entity.Role;
 import g6.fashionFlex.entity.User;
 import g6.fashionFlex.service.AdminUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +12,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-
 @Controller
-@RequestMapping("/admin/users")
+@RequestMapping("/admin/customers")
 public class AdminUserController {
 
     @Autowired
@@ -28,21 +25,27 @@ public class AdminUserController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "userID") String sortBy,
             @RequestParam(defaultValue = "desc") String sortDir,
+            @RequestParam(required = false) String keyword,
             Model model) {
         
         Sort sort = sortDir.equalsIgnoreCase("asc") ? 
             Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
         
-        Page<User> users = userService.getAllUsers(pageable);
-        List<Role> roles = userService.getAllRoles();
+        Page<User> users = (keyword != null && !keyword.trim().isEmpty())
+                ? userService.searchUsers(keyword, pageable)
+                : userService.getAllUsers(pageable);
         
         model.addAttribute("users", users);
-        model.addAttribute("roles", roles);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", users.getTotalPages());
         model.addAttribute("sortBy", sortBy);
         model.addAttribute("sortDir", sortDir);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("totalUsers", userService.countAllUsers());
+        model.addAttribute("activeUsers", userService.countActiveUsers());
+        model.addAttribute("inactiveUsers", userService.countInactiveUsers());
+        model.addAttribute("newUsersThisMonth", userService.countNewUsersThisMonth());
         
         return "admin/customers";
     }
@@ -57,35 +60,22 @@ public class AdminUserController {
             redirectAttributes.addFlashAttribute("error", "Error updating status: " + e.getMessage());
         }
         
-        return "redirect:/admin/users";
+        return "redirect:/admin/customers";
     }
 
-    @PostMapping("/{id}/role")
-    public String assignRole(@PathVariable Integer id,
-                            @RequestParam Integer roleID,
-                            RedirectAttributes redirectAttributes) {
+    @PostMapping("/create-admin")
+    public String createAdmin(@RequestParam("email") String email,
+                              @RequestParam("password") String password,
+                              RedirectAttributes redirectAttributes) {
         try {
-            userService.assignRole(id, roleID);
-            redirectAttributes.addFlashAttribute("success", "Role assigned successfully");
+            userService.createAdmin(email, password);
+            redirectAttributes.addFlashAttribute("success", "Admin account created successfully");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error assigning role: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Error creating admin: " + e.getMessage());
         }
-        
-        return "redirect:/admin/users";
+        return "redirect:/admin/customers";
     }
 
-    @PostMapping("/{id}/remove-role")
-    public String removeRole(@PathVariable Integer id,
-                            RedirectAttributes redirectAttributes) {
-        try {
-            userService.removeRole(id);
-            redirectAttributes.addFlashAttribute("success", "Role removed successfully");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error removing role: " + e.getMessage());
-        }
-        
-        return "redirect:/admin/users";
-    }
 
     @PostMapping("/{id}/delete")
     public String deleteUser(@PathVariable Integer id,
@@ -97,7 +87,7 @@ public class AdminUserController {
             redirectAttributes.addFlashAttribute("error", "Error deleting user: " + e.getMessage());
         }
         
-        return "redirect:/admin/users";
+        return "redirect:/admin/customers";
     }
 }
 

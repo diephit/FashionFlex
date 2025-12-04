@@ -11,6 +11,164 @@
 	<link rel="stylesheet" type="text/css" th:href="@{/css/util.css}">
 	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
 	<link rel="stylesheet" type="text/css" th:href="@{/css/admin-styles.css}">
+	
+	<style>
+		
+		.filter-section-modern {
+			background: white;
+			padding: 25px;
+			border-radius: 12px;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+			margin-bottom: 25px;
+		}
+
+		.filter-main-row {
+			display: flex;
+			gap: 12px;
+			flex-wrap: wrap;
+			align-items: flex-start;
+		}
+
+		.filter-inputs-group {
+			display: flex;
+			gap: 10px;
+			flex-wrap: wrap;
+			align-items: center;
+			flex: 1;
+		}
+
+		.search-box-modern {
+			position: relative;
+			min-width: 240px;
+		}
+
+		.search-box-modern i {
+			position: absolute;
+			left: 15px;
+			top: 50%;
+			transform: translateY(-50%);
+			color: #9ca3af;
+		}
+
+		.search-box-modern input {
+			width: 100%;
+			padding: 12px 15px 12px 40px;
+			border: 2px solid #e5e7eb;
+			border-radius: 8px;
+			font-size: 14px;
+			transition: all 0.3s;
+		}
+
+		.search-box-modern input:focus {
+			outline: none;
+			border-color: #3b82f6;
+			box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+		}
+
+		.select-modern {
+			padding: 12px 15px;
+			border: 2px solid #e5e7eb;
+			border-radius: 8px;
+			font-size: 14px;
+			background: white;
+			cursor: pointer;
+			transition: all 0.3s;
+			min-width: 140px;
+		}
+
+		.select-modern:focus {
+			outline: none;
+			border-color: #3b82f6;
+			box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+		}
+
+		.date-input-modern {
+			padding: 12px 15px;
+			border: 2px solid #e5e7eb;
+			border-radius: 8px;
+			font-size: 14px;
+			transition: all 0.3s;
+		}
+
+		.date-input-modern:focus {
+			outline: none;
+			border-color: #3b82f6;
+			box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+		}
+
+		.date-separator {
+			color: #6b7280;
+			font-weight: 500;
+			padding: 0 5px;
+		}
+
+		.btn-modern {
+			padding: 12px 20px;
+			border: none;
+			border-radius: 8px;
+			font-size: 14px;
+			font-weight: 500;
+			cursor: pointer;
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			transition: all 0.3s;
+			text-decoration: none;
+			white-space: nowrap;
+		}
+
+		.btn-filter-modern {
+			background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+			color: white;
+			box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+		}
+
+		.btn-filter-modern:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+			color: white;
+		}
+
+		.btn-export-modern {
+			background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+			color: white;
+			box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+		}
+
+		.btn-export-modern:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+			color: white;
+		}
+
+		.btn-export-modern:active,
+		.btn-filter-modern:active {
+			transform: translateY(0);
+		}
+
+		/* Responsive */
+		@media (max-width: 768px) {
+			.filter-main-row {
+				flex-direction: column;
+			}
+
+			.filter-inputs-group {
+				width: 100%;
+				flex-direction: column;
+			}
+
+			.search-box-modern,
+			.select-modern,
+			.date-input-modern {
+				width: 100%;
+			}
+
+			.btn-modern {
+				width: 100%;
+				justify-content: center;
+			}
+		}
+	</style>
 </head>
 <body>
 
@@ -26,10 +184,15 @@
 				<li><a th:href="@{/admin/orders}" class="active"><i class="fa fa-shopping-cart"></i> Orders</a></li>
 				<li><a th:href="@{/admin/customers}"><i class="fa fa-users"></i> Customers</a></li>
 				<li><a th:href="@{/admin/categories}"><i class="fa fa-folder"></i> Categories</a></li>
-				<li><a th:href="@{/admin/coupons}"><i class="fa fa-tag"></i> Coupons</a></li>
-				<li><a th:href="@{/admin/reviews}"><i class="fa fa-star"></i> Reviews</a></li>
-				<li><a th:href="@{/admin/settings}"><i class="fa fa-cog"></i> Settings</a></li>
-				<li><a th:href="@{/}"><i class="fa fa-sign-out"></i> Back to Store</a></li>
+				<li><a th:href="@{/admin/membership}"><i class="fa fa-star"></i> Membership</a></li>
+				<li>
+					<form th:action="@{/logout}" method="post" class="admin-sidebar-logout">
+						<button type="submit">
+							<i class="fa fa-sign-out"></i>
+							Logout
+						</button>
+					</form>
+				</li>
 			</ul>
 		</aside>
 
@@ -51,52 +214,91 @@
 							<i class="fa fa-clock-o"></i>
 						</div>
 						<h4>Pending Orders</h4>
-						<p class="value">45</p>
+						<p class="value" th:text="${pendingOrders != null ? pendingOrders : 0}">0</p>
 					</div>
 					<div class="dashboard-card">
 						<div class="dashboard-card-icon processing">
 							<i class="fa fa-refresh"></i>
 						</div>
-						<h4>Processing</h4>
-						<p class="value">128</p>
+						<h4>Paid Orders</h4>
+						<p class="value" th:text="${paidOrders != null ? paidOrders : 0}">0</p>
 					</div>
 					<div class="dashboard-card">
 						<div class="dashboard-card-icon completed">
 							<i class="fa fa-check"></i>
 						</div>
 						<h4>Completed</h4>
-						<p class="value">1,056</p>
+						<p class="value" th:text="${completedOrders != null ? completedOrders : 0}">0</p>
 					</div>
 					<div class="dashboard-card">
 						<div class="dashboard-card-icon cancelled">
 							<i class="fa fa-times"></i>
 						</div>
 						<h4>Cancelled</h4>
-						<p class="value">23</p>
+						<p class="value" th:text="${canceledOrders != null ? canceledOrders : 0}">0</p>
 					</div>
 				</div>
 
-				<!-- Filters -->
-				<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-					<div style="display: flex; gap: 10px;">
-						<input type="text" id="tableSearch" placeholder="Search orders..." style="padding: 10px 15px; border: 1px solid #ddd; border-radius: 4px; width: 300px;">
-						<select style="padding: 10px 15px; border: 1px solid #ddd; border-radius: 4px;">
-							<option>All Status</option>
-							<option>Pending</option>
-							<option>Processing</option>
-							<option>Completed</option>
-							<option>Cancelled</option>
-						</select>
-					</div>
-					<button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
-						<i class="fa fa-download"></i> Export Orders
-					</button>
+				<!-- FILTERS - NEW DESIGN -->
+				<div class="filter-section-modern">
+					<form th:action="@{/admin/orders}" method="get">
+						<div class="filter-main-row">
+							<!-- Left side: All filter inputs -->
+							<div class="filter-inputs-group">
+								<!-- Search Box -->
+								<div class="search-box-modern">
+									<i class="fa fa-search"></i>
+									<input type="text" 
+									       name="keyword" 
+									       placeholder="Search orders..." 
+									       th:value="${keyword != null ? keyword : ''}"
+									       class="search-input-modern">
+								</div>
+
+								<!-- Status Select -->
+								<select name="status" class="select-modern">
+									<option value="">All Status</option>
+									<option th:each="st : ${orderStatuses}" 
+									        th:value="${st.name()}" 
+									        th:text="${st.name()}"
+									        th:selected="${status != null && status.equals(st.name())}"></option>
+								</select>
+
+								<!-- Start Date -->
+								<input type="date" 
+								       name="startDate"
+								       th:value="${startDate}"
+								       class="date-input-modern">
+
+								<span class="date-separator">to</span>
+
+								<!-- End Date -->
+								<input type="date" 
+								       name="endDate"
+								       th:value="${endDate}"
+								       class="date-input-modern">
+
+								<!-- Filter Button -->
+								<button type="submit" class="btn-modern btn-filter-modern">
+									<i class="fa fa-filter"></i>
+									<span>Filter</span>
+								</button>
+							</div>
+
+							<!-- Right side: Export button -->
+							<a th:href="@{/admin/orders/export(keyword=${keyword},status=${status},startDate=${startDate},endDate=${endDate})}"
+							   class="btn-modern btn-export-modern">
+								<i class="fa fa-download"></i>
+								<span>Export Orders</span>
+							</a>
+						</div>
+					</form>
 				</div>
 
 				<!-- Orders Table -->
 				<div class="admin-table-wrapper">
 					<div class="admin-table-header">
-						<h3>All Orders (1,252)</h3>
+						<h3>All Orders</h3>
 					</div>
 
 					<table class="admin-table">
@@ -104,6 +306,7 @@
 							<tr>
 								<th>Order ID</th>
 								<th>Customer</th>
+								<th>Email</th>
 								<th>Date</th>
 								<th>Items</th>
 								<th>Total</th>
@@ -113,96 +316,60 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td><strong>#ORD-2025-001</strong></td>
-								<td>John Doe<br><small style="color: #999;">john@example.com</small></td>
-								<td>Jan 15, 2025<br><small style="color: #999;">10:30 AM</small></td>
-								<td>3 items</td>
-								<td><strong>$156.40</strong></td>
-								<td>Credit Card</td>
-								<td>
-									<select class="status-select" data-order-id="001" style="padding: 5px 10px; border-radius: 4px; border: 1px solid #ddd;">
-										<option>Pending</option>
-										<option selected>Processing</option>
-										<option>Completed</option>
-										<option>Cancelled</option>
-									</select>
-								</td>
-								<td>
-									<button class="action-btn view"><i class="fa fa-eye"></i></button>
-									<button class="action-btn edit"><i class="fa fa-edit"></i></button>
-									<button class="action-btn delete" data-item="Order #001"><i class="fa fa-trash"></i></button>
+							<tr th:if="${orders == null || orders.isEmpty()}">
+								<td colspan="9" class="text-center text-muted" style="padding: 30px;">
+									No orders to display yet.
 								</td>
 							</tr>
-							<tr>
-								<td><strong>#ORD-2025-002</strong></td>
-								<td>Jane Smith<br><small style="color: #999;">jane@example.com</small></td>
-								<td>Jan 14, 2025<br><small style="color: #999;">3:45 PM</small></td>
-								<td>1 item</td>
-								<td><strong>$89.50</strong></td>
-								<td>PayPal</td>
-								<td><span class="status-badge completed">Completed</span></td>
+							<tr th:each="order : ${orders.content}">
+								<td th:text="${order.orderID}">#</td>
 								<td>
-									<button class="action-btn view"><i class="fa fa-eye"></i></button>
-									<button class="action-btn edit"><i class="fa fa-edit"></i></button>
-									<button class="action-btn delete" data-item="Order #002"><i class="fa fa-trash"></i></button>
+									<span th:text="${order.customerName != null && !order.customerName.isBlank() ? order.customerName : 
+									                (order.customer != null && order.customer.user != null && order.customer.user.name != null ? order.customer.user.name : 
+									                (order.user != null && order.user.name != null ? order.user.name : 
+									                (order.contactEmail != null ? order.contactEmail.split('@')[0] : 'Customer')))}">Customer</span>
 								</td>
-							</tr>
-							<tr>
-								<td><strong>#ORD-2025-003</strong></td>
-								<td>Mike Johnson<br><small style="color: #999;">mike@example.com</small></td>
-								<td>Jan 14, 2025<br><small style="color: #999;">11:20 AM</small></td>
-								<td>5 items</td>
-								<td><strong>$234.00</strong></td>
-								<td>Bank Transfer</td>
-								<td><span class="status-badge pending">Pending</span></td>
 								<td>
-									<button class="action-btn view"><i class="fa fa-eye"></i></button>
-									<button class="action-btn edit"><i class="fa fa-edit"></i></button>
-									<button class="action-btn delete" data-item="Order #003"><i class="fa fa-trash"></i></button>
+									<span th:text="${order.customer != null && order.customer.user != null && order.customer.user.email != null ? order.customer.user.email :
+										            (order.user != null && order.user.email != null ? order.user.email :
+										            (order.contactEmail != null ? order.contactEmail : 'N/A'))}">Email</span>
 								</td>
-							</tr>
-							<tr>
-								<td><strong>#ORD-2025-004</strong></td>
-								<td>Sarah Williams<br><small style="color: #999;">sarah@example.com</small></td>
-								<td>Jan 13, 2025<br><small style="color: #999;">2:15 PM</small></td>
-								<td>2 items</td>
-								<td><strong>$445.80</strong></td>
-								<td>Credit Card</td>
-								<td><span class="status-badge processing">Processing</span></td>
+								<td th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}">Date</td>
+								<td th:text="${order.orderItems != null ? #lists.size(order.orderItems) : 0}">0</td>
+								<td th:text="${'$' + #numbers.formatDecimal(order.totalAmount, 1, 2)}">$0.00</td>
 								<td>
-									<button class="action-btn view"><i class="fa fa-eye"></i></button>
-									<button class="action-btn edit"><i class="fa fa-edit"></i></button>
-									<button class="action-btn delete" data-item="Order #004"><i class="fa fa-trash"></i></button>
+									<span th:if="${order.payments != null && !order.payments.isEmpty()}">
+										<span th:each="payment, iterStat : ${order.payments}" th:if="${iterStat.index == 0}">
+											<span th:text="${payment.status.name()}"></span>
+										</span>
+									</span>
+									<span th:if="${order.payments == null || order.payments.isEmpty()}">N/A</span>
 								</td>
-							</tr>
-							<tr>
-								<td><strong>#ORD-2025-005</strong></td>
-								<td>Robert Brown<br><small style="color: #999;">robert@example.com</small></td>
-								<td>Jan 13, 2025<br><small style="color: #999;">9:00 AM</small></td>
-								<td>1 item</td>
-								<td><strong>$67.20</strong></td>
-								<td>Cash on Delivery</td>
-								<td><span class="status-badge cancelled">Cancelled</span></td>
 								<td>
-									<button class="action-btn view"><i class="fa fa-eye"></i></button>
-									<button class="action-btn edit"><i class="fa fa-edit"></i></button>
-									<button class="action-btn delete" data-item="Order #005"><i class="fa fa-trash"></i></button>
+									<span class="badge" 
+									      th:classappend="${order.status.name() == 'pending' ? 'badge-warning' : (order.status.name() == 'paid' ? 'badge-info' : (order.status.name() == 'shipped' ? 'badge-primary' : (order.status.name() == 'completed' ? 'badge-success' : (order.status.name() == 'canceled' ? 'badge-danger' : ''))))}"
+									      th:text="${order.status.name()}">Status</span>
+								</td>
+								<td>
+									<a th:href="@{/admin/orders/{id}(id=${order.orderID})}" 
+									   class="btn btn-sm btn-primary">
+										<i class="fa fa-eye"></i> View
+									</a>
 								</td>
 							</tr>
 						</tbody>
 					</table>
 
 					<!-- Pagination -->
-					<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
-						<div style="font-size: 14px; color: #666;">Showing 1 to 5 of 1,252 entries</div>
-						<div style="display: flex; gap: 5px;">
-							<button style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer;">Previous</button>
-							<button style="padding: 8px 12px; border: 1px solid #717fe0; border-radius: 4px; background: #717fe0; color: white; cursor: pointer;">1</button>
-							<button style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer;">2</button>
-							<button style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer;">3</button>
-							<button style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer;">Next</button>
-						</div>
+					<div th:if="${orders != null && orders.totalPages > 1}" 
+					     style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 20px;">
+						<a th:if="${orders.hasPrevious()}" 
+						   th:href="@{/admin/orders(page=${orders.number - 1}, keyword=${keyword}, status=${status}, sortBy=${sortBy}, sortDir=${sortDir}, startDate=${startDate}, endDate=${endDate})}"
+						   class="btn btn-sm btn-outline-primary">Previous</a>
+						<span th:text="'Page ' + (${orders.number} + 1) + ' of ' + ${orders.totalPages}">Page 1 of 1</span>
+						<a th:if="${orders.hasNext()}" 
+						   th:href="@{/admin/orders(page=${orders.number + 1}, keyword=${keyword}, status=${status}, sortBy=${sortBy}, sortDir=${sortDir}, startDate=${startDate}, endDate=${endDate})}"
+						   class="btn btn-sm btn-outline-primary">Next</a>
 					</div>
 				</div>
 			</div>
@@ -218,4 +385,4 @@
 	<script th:src="@{/js/admin.js}"></script>
 
 </body>
-</html>
+</html>                                                                                                 	

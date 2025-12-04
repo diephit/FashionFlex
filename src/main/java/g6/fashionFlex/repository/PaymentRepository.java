@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, Integer> {
@@ -39,5 +40,7 @@ public interface PaymentRepository extends JpaRepository<Payment, Integer> {
     List<Payment> findByStatusAndPaymentDateBetween(@Param("status") PaymentStatus status,
                                                     @Param("startDate") LocalDateTime startDate,
                                                     @Param("endDate") LocalDateTime endDate);
+
+    Optional<Payment> findTopByOrderOrderIDOrderByPaymentDateDesc(Integer orderID);
 }
 

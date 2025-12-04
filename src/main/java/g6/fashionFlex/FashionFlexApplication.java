@@ -8,5 +8,6 @@ public class FashionFlexApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(FashionFlexApplication.class, args);
 	}
-
 }
+
+

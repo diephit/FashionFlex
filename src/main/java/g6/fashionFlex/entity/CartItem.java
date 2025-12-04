@@ -23,6 +23,9 @@ public class CartItem {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
+    @Column(name = "selectedSize", length = 10)
+    private String selectedSize;
+
     @Column(name = "createdAt")
     private LocalDateTime createdAt;
 
@@ -73,6 +76,14 @@ public class CartItem {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    public String getSelectedSize() {
+        return selectedSize;
+    }
+
+    public void setSelectedSize(String selectedSize) {
+        this.selectedSize = selectedSize;
     }
 
     public LocalDateTime getCreatedAt() {

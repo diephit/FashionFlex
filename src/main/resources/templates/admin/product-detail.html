@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Product Detail - Admin</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" th:href="@{/images/icons/favicon.png}"/>
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/bootstrap/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/font-awesome-4.7.0/css/font-awesome.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/iconic/css/material-design-iconic-font.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/util.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/admin-styles.css}">
+</head>
+<body>
+
+	<div class="admin-wrapper">
+		<aside class="admin-sidebar">
+			<div class="admin-sidebar-header">
+				<h3><i class="zmdi zmdi-shield-security"></i> Admin Panel</h3>
+			</div>
+			<ul class="admin-sidebar-menu">
+				<li><a th:href="@{/admin/dashboard}"><i class="fa fa-tachometer"></i> Dashboard</a></li>
+				<li><a th:href="@{/admin/products}" class="active"><i class="fa fa-shopping-bag"></i> Products</a></li>
+				<li><a th:href="@{/admin/orders}"><i class="fa fa-shopping-cart"></i> Orders</a></li>
+				<li><a th:href="@{/admin/customers}"><i class="fa fa-users"></i> Customers</a></li>
+				<li><a th:href="@{/admin/categories}"><i class="fa fa-folder"></i> Categories</a></li>
+				<li><a th:href="@{/admin/membership}"><i class="fa fa-star"></i> Membership</a></li>
+				<li>
+					<form th:action="@{/logout}" method="post" class="admin-sidebar-logout">
+						<button type="submit">
+							<i class="fa fa-sign-out"></i>
+							Logout
+						</button>
+					</form>
+				</li>
+			</ul>
+		</aside>
+
+		<main class="admin-main" th:if="${product != null}">
+			<div class="admin-topbar">
+				<h2>Product Detail</h2>
+				<div class="admin-user-info">
+					<span th:text="${adminDisplayName != null ? adminDisplayName : 'Admin User'}">Admin User</span>
+					<img th:src="${'https://ui-avatars.com/api/?name=' + (adminDisplayName != null ? #strings.replace(adminDisplayName,' ','+') : 'Admin+User') + '&size=40&background=667eea&color=fff'}"
+						 alt="Admin">
+				</div>
+			</div>
+
+			<div class="admin-content">
+				<a th:href="@{/admin/products}" class="back-link">&larr; Back to product list</a>
+
+				<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+				<div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+				<div class="admin-table-wrapper">
+					<div class="admin-table-header">
+						<h3>Product Overview</h3>
+					</div>
+					<div class="product-detail-header">
+						<div class="product-detail-media">
+							<img th:src="${product.mainImage != null ? '/' + #strings.replace(product.mainImage,'static/','') : 'https://placehold.co/360x360?text=Product'}"
+								 alt="Product Image">
+						</div>
+						<div class="product-detail-meta">
+							<h2 th:text="${product.name}">Product Name</h2>
+							<p class="text-muted" th:text="${product.category != null ? product.category.name : 'Unassigned'}">Category</p>
+							<div class="status-pill"
+								 th:classappend="${product.status != null && product.status.name() == 'active'} ? ' status-completed' : ' status-cancelled'"
+								 th:text="${product.status != null ? #strings.capitalize(product.status.name()) : 'N/A'}">
+								Active
+							</div>
+							<p class="product-description" th:text="${product.description != null ? product.description : 'No description yet.'}">
+								Description
+							</p>
+							<div class="stock-control">
+								<div>
+									<span class="label">Current stock</span>
+									<span class="value" th:text="${product.stockQuantity != null ? product.stockQuantity : 0}">0</span>
+								</div>
+								<button type="button"
+										class="action-btn add open-stock-modal"
+										title="Add stock"
+										th:data-product-id="${product.productID}"
+										th:data-product-name="${product.name}"
+										th:data-current-stock="${product.stockQuantity != null ? product.stockQuantity : 0}"
+										th:data-stock-url="@{/admin/products/{id}/stock(id=${product.productID})}">
+									<i class="fa fa-plus"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="admin-table-wrapper">
+					<div class="admin-table-header">
+						<h3>Edit Product</h3>
+					</div>
+					<form th:action="@{/admin/products/{id}(id=${product.productID})}" method="post" enctype="multipart/form-data"
+						  class="product-edit-form">
+						<input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+						<div class="form-grid">
+							<div>
+								<label class="form-label">Name</label>
+								<input type="text" name="name" class="form-control" th:value="${product.name}" required>
+							</div>
+							<div>
+								<label class="form-label">Category</label>
+								<select name="category.categoryID" class="form-control" required>
+									<option value="">Select category</option>
+									<option th:each="cat : ${categories}"
+											th:value="${cat.categoryID}"
+											th:text="${cat.name}"
+											th:selected="${product.category != null && cat.categoryID == product.category.categoryID}"></option>
+								</select>
+							</div>
+							<div>
+								<label class="form-label">Status</label>
+								<select name="status" class="form-control">
+									<option th:each="st : ${T(g6.fashionFlex.entity.Product.ProductStatus).values()}"
+											th:value="${st}"
+											th:text="${#strings.capitalize(st.name())}"
+											th:selected="${product.status != null && st.name() == product.status.name()}"></option>
+								</select>
+							</div>
+							<div>
+								<label class="form-label">Stock Quantity</label>
+								<input type="number" min="0" name="stockQuantity" class="form-control"
+									   th:value="${product.stockQuantity != null ? product.stockQuantity : 0}">
+							</div>
+							<div>
+								<label class="form-label">Main Image</label>
+								<input type="file" name="imageFile" class="form-control" accept="image/*">
+								<small class="text-muted">Supported: JPG, PNG, WEBP. Max 5MB.</small>
+							</div>
+						</div>
+						<div>
+							<label class="form-label">Description</label>
+							<textarea name="description" rows="4" class="form-control"
+									  th:text="${product.description}"></textarea>
+						</div>
+						<div style="text-align:right;">
+							<button type="submit" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
+								Save Changes
+							</button>
+						</div>
+					</form>
+				</div>
+
+				<div class="admin-table-wrapper">
+					<div class="admin-table-header">
+						<h3>Variants</h3>
+					</div>
+					<table class="admin-table">
+						<thead>
+							<tr>
+								<th>Image</th>
+								<th>SKU</th>
+								<th>Price</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody th:if="${variants != null && !variants.isEmpty()}">
+							<tr th:each="variant : ${variants}">
+								<td class="variant-image-cell">
+									<div class="variant-image-preview">
+										<img th:src="${variant.variantImage != null ? '/' + #strings.replace(variant.variantImage,'static/','') : '/images/product-01.jpg'}"
+											 alt="Variant Image"
+											 onerror="this.src='/images/product-01.jpg'">
+									</div>
+									<label class="variant-upload-btn">
+										<input type="file"
+											   accept="image/*"
+											   name="variantImage"
+											   th:attr="form=${'variantForm-' + variant.variantID}"
+											   onchange="window.handleVariantImagePreview(this)">
+										<i class="fa fa-upload"></i> Change
+									</label>
+								</td>
+								<td>
+									<input type="text" name="sku" class="form-control" th:value="${variant.sku}" required
+										   th:attr="form=${'variantForm-' + variant.variantID}">
+								</td>
+								<td>
+									<input type="number" step="0.01" min="0" name="price" class="form-control" th:value="${variant.price}" required
+										   th:attr="form=${'variantForm-' + variant.variantID}">
+								</td>
+								<td>
+									<div style="display:flex;gap:6px;flex-wrap:wrap;">
+										<form th:id="${'variantForm-' + variant.variantID}"
+											  th:action="@{/admin/products/variants/{variantId}(variantId=${variant.variantID})}"
+											  method="post" class="variant-form">
+											<input type="hidden" name="productId" th:value="${product.productID}">
+											<input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+											<button type="submit" class="action-btn edit" title="Save variant">
+												<i class="fa fa-save"></i>
+											</button>
+										</form>
+										<form th:action="@{/admin/products/variants/{variantId}/delete(variantId=${variant.variantID})}" method="post"
+											  th:onsubmit="return confirm('Delete this variant?');">
+											<input type="hidden" name="productId" th:value="${product.productID}">
+											<input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+											<button type="submit" class="action-btn delete" title="Delete variant">
+												<i class="fa fa-trash"></i>
+											</button>
+										</form>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+						<tbody th:if="${variants == null || variants.isEmpty()}">
+							<tr>
+								<td colspan="4" class="text-center text-muted" style="padding: 25px;">
+									No variants yet. Create the first one below.
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+					<div class="admin-table-header" style="margin-top:25px;">
+						<h3>Add Variant</h3>
+					</div>
+					<form th:action="@{/admin/products/{productId}/variants(productId=${product.productID})}" method="post"
+						  class="variant-add-form" enctype="multipart/form-data">
+						<input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+						<div class="form-grid">
+							<div>
+								<label class="form-label">SKU</label>
+								<input type="text" name="sku" class="form-control" placeholder="Unique SKU" required>
+							</div>
+							<div>
+								<label class="form-label">Price</label>
+								<input type="number" step="0.01" min="0" name="price" class="form-control" placeholder="0.00" required>
+							</div>
+							<div>
+								<label class="form-label">Variant Image</label>
+								<input type="file" name="variantImage" class="form-control" accept="image/*">
+							</div>
+						</div>
+						<div style="text-align:right;">
+							<button type="submit" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
+								Add Variant
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<!-- Stock Modal -->
+	<div class="stock-modal" id="stockModal">
+		<div class="stock-modal-backdrop"></div>
+		<div class="stock-modal-content">
+			<button type="button" class="stock-modal-close" title="Close">
+				<i class="fa fa-close"></i>
+			</button>
+			<h3>Add Stock</h3>
+			<p class="stock-modal-product">
+				<strong>Product:</strong> <span id="stockModalProductName">—</span>
+			</p>
+			<p class="stock-modal-current">
+				Current stock: <span id="stockModalCurrentStock">0</span>
+			</p>
+			<form id="stockModalForm" method="post">
+				<input type="number" name="amount" min="1" placeholder="Enter quantity" required>
+				<input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+				<div class="stock-modal-actions">
+					<button type="button" class="btn-outline stock-modal-cancel">Cancel</button>
+					<button type="submit" class="btn-primary">Add Stock</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<main class="admin-main" th:if="${product == null}">
+		<div class="admin-topbar">
+			<h2>Product Detail</h2>
+			<div class="admin-user-info">
+				<span th:text="${adminDisplayName != null ? adminDisplayName : 'Admin User'}">Admin User</span>
+			</div>
+		</div>
+		<div class="admin-content">
+			<div class="empty-state" style="background:#fff;">
+				<h4>Product not found</h4>
+				<p>The product you are looking for does not exist.</p>
+				<a th:href="@{/admin/products}" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
+					Return to products
+				</a>
+			</div>
+		</div>
+	</main>
+
+	<button class="admin-mobile-toggle"><i class="fa fa-bars"></i></button>
+
+	<script th:src="@{/vendor/jquery/jquery-3.2.1.min.js}"></script>
+	<script th:src="@{/vendor/bootstrap/js/popper.js}"></script>
+	<script th:src="@{/vendor/bootstrap/js/bootstrap.min.js}"></script>
+	<script th:src="@{/vendor/sweetalert/sweetalert.min.js}"></script>
+	<script th:src="@{/js/admin.js}"></script>
+	<script>
+		window.handleVariantImagePreview = function(input) {
+			if (!input || !input.files || input.files.length === 0) {
+				return;
+			}
+			const cell = input.closest('.variant-image-cell');
+			if (!cell) {
+				return;
+			}
+			const preview = cell.querySelector('img');
+			if (preview) {
+				preview.src = URL.createObjectURL(input.files[0]);
+			}
+		};
+
+		(function() {
+			const modal = document.getElementById('stockModal');
+			if (!modal) return;
+			const form = document.getElementById('stockModalForm');
+			const productNameEl = document.getElementById('stockModalProductName');
+			const currentStockEl = document.getElementById('stockModalCurrentStock');
+			const closeModal = () => modal.classList.remove('active');
+
+			document.querySelectorAll('.open-stock-modal').forEach(trigger => {
+				trigger.addEventListener('click', (event) => {
+					event.preventDefault();
+					const productName = trigger.getAttribute('data-product-name') || 'Product';
+					const currentStock = trigger.getAttribute('data-current-stock') || '0';
+					const stockUrl = trigger.getAttribute('data-stock-url');
+					productNameEl.textContent = productName;
+					currentStockEl.textContent = currentStock;
+					form.setAttribute('action', stockUrl);
+					modal.classList.add('active');
+					form.amount.focus();
+				});
+			});
+
+			modal.querySelector('.stock-modal-close').addEventListener('click', closeModal);
+			modal.querySelector('.stock-modal-cancel').addEventListener('click', closeModal);
+			modal.addEventListener('click', (event) => {
+				if (event.target === modal || event.target.classList.contains('stock-modal-backdrop')) {
+					closeModal();
+				}
+			});
+		})();
+	</script>
+
+</body>
+</html>
+

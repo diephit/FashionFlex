@@ -32,5 +32,9 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
     Stock findLatestByVariant(@Param("variantID") Integer variantID);
     
     Page<Stock> findAll(Pageable pageable);
+    
+    @Query("SELECT s FROM Stock s WHERE s.currentQuantity <= :threshold " +
+           "ORDER BY s.currentQuantity ASC")
+    List<Stock> findLowStockVariants(@Param("threshold") Integer threshold);
 }
 

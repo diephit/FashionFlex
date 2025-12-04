@@ -6,6 +6,7 @@ import g6.fashionFlex.dto.RegisterRequest;
 import g6.fashionFlex.dto.UserDTO;
 import g6.fashionFlex.security.JwtTokenProvider;
 import g6.fashionFlex.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,8 +20,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import g6.fashionFlex.repository.CustomerRepository;
 import g6.fashionFlex.repository.UserRepository;
 import g6.fashionFlex.entity.User;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 public class AuthController {
@@ -37,12 +42,16 @@ public class AuthController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private CustomerRepository customerRepository;
+
     // Display login page
     @GetMapping("/login")
     public String showLoginPage(@RequestParam(required = false) String error,
                                 @RequestParam(required = false) String logout,
                                 @RequestParam(required = false) String registered,
                                 @RequestParam(required = false) String message,
+                                HttpSession session,  // THÊM DÒNG NÀY
                                 Model model) {
         if (error != null) {
             model.addAttribute("error", "Invalid email or password");
@@ -56,6 +65,14 @@ public class AuthController {
         if (message != null) {
             model.addAttribute("message", message);
         }
+        
+        // THÊM ĐOẠN NÀY - Lấy và clear loginMessage từ session
+        String loginMessage = (String) session.getAttribute("loginMessage");
+        if (loginMessage != null) {
+            model.addAttribute("loginMessage", loginMessage);
+            session.removeAttribute("loginMessage");
+        }
+        
         model.addAttribute("user", new RegisterRequest());
         return "login";
     }
@@ -65,6 +82,7 @@ public class AuthController {
     public String registerUser(@RequestParam(required = false) String fullName,
                                @RequestParam(required = false) String email,
                                @RequestParam(required = false) String password,
+                               @RequestParam(required = false) String phone,
                                RedirectAttributes redirectAttributes,
                                Model model) {
         // Create RegisterRequest from form parameters
@@ -79,6 +97,10 @@ public class AuthController {
             registerRequest.setPassword(password);
         }
         
+        if (phone != null) {
+            registerRequest.setPhone(phone.trim());
+        }
+
         // Always add user object back to model for form binding
         model.addAttribute("user", registerRequest);
         model.addAttribute("showRegister", true);
@@ -99,8 +121,26 @@ public class AuthController {
             return "login";
         }
         
-        if (registerRequest.getPassword().length() < 6) {
-            model.addAttribute("registerError", "Password must be at least 6 characters");
+        if (!isStrongPassword(registerRequest.getPassword())) {
+            model.addAttribute("registerError", "Password must be at least 8 characters with at least one uppercase letter and one special character.");
+            return "login";
+        }
+
+        if (registerRequest.getPhone() == null || registerRequest.getPhone().trim().isEmpty()) {
+            model.addAttribute("registerError", "Phone number is required");
+            return "login";
+        }
+
+        String normalizedPhone = registerRequest.getPhone().trim();
+        if (!isValidPhone(normalizedPhone)) {
+            model.addAttribute("registerError", "Phone number must start with 0 and contain exactly 10 digits.");
+            return "login";
+        }
+
+        registerRequest.setPhone(normalizedPhone);
+
+        if (customerRepository.existsByPhone(normalizedPhone)) {
+            model.addAttribute("registerError", "This phone number has been used, please try another one");
             return "login";
         }
 
@@ -132,7 +172,7 @@ public class AuthController {
             }
             
             // Email is unique, proceed with registration
-            UserDTO userDTO = userService.registerUser(registerRequest);
+            userService.registerUser(registerRequest);
             redirectAttributes.addAttribute("registered", "true");
             return "redirect:/login";
         } catch (Exception e) {
@@ -149,22 +189,36 @@ public class AuthController {
         }
     }
 
+    private boolean isStrongPassword(String password) {
+        if (password == null) {
+            return false;
+        }
+        return password.matches("^(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$");
+    }
+
+    private boolean isValidPhone(String phone) {
+        if (phone == null) {
+            return false;
+        }
+        return phone.matches("^0\\d{9}$");
+    }
+
     // REST API endpoint for registration (for AJAX calls)
     @PostMapping("/api/auth/register-json")
     @ResponseBody
     public ResponseEntity<?> registerUserJson(@Valid @RequestBody RegisterRequest registerRequest) {
         try {
             UserDTO userDTO = userService.registerUser(registerRequest);
-            return ResponseEntity.ok().body(Map.of(
-                    "success", true,
-                    "message", "Registration successful",
-                    "user", userDTO
-            ));
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Registration successful");
+            response.put("user", userDTO);
+            return ResponseEntity.ok().body(response);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
-                    "success", false,
-                    "message", e.getMessage()
-            ));
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
     }
 
@@ -231,46 +285,11 @@ public class AuthController {
         return "redirect:/login";
     }
 
-    @GetMapping("/user/home")
-    public String userHome(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            String email = authentication.getName();
-            try {
-                UserDTO user = userService.getUserByEmail(email);
-                model.addAttribute("user", user);
-            } catch (Exception e) {
-                // User not found, continue without user details
-            }
-        }
-        return "user_home";
-    }
-
     // Logout endpoint
     @GetMapping("/logout")
     public String logout(RedirectAttributes redirectAttributes) {
         SecurityContextHolder.clearContext();
         redirectAttributes.addAttribute("logout", "true");
         return "redirect:/login";
-    }
-
-    // Helper method to create response map
-    private static class Map<K, V> {
-        private final java.util.Map<K, V> map = new java.util.HashMap<>();
-
-        public static <K, V> java.util.Map<K, V> of(K k1, V v1, K k2, V v2) {
-            java.util.Map<K, V> map = new java.util.HashMap<>();
-            map.put(k1, v1);
-            map.put(k2, v2);
-            return map;
-        }
-
-        public static <K, V> java.util.Map<K, V> of(K k1, V v1, K k2, V v2, K k3, V v3) {
-            java.util.Map<K, V> map = new java.util.HashMap<>();
-            map.put(k1, v1);
-            map.put(k2, v2);
-            map.put(k3, v3);
-            return map;
-        }
     }
 }

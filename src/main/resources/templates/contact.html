@@ -30,31 +30,212 @@
 <!--===============================================================================================-->
 </head>
 <body class="animsition">
-    <header>
-        <!-- Logo desktop -->		
-        <a href="/" class="logo" style="font-family: Poppins-Bold; font-size: 2rem; color: #333;">
-            Fashion Flex
-        </a>
+	<!-- Header -->
+	<header>
+		<!-- Header desktop -->
+		<div class="container-menu-desktop">
+			<!-- Topbar -->
+			<div class="top-bar">
+				<div class="content-topbar flex-sb-m h-full container">
+					<div class="left-top-bar">
+						Free shipping for standard order over $100
+					</div>
 
-        <!-- Menu desktop -->
-        <div class="menu-desktop">
-            <ul class="main-menu">
-                <li><a href="/product">Shop</a></li>
-                <li class="label1" data-label1="hot"><a href="/shopping-cart">Features</a></li>
-                <li><a th:href="@{/blog}">Blog</a></li>
-                <li><a th:href="@{/about}">About</a></li>
-                <!-- -> Fix here: use /contact (not contact.html) -->
-                <li><a href="/contact">Contact</a></li>
-            </ul>
-        </div>
+					<!-- Auth area in header -->
+					<div class="right-top-bar flex-w h-full">
+						<a href="#" class="flex-c-m trans-04 p-lr-25">
+							Help & FAQs
+						</a>
 
-        <!-- Logo mobile -->		
-        <div class="logo-mobile">
-            <a href="/" style="font-family: Poppins-Bold; font-size: 1.5rem; color: #333;">
-                Fashion Flex
-            </a>
-        </div>
-    </header>
+						<!-- My Account: go to profile if logged in, else to login with message -->
+						<a th:href="@{/my-account}" class="flex-c-m trans-04 p-lr-25">
+							My Account
+						</a>
+
+						<!-- Auth area: show username + Logout if logged in; else Sign in / Sign up -->
+						<th:block th:if="${isAuthenticated}">
+							<span class="flex-c-m trans-04 p-lr-25">
+								<i class="fa fa-user"></i>&nbsp;<span th:text="${displayName}"></span>
+							</span>
+							<form th:action="@{/logout}" method="post" style="display:inline;margin:0;">
+								<button type="submit" class="flex-c-m trans-04 p-lr-25"
+									style="background:none;border:none;cursor:pointer;font:inherit;color:inherit;">
+									Logout
+								</button>
+							</form>
+						</th:block>
+						<th:block th:unless="${isAuthenticated}">
+							<a th:href="@{/login}" class="flex-c-m trans-04 p-lr-25">Sign in</a>
+							<a th:href="@{/login}" class="flex-c-m trans-04 p-lr-25">Sign up</a>
+						</th:block>
+					</div>
+				</div>
+			</div>
+
+			<div class="wrap-menu-desktop">
+				<nav class="limiter-menu-desktop container">
+					<!-- Logo desktop -->		
+					<a href="/index" class="logo" style="font-family: Poppins-Bold; font-size: 2rem; color: #333;">
+						Fashion Flex
+					</a>
+
+					<!-- Menu desktop -->
+					<div class="menu-desktop">
+						<ul class="main-menu">
+							<li>
+								<a href="/product">Shop</a>
+							</li>
+
+							<li class="label1" data-label1="hot">
+								<a href="/shopping-cart">Features</a>
+							</li>
+
+							<li>
+								<a href="/blog">Blog</a>
+							</li>
+
+							<li>
+								<a href="/about">About</a>
+							</li>
+
+							<li>
+								<a href="/contact">Contact</a>
+							</li>
+						</ul>
+					</div>
+
+					<!-- Icon header -->
+					<div class="wrap-icon-header flex-w flex-r-m">
+						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
+							<i class="zmdi zmdi-search"></i>
+						</div>
+
+						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart"
+							data-notify="2">
+							<i class="zmdi zmdi-shopping-cart"></i>
+						</div>
+
+						<a th:href="@{/wishlist}"
+							class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti wishlist-nav-link"
+							data-notify="0">
+							<i class="zmdi zmdi-favorite-outline"></i>
+						</a>
+					</div>
+				</nav>
+			</div>
+		</div>
+
+		<!-- Header Mobile -->
+		<div class="wrap-header-mobile">
+			<!-- Logo moblie -->		
+			<div class="logo-mobile">
+				<a href="/index" style="font-family: Poppins-Bold; font-size: 1.5rem; color: #333;">
+					Fashion Flex
+				</a>
+			</div>
+
+			<!-- Icon header -->
+			<div class="wrap-icon-header flex-w flex-r-m m-r-15">
+				<div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 js-show-modal-search">
+					<i class="zmdi zmdi-search"></i>
+				</div>
+
+				<div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart"
+					data-notify="2">
+					<i class="zmdi zmdi-shopping-cart"></i>
+				</div>
+
+				<a th:href="@{/wishlist}"
+					class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti wishlist-nav-link"
+					data-notify="0">
+					<i class="zmdi zmdi-favorite-outline"></i>
+				</a>
+			</div>
+
+			<!-- Button show menu -->
+			<div class="btn-show-menu-mobile hamburger hamburger--squeeze">
+				<span class="hamburger-box">
+					<span class="hamburger-inner"></span>
+				</span>
+			</div>
+		</div>
+
+		<!-- Menu Mobile -->
+		<div class="menu-mobile">
+			<ul class="topbar-mobile">
+				<li>
+					<div class="left-top-bar">
+						Free shipping for standard order over $100
+					</div>
+				</li>
+
+				<li>
+					<div class="right-top-bar flex-w h-full">
+						<a href="#" class="flex-c-m p-lr-10 trans-04">
+							Help & FAQs
+						</a>
+
+						<a href="/login" class="flex-c-m p-lr-10 trans-04">
+							My Account
+						</a>
+
+						<a href="#" class="flex-c-m p-lr-10 trans-04">
+							EN
+						</a>
+
+						<a href="#" class="flex-c-m p-lr-10 trans-04">
+							USD
+						</a>
+					</div>
+				</li>
+			</ul>
+
+			<ul class="main-menu-m">
+				<li>
+					<a href="/index">Home</a>
+					<span class="arrow-main-menu-m">
+						<i class="fa fa-angle-right" aria-hidden="true"></i>
+					</span>
+				</li>
+
+				<li>
+					<a href="/product">Shop</a>
+				</li>
+
+				<li>
+					<a href="/shopping-cart" class="label1 rs1" data-label1="hot">Features</a>
+				</li>
+
+				<li>
+					<a th:href="@{/blog}">Blog</a>
+				</li>
+
+				<li>
+					<a th:href="@{/about}">About</a>
+				</li>
+
+				<li>
+					<a href="/contact">Contact</a>
+				</li>
+			</ul>
+		</div>
+
+		<!-- Modal Search -->
+		<div class="modal-search-header flex-c-m trans-04 js-hide-modal-search">
+			<div class="container-search-header">
+				<button class="flex-c-m btn-hide-modal-search trans-04 js-hide-modal-search">
+					<img src="images/icons/icon-close2.png" alt="CLOSE">
+				</button>
+
+				<form class="wrap-search-header flex-w p-l-15">
+					<button class="flex-c-m trans-04">
+						<i class="zmdi zmdi-search"></i>
+					</button>
+					<input class="plh3" type="text" name="search" placeholder="Search...">
+				</form>
+			</div>
+		</div>
+	</header>
 
 	<!-- Cart -->
 	<div class="wrap-header-cart js-panel-cart">
@@ -180,51 +361,12 @@
 				</div>
 
 				<div class="size-210 bor10 flex-w flex-col-m p-lr-93 p-tb-30 p-lr-15-lg w-full-md">
-					<div class="flex-w w-full p-b-42">
-						<span class="fs-18 cl5 txt-center size-211">
-							<span class="lnr lnr-map-marker"></span>
-						</span>
-
-						<div class="size-212 p-t-2">
-							<span class="mtext-110 cl2">
-								Address
-							</span>
-
-							<p class="stext-115 cl6 size-213 p-t-18">
-								Coza Store Center 8th floor, 379 Hudson St, New York, NY 10018 US
-							</p>
-						</div>
-					</div>
-
-					<div class="flex-w w-full p-b-42">
-						<span class="fs-18 cl5 txt-center size-211">
-							<span class="lnr lnr-phone-handset"></span>
-						</span>
-
-						<div class="size-212 p-t-2">
-							<span class="mtext-110 cl2">
-								Lets Talk
-							</span>
-
-							<p class="stext-115 cl1 size-213 p-t-18">
-								+1 800 1236879
-							</p>
-						</div>
-					</div>
-
-					<div class="flex-w w-full">
-						<span class="fs-18 cl5 txt-center size-211">
-							<span class="lnr lnr-envelope"></span>
-						</span>
-
-						<div class="size-212 p-t-2">
-							<span class="mtext-110 cl2">
-								Sale Support
-							</span>
-
-							<p class="stext-115 cl1 size-213 p-t-18">
-								contact@example.com
-							</p>
+					<div class="flex-w w-full p-b-42" style="justify-content: center; align-items: center;">
+						<div style="text-align: center;">
+							<h4 class="mtext-110 cl2 p-b-20">
+								Contact Us Here
+							</h4>
+							<img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://forms.gle/15YzDXuU5Hk9Fvgw6" alt="Contact Form QR Code" style="max-width: 250px; height: auto; border: 2px solid #ddd; padding: 10px; border-radius: 8px;">
 						</div>
 					</div>
 				</div>
@@ -233,149 +375,177 @@
 	</section>	
 
 	<!-- Footer -->
-	<footer class="bg3 p-t-75 p-b-32">
+	<footer th:fragment="footer" class="bg3 p-t-75 p-b-32">
 		<div class="container">
 			<div class="row">
 				<div class="col-sm-6 col-lg-3 p-b-50">
 					<h4 class="stext-301 cl0 p-b-30">
 						Categories
 					</h4>
-
+	
 					<ul>
 						<li class="p-b-10">
-							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
+							<a th:href="@{/product(category=women)}" class="stext-107 cl7 hov-cl1 trans-04">
 								Women
 							</a>
 						</li>
-
+	
 						<li class="p-b-10">
-							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
+							<a th:href="@{/product(category=men)}" class="stext-107 cl7 hov-cl1 trans-04">
 								Men
 							</a>
 						</li>
-
+	
 						<li class="p-b-10">
-							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
+							<a th:href="@{/product(category=shoes)}" class="stext-107 cl7 hov-cl1 trans-04">
 								Shoes
 							</a>
 						</li>
-
+	
 						<li class="p-b-10">
-							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
+							<a th:href="@{/product(category=watches)}" class="stext-107 cl7 hov-cl1 trans-04">
 								Watches
 							</a>
 						</li>
 					</ul>
 				</div>
-
+	
 				<div class="col-sm-6 col-lg-3 p-b-50">
 					<h4 class="stext-301 cl0 p-b-30">
 						Help
 					</h4>
-
+	
 					<ul>
 						<li class="p-b-10">
-							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
+							<a th:href="@{/user/order-tracking}" class="stext-107 cl7 hov-cl1 trans-04">
 								Track Order
 							</a>
 						</li>
-
+	
 						<li class="p-b-10">
-							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-								Returns 
+							<a th:href="@{/info/return-policy}" class="stext-107 cl7 hov-cl1 trans-04">
+								Returns
 							</a>
 						</li>
-
+	
 						<li class="p-b-10">
-							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
+							<a th:href="@{/info/shipping-policy}" class="stext-107 cl7 hov-cl1 trans-04">
 								Shipping
 							</a>
 						</li>
-
+	
 						<li class="p-b-10">
-							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
+							<a th:href="@{/info/faq}" class="stext-107 cl7 hov-cl1 trans-04">
 								FAQs
 							</a>
 						</li>
 					</ul>
 				</div>
-
+	
 				<div class="col-sm-6 col-lg-3 p-b-50">
 					<h4 class="stext-301 cl0 p-b-30">
-						GET IN TOUCH
+						Information
 					</h4>
-
-					<p class="stext-107 cl7 size-201">
-						Any questions? Let us know in store at 8th floor, 379 Hudson St, New York, NY 10018 or call us on (+1) 96 716 6879
-					</p>
-
-					<div class="p-t-27">
-						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
-							<i class="fa fa-facebook"></i>
-						</a>
-
-						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
-							<i class="fa fa-instagram"></i>
-						</a>
-
-						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
-							<i class="fa fa-pinterest-p"></i>
-						</a>
-					</div>
+	
+					<ul>
+						<li class="p-b-10">
+							<a th:href="@{/about}" class="stext-107 cl7 hov-cl1 trans-04">
+								About Us
+							</a>
+						</li>
+	
+						<li class="p-b-10">
+							<a th:href="@{/contact}" class="stext-107 cl7 hov-cl1 trans-04">
+								Contact Us
+							</a>
+						</li>
+	
+						<li class="p-b-10">
+							<a th:href="@{/info/privacy-policy}" class="stext-107 cl7 hov-cl1 trans-04">
+								Privacy Policy
+							</a>
+						</li>
+	
+						<li class="p-b-10">
+							<a th:href="@{/info/terms-conditions}" class="stext-107 cl7 hov-cl1 trans-04">
+								Terms & Conditions
+							</a>
+						</li>
+					</ul>
 				</div>
-
+	
 				<div class="col-sm-6 col-lg-3 p-b-50">
 					<h4 class="stext-301 cl0 p-b-30">
 						Newsletter
 					</h4>
-
+	
+					<p class="stext-107 cl7 size-201 p-b-20">
+						Subscribe to get special offers, free giveaways, and exclusive deals.
+					</p>
+	
 					<form>
 						<div class="wrap-input1 w-full p-b-4">
 							<input class="input1 bg-none plh1 stext-107 cl7" type="text" name="email" placeholder="email@example.com">
 							<div class="focus-input1 trans-04"></div>
 						</div>
-
+	
 						<div class="p-t-18">
 							<button class="flex-c-m stext-101 cl0 size-103 bg1 bor1 hov-btn2 p-lr-15 trans-04">
 								Subscribe
 							</button>
 						</div>
 					</form>
+	
+					<div class="p-t-27">
+						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+							<i class="fa fa-facebook"></i>
+						</a>
+	
+						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+							<i class="fa fa-instagram"></i>
+						</a>
+	
+						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+							<i class="fa fa-pinterest-p"></i>
+						</a>
+	
+						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+							<i class="fa fa-twitter"></i>
+						</a>
+					</div>
 				</div>
 			</div>
-
+	
 			<div class="p-t-40">
 				<div class="flex-c-m flex-w p-b-18">
 					<a href="#" class="m-all-1">
-						<img src="images/icons/icon-pay-01.png" alt="ICON-PAY">
+						<img th:src="@{/images/icons/icon-pay-01.png}" alt="ICON-PAY">
 					</a>
-
+	
 					<a href="#" class="m-all-1">
-						<img src="images/icons/icon-pay-02.png" alt="ICON-PAY">
+						<img th:src="@{/images/icons/icon-pay-02.png}" alt="ICON-PAY">
 					</a>
-
+	
 					<a href="#" class="m-all-1">
-						<img src="images/icons/icon-pay-03.png" alt="ICON-PAY">
+						<img th:src="@{/images/icons/icon-pay-03.png}" alt="ICON-PAY">
 					</a>
-
+	
 					<a href="#" class="m-all-1">
-						<img src="images/icons/icon-pay-04.png" alt="ICON-PAY">
+						<img th:src="@{/images/icons/icon-pay-04.png}" alt="ICON-PAY">
 					</a>
-
+	
 					<a href="#" class="m-all-1">
-						<img src="images/icons/icon-pay-05.png" alt="ICON-PAY">
+						<img th:src="@{/images/icons/icon-pay-05.png}" alt="ICON-PAY">
 					</a>
 				</div>
-
+	
 				<p class="stext-107 cl6 txt-center">
-					<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | Made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a> &amp; distributed by <a href="https://themewagon.com" target="_blank">ThemeWagon</a>
-<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-
+					Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | FashionFlex E-commerce
 				</p>
 			</div>
 		</div>
 	</footer>
+	
 
 
 	<!-- Back to top -->

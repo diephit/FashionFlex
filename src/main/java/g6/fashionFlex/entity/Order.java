@@ -1,7 +1,5 @@
 package g6.fashionFlex.entity;
 
-
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,56 +21,66 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "orders")
 public class Order {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "orderID")
     private Integer orderID;
-
+    
     @ManyToOne
-    @JoinColumn(name = "customerID", nullable = false)
+    @JoinColumn(name = "userID", nullable = true)
+    private User user;
+    
+    @ManyToOne
+    @JoinColumn(name = "customerID", nullable = true)
     private Customer customer;
-
-    @Column(name = "orderDate")
+    
+    @Column(nullable = false)
     private LocalDateTime orderDate;
-
+    
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", columnDefinition = "ENUM('pending','paid','shipped','completed','canceled') DEFAULT 'pending'")
+    @Column(nullable = false)
     private OrderStatus status;
+    
+    @Column(nullable = false)
+    private Float totalAmount;
 
-    @Column(name = "totalAmount", precision = 12, scale = 2)
-    private BigDecimal totalAmount;
+    @Column(name = "contactEmail", length = 150)
+    private String contactEmail;
 
-    @Column(name = "trackingNumber", length = 100)
-    private String trackingNumber;
+    @Column(name = "shippingAddress", columnDefinition = "TEXT")
+    private String shippingAddress;
 
-    @Column(name = "createdAt")
+    @Column(name = "customerName", length = 150)
+    private String customerName;
+    
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
-
-    @Column(name = "updatedAt")
+    
+    @Column(nullable = false)
     private LocalDateTime updatedAt;
-
+    
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
-
+    
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<Payment> payments;
-
+    
+    public enum OrderStatus {
+        pending, paid, shipped, completed, canceled
+    }
+    
     @PrePersist
     protected void onCreate() {
-        orderDate = LocalDateTime.now();
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
-        if (status == null) {
-            status = OrderStatus.pending;
+        if (orderDate == null) {
+            orderDate = LocalDateTime.now();
         }
     }
-
+    
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
-    }
-
-    public Order() {
     }
 
     public Integer getOrderID() {
@@ -81,6 +89,14 @@ public class Order {
 
     public void setOrderID(Integer orderID) {
         this.orderID = orderID;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Customer getCustomer() {
@@ -107,13 +123,54 @@ public class Order {
         this.status = status;
     }
 
-    public BigDecimal getTotalAmount() {
+    public Float getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(BigDecimal totalAmount) {
+    public void setTotalAmount(Float totalAmount) {
         this.totalAmount = totalAmount;
     }
+
+    public String getContactEmail() {
+        return contactEmail;
+    }
+
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
+    }
+
+    public String getShippingAddress() {
+        return shippingAddress;
+    }
+
+    public void setShippingAddress(String shippingAddress) {
+        this.shippingAddress = shippingAddress;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     public List<OrderItem> getOrderItems() {
         return orderItems;
     }
@@ -128,17 +185,5 @@ public class Order {
 
     public void setPayments(List<Payment> payments) {
         this.payments = payments;
-    }
-
-    public String getTrackingNumber() {
-        return trackingNumber;
-    }
-
-    public void setTrackingNumber(String trackingNumber) {
-        this.trackingNumber = trackingNumber;
-    }
-
-    public enum OrderStatus {
-        pending, paid, shipped, completed, canceled
     }
 }

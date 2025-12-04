@@ -11,7 +11,7 @@ USE ff;
 -- ROLES
 CREATE TABLE roles (
     roleID INT AUTO_INCREMENT PRIMARY KEY,
-    roleName VARCHAR(50) NOT NULL UNIQUE -- 'customer', 'admin'
+    roleName VARCHAR(50) NOT NULL UNIQUE 
 );
 
 -- USERS
@@ -49,10 +49,29 @@ CREATE TABLE customers (
     totalSpent FLOAT DEFAULT 0,
     levelID INT DEFAULT 1, 
     address TEXT,
+    customerImg VARCHAR(255),
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (userID) REFERENCES users(userID),
     FOREIGN KEY (levelID) REFERENCES membership_levels(levelID)
+);
+
+-- ADDRESSES
+CREATE TABLE addresses (
+    addressID INT AUTO_INCREMENT PRIMARY KEY,
+    customerID INT NOT NULL,
+    fullName VARCHAR(100) NOT NULL,
+    phone VARCHAR(20),
+    addressLine1 VARCHAR(255) NOT NULL,
+    addressLine2 VARCHAR(255),
+    city VARCHAR(100) NOT NULL,
+    state VARCHAR(100),
+    postalCode VARCHAR(20),
+    country VARCHAR(100) DEFAULT 'Vietnam',
+    isDefault BOOLEAN DEFAULT FALSE,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (customerID) REFERENCES customers(customerID) ON DELETE CASCADE
 );
 
 -- ADMINS
@@ -144,16 +163,21 @@ CREATE TABLE cart_items (
 -- ORDERS
 CREATE TABLE orders (
     orderID INT AUTO_INCREMENT PRIMARY KEY,
-    customerID INT NOT NULL,
+    userID INT NULL,
+    customerID INT NULL,
     orderDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status ENUM('pending','paid','shipped','completed','canceled') DEFAULT 'pending',
     totalAmount FLOAT NOT NULL,
+    contactEmail VARCHAR(150),
+    shippingAddress TEXT,
+    customerName VARCHAR(150),
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (userID) REFERENCES users(userID),
     FOREIGN KEY (customerID) REFERENCES customers(customerID)
 );
 
--- ORDER ITEMS
+
 -- ORDER ITEMS
 CREATE TABLE order_items (
     orderItemID INT AUTO_INCREMENT PRIMARY KEY,
@@ -180,6 +204,33 @@ CREATE TABLE payments (
     updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (orderID) REFERENCES orders(orderID)
 );
+
+-- Đồng bộ trạng thái đơn hàng theo kết quả thanh toán:
+-- - Nếu payment.status = 'success'  -> orders.status = 'completed'
+-- - Nếu payment.status = 'failed' hoặc 'refunded' -> orders.status = 'pending'
+DELIMITER //
+CREATE TRIGGER trg_payments_after_insert
+AFTER INSERT ON payments
+FOR EACH ROW
+BEGIN
+    IF NEW.status = 'success' THEN
+        UPDATE orders SET status = 'completed' WHERE orderID = NEW.orderID;
+    ELSEIF NEW.status IN ('failed','refunded') THEN
+        UPDATE orders SET status = 'pending' WHERE orderID = NEW.orderID;
+    END IF;
+END//
+
+CREATE TRIGGER trg_payments_after_update
+AFTER UPDATE ON payments
+FOR EACH ROW
+BEGIN
+    IF NEW.status = 'success' THEN
+        UPDATE orders SET status = 'completed' WHERE orderID = NEW.orderID;
+    ELSEIF NEW.status IN ('failed','refunded') THEN
+        UPDATE orders SET status = 'pending' WHERE orderID = NEW.orderID;
+    END IF;
+END//
+DELIMITER ;
 
 -- OPTIONAL: Membership history
 CREATE TABLE membership_history (
@@ -236,8 +287,8 @@ INSERT INTO users (name, email, password, roleID) VALUES
 INSERT INTO admins (userID, department, position) VALUES (2, 'Operations', 'System Admin');
 
 -- CUSTOMERS
-INSERT INTO customers (userID, phone, totalSpent, levelID, address)
-VALUES (1, '0123456789', 300.00, 1, '123 Main St');
+INSERT INTO customers (userID, phone, totalSpent, levelID, address,customerImg)
+VALUES (1, '0123456789', 300.00, 1, '123 Main St','static/images/customer1.jpg');
 
 
 INSERT INTO categories (categoryID, name, parentCategoryID) VALUES
@@ -282,10 +333,6 @@ VALUES
 ('Slim Fit Jeans', 'Blue denim with stretch material', 12, 'static/images/jeans1.jpg', 100, 1, 1, 'active'),
 ('Relaxed Fit Jeans', 'Casual denim for everyday comfort', 12, 'static/images/jeans2.jpg', 100, 1, 1, 'active');
 
--- Men -> Shorts
-INSERT INTO products (name, description, categoryID, mainImage, stockQuantity, createdByAdminID, updatedByAdminID, status)
-VALUES
-('Cargo Shorts', 'Multi-pocket casual shorts', 13, 'static/images/shorts1.jpg', 100, 1, 1, 'active');
 
 -- Men -> Shoes
 INSERT INTO products (name, description, categoryID, mainImage, stockQuantity, createdByAdminID, updatedByAdminID, status)
@@ -458,3 +505,5 @@ VALUES
 (23, 'KIDS_SNEAKERS1-Blue', 24.99, 'static/images/kids_sneakers1_blue.jpg', 'active'),
 (24, 'KIDS_SANDALS1-Pink', 19.99, 'static/images/kids_sandals1_pink.jpg', 'active'),
 (24, 'KIDS_SANDALS1-Blue', 19.99, 'static/images/kids_sandals1_blue.jpg', 'active');
+
+

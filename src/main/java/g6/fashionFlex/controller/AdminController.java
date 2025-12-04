@@ -1,8 +1,12 @@
 package g6.fashionFlex.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,9 +21,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import g6.fashionFlex.entity.Order;
 import g6.fashionFlex.entity.Role;
+import g6.fashionFlex.entity.Stock;
 import g6.fashionFlex.entity.User;
 import g6.fashionFlex.repository.AdminRepository;
+import g6.fashionFlex.repository.OrderRepository;
+import g6.fashionFlex.repository.StockRepository;
 import g6.fashionFlex.repository.UserRepository;
 import g6.fashionFlex.service.AdminStatsService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,6 +48,12 @@ public class AdminController {
     @Autowired
     private AdminStatsService statsService;
     
+    @Autowired
+    private OrderRepository orderRepository;
+    
+    @Autowired
+    private StockRepository stockRepository;
+    
     @GetMapping("/admin/admin-login")
     public String adminPage(Model model) {
         return "redirect:/admin/dashboard";
@@ -50,6 +64,15 @@ public class AdminController {
         try {
             Map<String, Object> stats = statsService.getDashboardStats();
             model.addAllAttributes(stats);
+            
+            // Get recent orders (last 5)
+            Pageable recentOrdersPageable = PageRequest.of(0, 5);
+            List<Order> recentOrders = orderRepository.findRecentOrders(recentOrdersPageable);
+            model.addAttribute("recentOrders", recentOrders);
+            
+            // Get low stock products (quantity <= 10)
+            List<Stock> lowStockItems = stockRepository.findLowStockVariants(10);
+            model.addAttribute("lowStockItems", lowStockItems);
         } catch (Exception e) {
             // If stats service fails, provide default values
             model.addAttribute("totalUsers", 0);
@@ -57,7 +80,10 @@ public class AdminController {
             model.addAttribute("totalOrders", 0);
             model.addAttribute("totalCategories", 0);
             model.addAttribute("totalRevenue", 0);
+            model.addAttribute("recentOrders", List.of());
+            model.addAttribute("lowStockItems", List.of());
         }
+        model.addAttribute("adminDisplayName", resolveAdminDisplayName());
         return "admin/dashboard";
     }
     
@@ -119,5 +145,17 @@ public class AdminController {
             redirectAttributes.addAttribute("error", "true");
             return "redirect:/admin-login";
         }
+    }
+
+    private String resolveAdminDisplayName() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null
+                || !authentication.isAuthenticated()
+                || authentication instanceof AnonymousAuthenticationToken) {
+            return "Admin";
+        }
+        return userRepository.findByEmail(authentication.getName())
+                .map(User::getName)
+                .orElse(authentication.getName());
     }
 }

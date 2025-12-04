@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Membership - FashionFlex</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" th:href="@{/images/icons/favicon.png}"/>
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/bootstrap/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/font-awesome-4.7.0/css/font-awesome.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/iconic/css/material-design-iconic-font.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/linearicons-v1.0.0/icon-font.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/animate/animate.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/css-hamburgers/hamburgers.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/animsition/css/animsition.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/select2/select2.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/perfect-scrollbar/perfect-scrollbar.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/util.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/user-pages.css}">
+<style>
+.membership-card {
+    background: linear-gradient(135deg, #717fe0 0%, #5a67d8 100%);
+    border-radius: 12px;
+    padding: 30px;
+    color: #fff;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(113, 127, 224, 0.3);
+}
+
+.membership-level-badge {
+    display: inline-block;
+    padding: 8px 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    font-family: Poppins-Medium;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.membership-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 25px;
+}
+
+.membership-stat-item {
+    text-align: center;
+}
+
+.membership-stat-value {
+    display: block;
+    font-family: Poppins-Bold;
+    font-size: 28px;
+    margin-bottom: 5px;
+}
+
+.membership-stat-label {
+    font-family: Poppins-Regular;
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+.progress-section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.progress-bar-container {
+    background: #f0f0f0;
+    border-radius: 10px;
+    height: 20px;
+    overflow: hidden;
+    margin: 15px 0;
+}
+
+.progress-bar-fill {
+    background: linear-gradient(90deg, #717fe0 0%, #5a67d8 100%);
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 11px;
+    font-family: Poppins-Medium;
+}
+
+.history-item {
+    padding: 20px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.history-item:last-child {
+    border-bottom: none;
+}
+
+.history-level-change {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.level-badge {
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-family: Poppins-Medium;
+    font-size: 12px;
+}
+
+.level-badge.bronze {
+    background: #cd7f32;
+    color: #fff;
+}
+
+.level-badge.silver {
+    background: #c0c0c0;
+    color: #333;
+}
+
+.level-badge.gold {
+    background: #ffd700;
+    color: #333;
+}
+
+.level-badge.platinum {
+    background: #e5e4e2;
+    color: #333;
+}
+
+@media (max-width: 768px) {
+    .membership-stats {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+<body class="animsition">
+
+	<!-- Header -->
+	<header>
+		<!-- Header desktop -->
+		<div class="container-menu-desktop">
+			<div class="top-bar">
+				<div class="content-topbar flex-sb-m h-full container">
+					<div class="left-top-bar">
+						Free shipping for standard order over $100
+					</div>
+
+					<div class="right-top-bar flex-w h-full">
+						<a href="../info/faq.html" class="flex-c-m trans-04 p-lr-25">Help & FAQs</a>
+						<a href="/my-account" class="flex-c-m trans-04 p-lr-25">My Account</a>
+						<a href="#" class="flex-c-m trans-04 p-lr-25">EN</a>
+						<a href="#" class="flex-c-m trans-04 p-lr-25">USD</a>
+					</div>
+				</div>
+			</div>
+
+			<div class="wrap-menu-desktop">
+				<nav class="limiter-menu-desktop container">
+					<a href="/index" class="logo" style="font-family: Poppins-Bold; font-size: 2rem; color: #333;">Fashion Flex</a>
+
+					<div class="menu-desktop">
+						<ul class="main-menu">
+							<li><a th:href="@{/product}">Shop</a></li>
+							<li class="label1" data-label1="hot"><a href="/shopping-cart">Cart</a></li>
+							<li><a th:href="@{/blog}">Blog</a></li>
+							<li><a th:href="@{/about}">About</a></li>
+							<li><a th:href="@{/contact}">Contact</a></li>
+						</ul>
+					</div>
+
+					<div class="wrap-icon-header flex-w flex-r-m">
+						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
+							<i class="zmdi zmdi-search"></i>
+						</div>
+						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="2">
+							<i class="zmdi zmdi-shopping-cart"></i>
+						</div>
+						<a th:href="@{/wishlist}" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti wishlist-nav-link" data-notify="0">
+							<i class="zmdi zmdi-favorite-outline"></i>
+						</a>
+					</div>
+				</nav>
+			</div>
+		</div>
+
+		<!-- Header Mobile -->
+		<div class="wrap-header-mobile">
+			<div class="logo-mobile">
+				<a th:href="@{/}"><img th:src="@{/images/icons/logo-01.png}" alt="IMG-LOGO"></a>
+			</div>
+
+			<div class="wrap-icon-header flex-w flex-r-m m-r-15">
+				<div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 js-show-modal-search">
+					<i class="zmdi zmdi-search"></i>
+				</div>
+				<div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart" data-notify="2">
+					<i class="zmdi zmdi-shopping-cart"></i>
+				</div>
+				<a th:href="@{/wishlist}" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti wishlist-nav-link" data-notify="0">
+					<i class="zmdi zmdi-favorite-outline"></i>
+				</a>
+			</div>
+
+			<div class="btn-show-menu-mobile hamburger hamburger--squeeze">
+				<span class="hamburger-box">
+					<span class="hamburger-inner"></span>
+				</span>
+			</div>
+		</div>
+
+		<!-- Menu Mobile -->
+		<div class="menu-mobile">
+			<ul class="main-menu-m">
+				<li>
+					<a th:href="@{/}">Home</a>
+					<ul class="sub-menu-m">
+						<li><a th:href="@{/}">Homepage 1</a></li>
+						<li><a th:href="@{/home-02}">Homepage 2</a></li>
+						<li><a th:href="@{/home-03}">Homepage 3</a></li>
+					</ul>
+					<span class="arrow-main-menu-m">
+						<i class="fa fa-angle-right" aria-hidden="true"></i>
+					</span>
+				</li>
+				<li><a th:href="@{/product}">Shop</a></li>
+				<li><a href="shopping-cart.html" class="label1 rs1" data-label1="hot">Cart</a></li>
+				<li><a th:href="@{/blog}">Blog</a></li>
+				<li><a th:href="@{/about}">About</a></li>
+				<li><a th:href="@{/contact}">Contact</a></li>
+			</ul>
+		</div>
+
+		<!-- Modal Search -->
+		<div class="modal-search-header flex-c-m trans-04 js-hide-modal-search">
+			<div class="container-search-header">
+				<button class="flex-c-m btn-hide-modal-search trans-04 js-hide-modal-search">
+					<img th:src="@{/images/icons/icon-close2.png}" alt="CLOSE">
+				</button>
+				<form class="wrap-search-header flex-w p-l-15">
+					<button class="flex-c-m trans-04">
+						<i class="zmdi zmdi-search"></i>
+					</button>
+					<input class="plh3" type="text" name="search" placeholder="Search...">
+				</form>
+			</div>
+		</div>
+	</header>
+
+	<!-- Main Content -->
+	<div class="user-account-wrapper">
+		<div class="container">
+			<div class="row">
+				<!-- Sidebar Navigation -->
+				<div class="col-md-3">
+					<div class="user-account-nav">
+						<ul>
+							<li>
+								<a th:href="@{/order-history}">
+									<i class="fa fa-shopping-bag"></i>
+									Orders
+								</a>
+							</li>
+							<li>
+								<a th:href="@{/wishlist}">
+									<i class="fa fa-heart"></i>
+									Wishlist
+								</a>
+							</li>
+							<!-- Address Book removed: customers enter shipping address directly at checkout -->
+							<li>
+								<a th:href="@{/membership}" class="active">
+									<i class="fa fa-star"></i>
+									Membership
+								</a>
+							</li>
+							<li>
+								<a th:href="@{/profile-edit}">
+									<i class="fa fa-user"></i>
+									Profile
+								</a>
+							</li>
+							<li>
+								<a th:href="@{/change-password}">
+									<i class="fa fa-lock"></i>
+									Change Password
+								</a>
+							</li>
+							<li>
+								<a th:href="@{/logout}">
+									<i class="fa fa-sign-out"></i>
+									Logout
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+
+				<!-- Main Content -->
+				<div class="col-md-9">
+					<!-- Membership Card -->
+					<div class="membership-card">
+						<div class="membership-level-badge" th:text="${currentLevel != null ? currentLevel.levelName : 'Bronze'}">Bronze</div>
+						<h2 style="font-family: Poppins-Bold; font-size: 32px; margin: 10px 0;">Membership Status</h2>
+						<p style="opacity: 0.9; margin-bottom: 0;" th:if="${currentLevel != null}" th:text="${currentLevel.description}">Cấp mặc định cho người mới</p>
+						
+						<div class="membership-stats">
+							<div class="membership-stat-item">
+								<span class="membership-stat-value" th:text="${customer.loyaltyPoints != null ? customer.loyaltyPoints : 0}">0</span>
+								<span class="membership-stat-label">Loyalty Points</span>
+							</div>
+							<div class="membership-stat-item">
+								<span class="membership-stat-value" th:text="${customer.totalSpent != null ? #numbers.formatDecimal(customer.totalSpent, 0, 'COMMA', 0, 'POINT') : '0'}">$0</span>
+								<span class="membership-stat-label">Total Spent</span>
+							</div>
+							<div class="membership-stat-item">
+								<span class="membership-stat-value" th:text="${currentLevel != null ? #numbers.formatDecimal(currentLevel.discountRate, 1, 'POINT', 1, 'POINT') + '%' : '0%'}">0%</span>
+								<span class="membership-stat-label">Discount Rate</span>
+							</div>
+						</div>
+					</div>
+
+					<!-- Progress to Next Level -->
+					<div class="progress-section" th:if="${nextLevel != null}">
+						<h3 style="font-family: Poppins-Medium; font-size: 18px; margin-bottom: 15px;">Progress to <span th:text="${nextLevel.levelName}">Silver</span></h3>
+						<p style="color: #999; font-size: 13px; margin-bottom: 10px;">
+							Spend <span th:text="${#numbers.formatDecimal(nextLevel.minSpent.subtract(customer.totalSpent != null ? customer.totalSpent : java.math.BigDecimal.ZERO), 0, 'COMMA', 0, 'POINT')}">$500</span> more to reach <span th:text="${nextLevel.levelName}">Silver</span> level
+						</p>
+						<div class="progress-bar-container">
+							<div class="progress-bar-fill" th:style="'width: ' + ${progress} + '%;'" th:text="${#numbers.formatDecimal(progress, 1, 'POINT', 1, 'POINT')} + '%'">50%</div>
+						</div>
+					</div>
+					<div class="progress-section" th:if="${nextLevel == null}">
+						<h3 style="font-family: Poppins-Medium; font-size: 18px; margin-bottom: 15px;">Congratulations!</h3>
+						<p style="color: #999; font-size: 14px;">You have reached the highest membership level.</p>
+					</div>
+
+					<!-- Membership History -->
+					<div class="user-account-content">
+						<div class="user-account-header">
+							<h2>Membership History</h2>
+							<p>Track your membership level changes</p>
+						</div>
+
+						<div th:if="${history != null && !history.isEmpty()}">
+							<div class="history-item" th:each="item : ${history}">
+								<div class="history-level-change">
+									<span class="level-badge" 
+										  th:classappend="${item.oldLevel != null ? item.oldLevel.levelName.toLowerCase() : ''}"
+										  th:text="${item.oldLevel != null ? item.oldLevel.levelName : 'N/A'}">Bronze</span>
+									<i class="fa fa-arrow-right" style="color: #999;"></i>
+									<span class="level-badge" 
+										  th:classappend="${item.newLevel != null ? item.newLevel.levelName.toLowerCase() : ''}"
+										  th:text="${item.newLevel != null ? item.newLevel.levelName : 'N/A'}">Silver</span>
+								</div>
+								<div style="text-align: right;">
+									<div style="font-family: Poppins-Regular; font-size: 13px; color: #333;" 
+										 th:text="${#temporals.format(item.changedAt, 'MMM dd, yyyy HH:mm')}">Jan 15, 2025</div>
+									<div style="font-family: Poppins-Regular; font-size: 12px; color: #999;" 
+										 th:if="${item.note != null}" th:text="${item.note}">Auto-upgraded</div>
+								</div>
+							</div>
+						</div>
+						<div th:if="${history == null || history.isEmpty()}" style="text-align: center; padding: 40px; color: #999;">
+							<p>No membership history yet.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Footer -->
+	<footer th:fragment="footer" class="bg3 p-t-75 p-b-32">
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-6 col-lg-3 p-b-50">
+					<h4 class="stext-301 cl0 p-b-30">
+						Categories
+					</h4>
+	
+					<ul>
+						<li class="p-b-10">
+							<a th:href="@{/product(category=women)}" class="stext-107 cl7 hov-cl1 trans-04">
+								Women
+							</a>
+						</li>
+	
+						<li class="p-b-10">
+							<a th:href="@{/product(category=men)}" class="stext-107 cl7 hov-cl1 trans-04">
+								Men
+							</a>
+						</li>
+	
+						<li class="p-b-10">
+							<a th:href="@{/product(category=shoes)}" class="stext-107 cl7 hov-cl1 trans-04">
+								Shoes
+							</a>
+						</li>
+	
+						<li class="p-b-10">
+							<a th:href="@{/product(category=watches)}" class="stext-107 cl7 hov-cl1 trans-04">
+								Watches
+							</a>
+						</li>
+					</ul>
+				</div>
+	
+				<div class="col-sm-6 col-lg-3 p-b-50">
+					<h4 class="stext-301 cl0 p-b-30">
+						Help
+					</h4>
+	
+					<ul>
+						<li class="p-b-10">
+							<a th:href="@{/user/order-tracking}" class="stext-107 cl7 hov-cl1 trans-04">
+								Track Order
+							</a>
+						</li>
+	
+						<li class="p-b-10">
+							<a th:href="@{/info/return-policy}" class="stext-107 cl7 hov-cl1 trans-04">
+								Returns
+							</a>
+						</li>
+	
+						<li class="p-b-10">
+							<a th:href="@{/info/shipping-policy}" class="stext-107 cl7 hov-cl1 trans-04">
+								Shipping
+							</a>
+						</li>
+	
+						<li class="p-b-10">
+							<a th:href="@{/info/faq}" class="stext-107 cl7 hov-cl1 trans-04">
+								FAQs
+							</a>
+						</li>
+					</ul>
+				</div>
+	
+				<div class="col-sm-6 col-lg-3 p-b-50">
+					<h4 class="stext-301 cl0 p-b-30">
+						Information
+					</h4>
+	
+					<ul>
+						<li class="p-b-10">
+							<a th:href="@{/about}" class="stext-107 cl7 hov-cl1 trans-04">
+								About Us
+							</a>
+						</li>
+	
+						<li class="p-b-10">
+							<a th:href="@{/contact}" class="stext-107 cl7 hov-cl1 trans-04">
+								Contact Us
+							</a>
+						</li>
+	
+						<li class="p-b-10">
+							<a th:href="@{/info/privacy-policy}" class="stext-107 cl7 hov-cl1 trans-04">
+								Privacy Policy
+							</a>
+						</li>
+	
+						<li class="p-b-10">
+							<a th:href="@{/info/terms-conditions}" class="stext-107 cl7 hov-cl1 trans-04">
+								Terms & Conditions
+							</a>
+						</li>
+					</ul>
+				</div>
+	
+				<div class="col-sm-6 col-lg-3 p-b-50">
+					<h4 class="stext-301 cl0 p-b-30">
+						Newsletter
+					</h4>
+	
+					<p class="stext-107 cl7 size-201 p-b-20">
+						Subscribe to get special offers, free giveaways, and exclusive deals.
+					</p>
+	
+					<form>
+						<div class="wrap-input1 w-full p-b-4">
+							<input class="input1 bg-none plh1 stext-107 cl7" type="text" name="email" placeholder="email@example.com">
+							<div class="focus-input1 trans-04"></div>
+						</div>
+	
+						<div class="p-t-18">
+							<button class="flex-c-m stext-101 cl0 size-103 bg1 bor1 hov-btn2 p-lr-15 trans-04">
+								Subscribe
+							</button>
+						</div>
+					</form>
+	
+					<div class="p-t-27">
+						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+							<i class="fa fa-facebook"></i>
+						</a>
+	
+						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+							<i class="fa fa-instagram"></i>
+						</a>
+	
+						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+							<i class="fa fa-pinterest-p"></i>
+						</a>
+	
+						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+							<i class="fa fa-twitter"></i>
+						</a>
+					</div>
+				</div>
+			</div>
+	
+			<div class="p-t-40">
+				<div class="flex-c-m flex-w p-b-18">
+					<a href="#" class="m-all-1">
+						<img th:src="@{/images/icons/icon-pay-01.png}" alt="ICON-PAY">
+					</a>
+	
+					<a href="#" class="m-all-1">
+						<img th:src="@{/images/icons/icon-pay-02.png}" alt="ICON-PAY">
+					</a>
+	
+					<a href="#" class="m-all-1">
+						<img th:src="@{/images/icons/icon-pay-03.png}" alt="ICON-PAY">
+					</a>
+	
+					<a href="#" class="m-all-1">
+						<img th:src="@{/images/icons/icon-pay-04.png}" alt="ICON-PAY">
+					</a>
+	
+					<a href="#" class="m-all-1">
+						<img th:src="@{/images/icons/icon-pay-05.png}" alt="ICON-PAY">
+					</a>
+				</div>
+	
+				<p class="stext-107 cl6 txt-center">
+					Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | FashionFlex E-commerce
+				</p>
+			</div>
+		</div>
+	</footer>
+	
+
+	<script th:src="@{/vendor/jquery/jquery-3.2.1.min.js}"></script>
+	<script th:src="@{/vendor/animsition/js/animsition.min.js}"></script>
+	<script th:src="@{/vendor/bootstrap/js/popper.js}"></script>
+	<script th:src="@{/vendor/bootstrap/js/bootstrap.min.js}"></script>
+	<script th:src="@{/vendor/select2/select2.min.js}"></script>
+	<script th:src="@{/vendor/daterangepicker/moment.min.js}"></script>
+	<script th:src="@{/vendor/daterangepicker/daterangepicker.js}"></script>
+	<script th:src="@{/vendor/slick/slick.min.js}"></script>
+	<script th:src="@{/js/slick-custom.js}"></script>
+	<script th:src="@{/vendor/parallax100/parallax100.js}"></script>
+	<script th:src="@{/vendor/isotope/isotope.pkgd.min.js}"></script>
+	<script th:src="@{/vendor/sweetalert/sweetalert.min.js}"></script>
+	<script th:src="@{/vendor/perfect-scrollbar/perfect-scrollbar.min.js}"></script>
+	<script th:src="@{/js/main.js}"></script>
+</body>
+</html>
+

@@ -3,15 +3,15 @@ package g6.fashionFlex.service;
 import g6.fashionFlex.entity.Order;
 import g6.fashionFlex.entity.Order.OrderStatus;
 import g6.fashionFlex.entity.Payment;
-import g6.fashionFlex.entity.Payment.PaymentStatus;
 import g6.fashionFlex.repository.OrderRepository;
 import g6.fashionFlex.repository.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,39 +39,50 @@ public class AdminOrderService {
         return orderRepository.findByStatus(status, pageable);
     }
 
+    public Page<Order> getOrdersByDateRange(LocalDateTime startDate,
+                                            LocalDateTime endDate,
+                                            Pageable pageable) {
+        List<Order> orders = orderRepository.findByOrderDateBetween(startDate, endDate);
+        return new PageImpl<>(orders, pageable, orders.size());
+    }
+
+    public Page<Order> getOrdersByStatusAndDateRange(OrderStatus status,
+                                                     LocalDateTime startDate,
+                                                     LocalDateTime endDate,
+                                                     Pageable pageable) {
+        List<Order> orders = orderRepository.findByStatusAndOrderDateBetween(status, startDate, endDate);
+        return new PageImpl<>(orders, pageable, orders.size());
+    }
+
     public Optional<Order> getOrderById(Integer orderID) {
         return orderRepository.findById(orderID);
-    }
-
-    @Transactional
-    public Order updateOrderStatus(Integer orderID, OrderStatus status) {
-        Order order = orderRepository.findById(orderID)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
-        
-        order.setStatus(status);
-        return orderRepository.save(order);
-    }
-
-    @Transactional
-    public Order updateTrackingNumber(Integer orderID, String trackingNumber) {
-        Order order = orderRepository.findById(orderID)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
-        
-        order.setTrackingNumber(trackingNumber);
-        return orderRepository.save(order);
     }
 
     public List<Payment> getOrderPayments(Integer orderID) {
         return paymentRepository.findByOrderOrderID(orderID);
     }
 
-    @Transactional
-    public Payment updatePaymentStatus(Integer paymentID, PaymentStatus status) {
-        Payment payment = paymentRepository.findById(paymentID)
-                .orElseThrow(() -> new RuntimeException("Payment not found"));
-        
-        payment.setStatus(status);
-        return paymentRepository.save(payment);
+    public long countAllOrders() {
+        return orderRepository.count();
+    }
+
+    public long countOrdersByStatus(OrderStatus status) {
+        return orderRepository.countByStatus(status);
+    }
+
+    public long countPendingOrders() {
+        return countOrdersByStatus(OrderStatus.pending);
+    }
+
+    public long countPaidOrders() {
+        return countOrdersByStatus(OrderStatus.paid);
+    }
+
+    public long countCompletedOrders() {
+        return countOrdersByStatus(OrderStatus.completed);
+    }
+
+    public long countCanceledOrders() {
+        return countOrdersByStatus(OrderStatus.canceled);
     }
 }
-

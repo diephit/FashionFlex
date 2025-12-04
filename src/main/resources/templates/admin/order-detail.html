@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Order Detail - Admin</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" th:href="@{/images/icons/favicon.png}"/>
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/bootstrap/css/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/font-awesome-4.7.0/css/font-awesome.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/iconic/css/material-design-iconic-font.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/util.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/admin-styles.css}">
+</head>
+<body>
+
+	<div class="admin-wrapper">
+		<!-- Sidebar -->
+		<aside class="admin-sidebar">
+			<div class="admin-sidebar-header">
+				<h3><i class="zmdi zmdi-shield-security"></i> Admin Panel</h3>
+			</div>
+			<ul class="admin-sidebar-menu">
+				<li><a th:href="@{/admin/dashboard}"><i class="fa fa-tachometer"></i> Dashboard</a></li>
+				<li><a th:href="@{/admin/products}"><i class="fa fa-shopping-bag"></i> Products</a></li>
+				<li><a th:href="@{/admin/orders}"><i class="fa fa-shopping-cart"></i> Orders</a></li>
+				<li><a th:href="@{/admin/customers}"><i class="fa fa-users"></i> Customers</a></li>
+				<li><a th:href="@{/admin/categories}"><i class="fa fa-folder"></i> Categories</a></li>
+				<li><a th:href="@{/admin/membership}"><i class="fa fa-star"></i> Membership</a></li>
+				<li>
+					<form th:action="@{/logout}" method="post" class="admin-sidebar-logout">
+						<button type="submit">
+							<i class="fa fa-sign-out"></i>
+							Logout
+						</button>
+					</form>
+				</li>
+			</ul>
+		</aside>
+
+		<!-- Main Content -->
+		<main class="admin-main">
+			<div class="admin-topbar">
+				<h2>Order Detail #<span th:text="${order.orderID}">0</span></h2>
+				<div class="admin-user-info">
+					<span>Admin User</span>
+					<img src="https://ui-avatars.com/api/?name=Admin+User&size=40&background=667eea&color=fff" alt="Admin">
+				</div>
+			</div>
+
+			<div class="admin-content">
+				<!-- Flash Messages -->
+				<div th:if="${success}" class="alert alert-success" role="alert">
+					<span th:text="${success}">Success message</span>
+				</div>
+				<div th:if="${error}" class="alert alert-danger" role="alert">
+					<span th:text="${error}">Error message</span>
+				</div>
+
+				<!-- Order Information -->
+				<div class="admin-table-wrapper" style="margin-bottom: 20px;">
+					<div class="admin-table-header">
+						<h3>Order Information</h3>
+					</div>
+					<div style="padding: 20px;">
+						<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+							<div>
+								<strong>Order ID:</strong> <span th:text="${order.orderID}">#</span>
+							</div>
+							<div>
+								<strong>Order Date:</strong> 
+								<span th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm:ss')}">Date</span>
+							</div>
+							<div>
+								<strong>Customer Name:</strong> 
+								<span th:text="${order.customer != null && order.customer.user != null ? order.customer.user.name : (order.user != null ? order.user.name : 'Anonymous')}">Customer</span>
+							</div>
+							<div>
+								<strong>Email:</strong> 
+								<span th:text="${order.customer != null && order.customer.user != null ? order.customer.user.email : (order.user != null ? order.user.email : 'N/A')}">Email</span>
+							</div>
+							<div th:if="${order.customer != null && order.customer.address != null}">
+								<strong>Address:</strong> 
+								<span th:text="${order.customer.address}">Address</span>
+							</div>
+							<div>
+								<strong>Total Amount:</strong> 
+								<span th:text="${'$' + #numbers.formatDecimal(order.totalAmount, 1, 2)}">$0.00</span>
+							</div>
+							<div>
+								<strong>Status:</strong> 
+								<span class="badge" 
+								      th:classappend="${order.status.name() == 'pending' ? 'badge-warning' : (order.status.name() == 'paid' ? 'badge-info' : (order.status.name() == 'shipped' ? 'badge-primary' : (order.status.name() == 'completed' ? 'badge-success' : (order.status.name() == 'canceled' ? 'badge-danger' : ''))))}"
+								      th:text="${order.status.name()}">Status</span>
+							</div>
+						</div>
+
+						<div class="alert alert-info" style="margin-top: 20px;">
+							Order and payment statuses are managed automatically based on payment gateway responses.
+						</div>
+					</div>
+				</div>
+
+				<!-- Order Items -->
+				<div class="admin-table-wrapper" style="margin-bottom: 20px;">
+					<div class="admin-table-header">
+						<h3>Order Items</h3>
+					</div>
+					<table class="admin-table">
+						<thead>
+							<tr>
+								<th>Product</th>
+								<th>SKU</th>
+								<th>Quantity</th>
+								<th>Price</th>
+								<th>Total</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:if="${order.orderItems == null || order.orderItems.isEmpty()}">
+								<td colspan="5" class="text-center text-muted" style="padding: 30px;">
+									No items in this order.
+								</td>
+							</tr>
+							<tr th:each="item : ${order.orderItems}">
+								<td th:text="${item.variant != null && item.variant.product != null ? item.variant.product.name : 'N/A'}">Product</td>
+								<td th:text="${item.variant != null ? item.variant.sku : 'N/A'}">SKU</td>
+								<td th:text="${item.quantity}">0</td>
+								<td th:text="${'$' + #numbers.formatDecimal(item.price, 1, 2)}">$0.00</td>
+								<td th:text="${'$' + #numbers.formatDecimal(item.totalPrice, 1, 2)}">$0.00</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<!-- Payments -->
+				<div class="admin-table-wrapper">
+					<div class="admin-table-header">
+						<h3>Payment History</h3>
+					</div>
+					<table class="admin-table">
+						<thead>
+							<tr>
+								<th>Payment ID</th>
+								<th>Method</th>
+								<th>Amount</th>
+								<th>Status</th>
+								<th>Transaction Code</th>
+								<th>Payment Date</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:if="${payments == null || payments.isEmpty()}">
+								<td colspan="6" class="text-center text-muted" style="padding: 30px;">
+									No payments for this order.
+								</td>
+							</tr>
+							<tr th:each="payment : ${payments}">
+								<td th:text="${payment.paymentID}">#</td>
+								<td th:text="${payment.method.name()}">Method</td>
+								<td th:text="${'$' + #numbers.formatDecimal(payment.amount, 1, 2)}">$0.00</td>
+								<td>
+									<span class="badge" 
+									      th:classappend="${payment.status.name() == 'pending' ? 'badge-warning' : (payment.status.name() == 'success' ? 'badge-success' : (payment.status.name() == 'failed' ? 'badge-danger' : (payment.status.name() == 'refunded' ? 'badge-info' : '')))}"
+									      th:text="${payment.status.name()}">Status</span>
+								</td>
+								<td th:text="${payment.transactionCode != null ? payment.transactionCode : 'N/A'}">N/A</td>
+								<td th:text="${payment.paymentDate != null ? #temporals.format(payment.paymentDate, 'yyyy-MM-dd HH:mm:ss') : 'N/A'}">N/A</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<div style="margin-top: 20px;">
+					<a th:href="@{/admin/orders}" class="btn btn-secondary">
+						<i class="fa fa-arrow-left"></i> Back to Orders
+					</a>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<button class="admin-mobile-toggle"><i class="fa fa-bars"></i></button>
+
+	<script th:src="@{/vendor/jquery/jquery-3.2.1.min.js}"></script>
+	<script th:src="@{/vendor/bootstrap/js/popper.js}"></script>
+	<script th:src="@{/vendor/bootstrap/js/bootstrap.min.js}"></script>
+	<script th:src="@{/vendor/sweetalert/sweetalert.min.js}"></script>
+	<script th:src="@{/js/admin.js}"></script>
+
+</body>
+</html>
+

@@ -1,33 +1,168 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<title>Wishlist - FashionFlex</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->
-	<link rel="icon" type="image/png" href="../../images/icons/favicon.png"/>
+	<link rel="icon" type="image/png" th:href="@{/images/icons/favicon.png}"/>
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="../../vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/bootstrap/css/bootstrap.min.css}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="../../fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/font-awesome-4.7.0/css/font-awesome.min.css}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="../../fonts/iconic/css/material-design-iconic-font.min.css">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/iconic/css/material-design-iconic-font.min.css}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="../../fonts/linearicons-v1.0.0/icon-font.min.css">
+	<link rel="stylesheet" type="text/css" th:href="@{/fonts/linearicons-v1.0.0/icon-font.min.css}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="../../vendor/animate/animate.css">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/animate/animate.css}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="../../vendor/css-hamburgers/hamburgers.min.css">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/css-hamburgers/hamburgers.min.css}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="../../vendor/animsition/css/animsition.min.css">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/animsition/css/animsition.min.css}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="../../vendor/select2/select2.min.css">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/select2/select2.min.css}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="../../vendor/perfect-scrollbar/perfect-scrollbar.css">
+	<link rel="stylesheet" type="text/css" th:href="@{/vendor/perfect-scrollbar/perfect-scrollbar.css}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="../../css/util.css">
-	<link rel="stylesheet" type="text/css" href="../../css/main.css">
-	<link rel="stylesheet" type="text/css" href="../../assets/css/pages/user-pages.css">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/util.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/user-pages.css}">
+	<style>
+		/* Wishlist Grid Styles */
+		.wishlist-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+			gap: 20px;
+			margin-top: 30px;
+		}
+
+		.wishlist-card {
+			background: #fff;
+			border: 1px solid #e6e6e6;
+			border-radius: 8px;
+			overflow: hidden;
+			transition: all 0.3s ease;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.wishlist-card:hover {
+			box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+			transform: translateY(-3px);
+		}
+
+		.wishlist-card-image {
+			position: relative;
+			width: 100%;
+			padding-top: 75%;
+			overflow: hidden;
+			background: #f8f8f8;
+		}
+
+		.wishlist-card-image img {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		.wishlist-card-body {
+			padding: 20px;
+			display: flex;
+			flex-direction: column;
+			flex: 1;
+		}
+
+		.wishlist-card-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-start;
+			margin-bottom: 10px;
+		}
+
+		.wishlist-product-name {
+			font-size: 16px;
+			font-weight: 600;
+			color: #333;
+			margin: 0;
+			flex: 1;
+			padding-right: 10px;
+			line-height: 1.4;
+		}
+
+		.wishlist-remove-btn.simple-remove {
+			background: none;
+			border: none;
+			color: #999;
+			cursor: pointer;
+			padding: 5px;
+			font-size: 18px;
+			line-height: 1;
+			transition: color 0.3s ease;
+			flex-shrink: 0;
+		}
+
+		.wishlist-remove-btn.simple-remove:hover {
+			color: #e74c3c;
+		}
+
+		.wishlist-product-meta {
+			font-size: 13px;
+			color: #999;
+			margin: 5px 0;
+		}
+
+		.wishlist-product-price {
+			font-size: 18px;
+			font-weight: 700;
+			color: #333;
+			margin: 10px 0 15px;
+		}
+
+		.wishlist-card-actions {
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+			margin-top: auto;
+		}
+
+		.wishlist-card-actions button {
+			width: 100%;
+			padding: 12px 15px;
+			border-radius: 4px;
+			font-size: 14px;
+			font-weight: 600;
+			text-transform: uppercase;
+			transition: all 0.3s ease;
+		}
+
+		.wishlist-addcart-btn:disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+		}
+
+		/* Responsive */
+		@media (max-width: 991px) {
+			.wishlist-grid {
+				grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+				gap: 20px;
+			}
+		}
+
+		@media (max-width: 575px) {
+			.wishlist-grid {
+				grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+				gap: 15px;
+			}
+			
+			.wishlist-card-body {
+				padding: 15px;
+			}
+		}
+	</style>
 <!--===============================================================================================-->
 </head>
 <body class="animsition">
@@ -44,64 +179,44 @@
 					</div>
 
 					<div class="right-top-bar flex-w h-full">
-						<a href="../info/faq.html" class="flex-c-m trans-04 p-lr-25">
-							Help & FAQs
-						</a>
-
-						<a th:href="@{/my-account}" class="flex-c-m trans-04 p-lr-25">
-							My Account
-						</a>
-
-						<a href="#" class="flex-c-m trans-04 p-lr-25">
-							EN
-						</a>
-
-						<a href="#" class="flex-c-m trans-04 p-lr-25">
-							USD
-						</a>
+						<a href="#" class="flex-c-m trans-04 p-lr-25">Help & FAQs</a>
+						
+						<!-- Auth area -->
+						<th:block th:if="${isAuthenticated}">
+							<span class="flex-c-m trans-04 p-lr-25">
+								<i class="fa fa-user"></i>&nbsp;<span th:text="${displayName}"></span>
+							</span>
+							<form th:action="@{/logout}" method="post" style="display:inline;margin:0;">
+								<button type="submit" class="flex-c-m trans-04 p-lr-25"
+									style="background:none;border:none;cursor:pointer;font:inherit;color:inherit;">
+									Logout
+								</button>
+							</form>
+						</th:block>
+						<th:block th:unless="${isAuthenticated}">
+							<a th:href="@{/login}" class="flex-c-m trans-04 p-lr-25">Sign in</a>
+							<a th:href="@{/login}" class="flex-c-m trans-04 p-lr-25">Sign up</a>
+						</th:block>
 					</div>
 				</div>
 			</div>
 
 			<div class="wrap-menu-desktop">
 				<nav class="limiter-menu-desktop container">
-
 					<!-- Logo desktop -->
-					<a href="../../index.html" class="logo">
-						<img src="../../images/icons/logo-01.png" alt="IMG-LOGO">
+					<a th:href="@{/}" class="logo" style="font-family: Poppins-Bold; font-size: 2rem; color: #333;">
+						Fashion Flex
 					</a>
 
 					<!-- Menu desktop -->
 					<div class="menu-desktop">
 						<ul class="main-menu">
-							<li>
-								<a href="../../index.html">Home</a>
-								<ul class="sub-menu">
-									<li><a href="../../index.html">Homepage 1</a></li>
-									<li><a href="../../home-02.html">Homepage 2</a></li>
-									<li><a href="../../home-03.html">Homepage 3</a></li>
-								</ul>
-							</li>
-
-							<li>
-								<a href="../../product.html">Shop</a>
-							</li>
-
-							<li class="label1" data-label1="hot">
-								<a href="../../shopping-cart.html">Cart</a>
-							</li>
-
-							<li>
-								<a href="../../blog.html">Blog</a>
-							</li>
-
-							<li>
-								<a href="../../about.html">About</a>
-							</li>
-
-							<li>
-								<a href="../../contact.html">Contact</a>
-							</li>
+							<li><a th:href="@{/}">Home</a></li>
+							<li><a th:href="@{/product}">Shop</a></li>
+							<li class="label1" data-label1="hot"><a th:href="@{/shopping-cart}">Cart</a></li>
+							<li><a th:href="@{/blog}">Blog</a></li>
+							<li><a th:href="@{/about}">About</a></li>
+							<li><a th:href="@{/contact}">Contact</a></li>
 						</ul>
 					</div>
 
@@ -115,7 +230,8 @@
 							<i class="zmdi zmdi-shopping-cart"></i>
 						</div>
 
-						<a href="wishlist.html" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti" data-notify="3">
+						<a th:href="@{/wishlist}" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti wishlist-nav-link" data-notify="0"
+							th:attr="data-notify=${wishlistCount != null ? wishlistCount : 0}">
 							<i class="zmdi zmdi-favorite-outline"></i>
 						</a>
 					</div>
@@ -125,12 +241,10 @@
 
 		<!-- Header Mobile -->
 		<div class="wrap-header-mobile">
-			<!-- Logo moblie -->
 			<div class="logo-mobile">
-				<a href="../../index.html"><img src="../../images/icons/logo-01.png" alt="IMG-LOGO"></a>
+				<a th:href="@{/}"><img th:src="@{/images/icons/logo-01.png}" alt="IMG-LOGO"></a>
 			</div>
 
-			<!-- Icon header -->
 			<div class="wrap-icon-header flex-w flex-r-m m-r-15">
 				<div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 js-show-modal-search">
 					<i class="zmdi zmdi-search"></i>
@@ -140,12 +254,12 @@
 					<i class="zmdi zmdi-shopping-cart"></i>
 				</div>
 
-				<a href="wishlist.html" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti" data-notify="3">
+				<a th:href="@{/wishlist}" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti wishlist-nav-link" data-notify="0"
+					th:attr="data-notify=${wishlistCount != null ? wishlistCount : 0}">
 					<i class="zmdi zmdi-favorite-outline"></i>
 				</a>
 			</div>
 
-			<!-- Button show menu -->
 			<div class="btn-show-menu-mobile hamburger hamburger--squeeze">
 				<span class="hamburger-box">
 					<span class="hamburger-inner"></span>
@@ -156,37 +270,12 @@
 		<!-- Menu Mobile -->
 		<div class="menu-mobile">
 			<ul class="main-menu-m">
-				<li>
-					<a href="../../index.html">Home</a>
-					<ul class="sub-menu-m">
-						<li><a href="../../index.html">Homepage 1</a></li>
-						<li><a href="../../home-02.html">Homepage 2</a></li>
-						<li><a href="../../home-03.html">Homepage 3</a></li>
-					</ul>
-					<span class="arrow-main-menu-m">
-						<i class="fa fa-angle-right" aria-hidden="true"></i>
-					</span>
-				</li>
-
-				<li>
-					<a href="../../product.html">Shop</a>
-				</li>
-
-				<li>
-					<a href="../../shopping-cart.html">Cart</a>
-				</li>
-
-				<li>
-					<a href="../../blog.html">Blog</a>
-				</li>
-
-				<li>
-					<a href="../../about.html">About</a>
-				</li>
-
-				<li>
-					<a href="../../contact.html">Contact</a>
-				</li>
+				<li><a th:href="@{/}">Home</a></li>
+				<li><a th:href="@{/product}">Shop</a></li>
+				<li><a th:href="@{/shopping-cart}">Cart</a></li>
+				<li><a th:href="@{/blog}">Blog</a></li>
+				<li><a th:href="@{/about}">About</a></li>
+				<li><a th:href="@{/contact}">Contact</a></li>
 			</ul>
 		</div>
 
@@ -194,7 +283,7 @@
 		<div class="modal-search-header flex-c-m trans-04 js-hide-modal-search">
 			<div class="container-search-header">
 				<button class="flex-c-m btn-hide-modal-search trans-04 js-hide-modal-search">
-					<img src="../../images/icons/icon-close2.png" alt="CLOSE">
+					<img th:src="@{/images/icons/icon-close2.png}" alt="CLOSE">
 				</button>
 
 				<form class="wrap-search-header flex-w p-l-15">
@@ -216,43 +305,38 @@
 					<div class="user-account-nav">
 						<ul>
 							<li>
-								<a th:href="@{/my-account}">
-									<i class="fa fa-tachometer"></i>
-									Dashboard
-								</a>
-							</li>
-							<li>
-								<a href="order-history.html">
+								<a th:href="@{/order-history}">
 									<i class="fa fa-shopping-bag"></i>
 									Orders
 								</a>
 							</li>
 							<li>
-								<a href="order-tracking.html">
-									<i class="fa fa-map-marker"></i>
-									Track Order
-								</a>
-							</li>
-							<li>
-								<a href="wishlist.html" class="active">
+								<a th:href="@{/wishlist}" class="active">
 									<i class="fa fa-heart"></i>
 									Wishlist
 								</a>
 							</li>
+							<!-- Address Book removed: customers enter shipping address directly at checkout -->
 							<li>
-								<a href="address-book.html">
-									<i class="fa fa-map"></i>
-									Addresses
+								<a th:href="@{/membership}">
+									<i class="fa fa-star"></i>
+									Membership
 								</a>
 							</li>
 							<li>
-								<a href="profile-edit.html">
+								<a th:href="@{/profile-edit}">
 									<i class="fa fa-user"></i>
 									Profile
 								</a>
 							</li>
 							<li>
-								<a href="../../login.html">
+								<a th:href="@{/change-password}">
+									<i class="fa fa-lock"></i>
+									Change Password
+								</a>
+							</li>
+							<li>
+								<a th:href="@{/logout}">
 									<i class="fa fa-sign-out"></i>
 									Logout
 								</a>
@@ -269,9 +353,58 @@
 							<p>Your favorite products saved for later</p>
 						</div>
 
+						<!-- Flash Messages -->
+						<div th:if="${message}" class="alert alert-info" style="padding: 12px 20px; margin-bottom: 20px; background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; border-radius: 4px;" th:text="${message}"></div>
+
 						<!-- Wishlist Grid -->
-						<div class="wishlist-grid">
-							<!-- Items removed: will be populated dynamically from DB -->
+						<div class="wishlist-grid" th:if="${wishlistItems != null and !#lists.isEmpty(wishlistItems)}">
+							<div class="wishlist-card" th:each="item : ${wishlistItems}" th:data-item-id="${item.wishlistItemID}">
+								<div class="wishlist-card-image">
+									<img th:if="${item.variant != null and item.variant.variantImage != null}"
+										 th:src="@{/{file}(file=${#strings.replace(item.variant.variantImage,'static/','')})}"
+										 alt="Product image">
+									<img th:if="${(item.variant == null or item.variant.variantImage == null) and item.product.mainImage != null}"
+										 th:src="@{/{file}(file=${#strings.replace(item.product.mainImage,'static/','')})}"
+										 alt="Product image">
+									<img th:if="${(item.variant == null or item.variant.variantImage == null) and item.product.mainImage == null}"
+										 th:src="@{/images/product-01.jpg}" alt="Product">
+								</div>
+								<div class="wishlist-card-body">
+									<div class="wishlist-card-header">
+										<h4 class="wishlist-product-name" th:text="${item.product.name}">Product Name</h4>
+										<button type="button" class="wishlist-remove-btn simple-remove" th:data-item-id="${item.wishlistItemID}">
+											<i class="zmdi zmdi-close"></i>
+										</button>
+									</div>
+									<p class="wishlist-product-meta">
+										<span th:text="'SKU: ' + ${item.variant != null ? item.variant.sku : 'N/A'}">SKU: N/A</span>
+									</p>
+									<p class="wishlist-product-price"
+									   th:text="${item.variant != null && item.variant.price != null ? '$' + #numbers.formatDecimal(item.variant.price, 1, 2) : 'Price varies'}">$0.00</p>
+									<div class="wishlist-card-actions">
+										<button type="button"
+												class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer wishlist-addcart-btn"
+												th:data-variant-id="${item.variant != null ? item.variant.variantID : ''}"
+												th:data-product-name="${item.product.name}"
+												th:disabled="${item.variant == null}">
+											Add to Cart
+										</button>
+										<button type="button"
+												class="flex-c-m stext-101 cl2 size-116 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer wishlist-remove-btn"
+												th:data-item-id="${item.wishlistItemID}">
+											Remove
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="wishlist-empty-state" th:if="${wishlistItems == null || #lists.isEmpty(wishlistItems)}" style="text-align: center; padding: 50px 20px;">
+							<i class="zmdi zmdi-favorite-outline" style="font-size: 80px; color: #ccc;"></i>
+							<h3 style="margin-top: 20px; color: #666;">Your wishlist is empty</h3>
+							<p style="color: #999;">Start adding your favorite products!</p>
+							<a th:href="@{/product}" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer" style="margin-top: 20px; display: inline-block;">
+								Browse Products
+							</a>
 						</div>
 					</div>
 				</div>
@@ -280,146 +413,177 @@
 	</div>
 
 	<!-- Footer -->
-	<footer class="bg3 p-t-75 p-b-32">
+	<footer th:fragment="footer" class="bg3 p-t-75 p-b-32">
 		<div class="container">
 			<div class="row">
 				<div class="col-sm-6 col-lg-3 p-b-50">
 					<h4 class="stext-301 cl0 p-b-30">
 						Categories
 					</h4>
-
+	
 					<ul>
 						<li class="p-b-10">
-							<a href="../../product.html" class="stext-107 cl7 hov-cl1 trans-04">
+							<a th:href="@{/product(category=women)}" class="stext-107 cl7 hov-cl1 trans-04">
 								Women
 							</a>
 						</li>
-
+	
 						<li class="p-b-10">
-							<a href="../../product.html" class="stext-107 cl7 hov-cl1 trans-04">
+							<a th:href="@{/product(category=men)}" class="stext-107 cl7 hov-cl1 trans-04">
 								Men
 							</a>
 						</li>
-
+	
 						<li class="p-b-10">
-							<a href="../../product.html" class="stext-107 cl7 hov-cl1 trans-04">
+							<a th:href="@{/product(category=shoes)}" class="stext-107 cl7 hov-cl1 trans-04">
 								Shoes
 							</a>
 						</li>
-
+	
 						<li class="p-b-10">
-							<a href="../../product.html" class="stext-107 cl7 hov-cl1 trans-04">
+							<a th:href="@{/product(category=watches)}" class="stext-107 cl7 hov-cl1 trans-04">
 								Watches
 							</a>
 						</li>
 					</ul>
 				</div>
-
+	
 				<div class="col-sm-6 col-lg-3 p-b-50">
 					<h4 class="stext-301 cl0 p-b-30">
 						Help
 					</h4>
-
+	
 					<ul>
 						<li class="p-b-10">
-							<a href="order-tracking.html" class="stext-107 cl7 hov-cl1 trans-04">
+							<a th:href="@{/user/order-tracking}" class="stext-107 cl7 hov-cl1 trans-04">
 								Track Order
 							</a>
 						</li>
-
+	
 						<li class="p-b-10">
-							<a href="../info/return-policy.html" class="stext-107 cl7 hov-cl1 trans-04">
+							<a th:href="@{/info/return-policy}" class="stext-107 cl7 hov-cl1 trans-04">
 								Returns
 							</a>
 						</li>
-
+	
 						<li class="p-b-10">
-							<a href="../info/shipping-policy.html" class="stext-107 cl7 hov-cl1 trans-04">
+							<a th:href="@{/info/shipping-policy}" class="stext-107 cl7 hov-cl1 trans-04">
 								Shipping
 							</a>
 						</li>
-
+	
 						<li class="p-b-10">
-							<a href="../info/faq.html" class="stext-107 cl7 hov-cl1 trans-04">
+							<a th:href="@{/info/faq}" class="stext-107 cl7 hov-cl1 trans-04">
 								FAQs
 							</a>
 						</li>
 					</ul>
 				</div>
-
+	
 				<div class="col-sm-6 col-lg-3 p-b-50">
 					<h4 class="stext-301 cl0 p-b-30">
-						GET IN TOUCH
+						Information
 					</h4>
-
-					<p class="stext-107 cl7 size-201">
-						Any questions? Let us know in store at 8th floor, 379 Hudson St, New York, NY 10018 or call us on (+1) 96 716 6879
-					</p>
-
-					<div class="p-t-27">
-						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
-							<i class="fa fa-facebook"></i>
-						</a>
-
-						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
-							<i class="fa fa-instagram"></i>
-						</a>
-
-						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
-							<i class="fa fa-pinterest-p"></i>
-						</a>
-					</div>
+	
+					<ul>
+						<li class="p-b-10">
+							<a th:href="@{/about}" class="stext-107 cl7 hov-cl1 trans-04">
+								About Us
+							</a>
+						</li>
+	
+						<li class="p-b-10">
+							<a th:href="@{/contact}" class="stext-107 cl7 hov-cl1 trans-04">
+								Contact Us
+							</a>
+						</li>
+	
+						<li class="p-b-10">
+							<a th:href="@{/info/privacy-policy}" class="stext-107 cl7 hov-cl1 trans-04">
+								Privacy Policy
+							</a>
+						</li>
+	
+						<li class="p-b-10">
+							<a th:href="@{/info/terms-conditions}" class="stext-107 cl7 hov-cl1 trans-04">
+								Terms & Conditions
+							</a>
+						</li>
+					</ul>
 				</div>
-
+	
 				<div class="col-sm-6 col-lg-3 p-b-50">
 					<h4 class="stext-301 cl0 p-b-30">
 						Newsletter
 					</h4>
-
+	
+					<p class="stext-107 cl7 size-201 p-b-20">
+						Subscribe to get special offers, free giveaways, and exclusive deals.
+					</p>
+	
 					<form>
 						<div class="wrap-input1 w-full p-b-4">
 							<input class="input1 bg-none plh1 stext-107 cl7" type="text" name="email" placeholder="email@example.com">
 							<div class="focus-input1 trans-04"></div>
 						</div>
-
+	
 						<div class="p-t-18">
 							<button class="flex-c-m stext-101 cl0 size-103 bg1 bor1 hov-btn2 p-lr-15 trans-04">
 								Subscribe
 							</button>
 						</div>
 					</form>
+	
+					<div class="p-t-27">
+						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+							<i class="fa fa-facebook"></i>
+						</a>
+	
+						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+							<i class="fa fa-instagram"></i>
+						</a>
+	
+						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+							<i class="fa fa-pinterest-p"></i>
+						</a>
+	
+						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+							<i class="fa fa-twitter"></i>
+						</a>
+					</div>
 				</div>
 			</div>
-
+	
 			<div class="p-t-40">
 				<div class="flex-c-m flex-w p-b-18">
 					<a href="#" class="m-all-1">
-						<img src="../../images/icons/icon-pay-01.png" alt="ICON-PAY">
+						<img th:src="@{/images/icons/icon-pay-01.png}" alt="ICON-PAY">
 					</a>
-
+	
 					<a href="#" class="m-all-1">
-						<img src="../../images/icons/icon-pay-02.png" alt="ICON-PAY">
+						<img th:src="@{/images/icons/icon-pay-02.png}" alt="ICON-PAY">
 					</a>
-
+	
 					<a href="#" class="m-all-1">
-						<img src="../../images/icons/icon-pay-03.png" alt="ICON-PAY">
+						<img th:src="@{/images/icons/icon-pay-03.png}" alt="ICON-PAY">
 					</a>
-
+	
 					<a href="#" class="m-all-1">
-						<img src="../../images/icons/icon-pay-04.png" alt="ICON-PAY">
+						<img th:src="@{/images/icons/icon-pay-04.png}" alt="ICON-PAY">
 					</a>
-
+	
 					<a href="#" class="m-all-1">
-						<img src="../../images/icons/icon-pay-05.png" alt="ICON-PAY">
+						<img th:src="@{/images/icons/icon-pay-05.png}" alt="ICON-PAY">
 					</a>
 				</div>
-
+	
 				<p class="stext-107 cl6 txt-center">
 					Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | FashionFlex E-commerce
 				</p>
 			</div>
 		</div>
 	</footer>
+	
 
 	<!-- Back to top -->
 	<div class="btn-back-to-top" id="myBtn">
@@ -429,16 +593,12 @@
 	</div>
 
 <!--===============================================================================================-->
-	<script src="../../vendor/jquery/jquery-3.2.1.min.js"></script>
-<!--===============================================================================================-->
-	<script src="../../vendor/animsition/js/animsition.min.js"></script>
-<!--===============================================================================================-->
-	<script src="../../vendor/bootstrap/js/popper.js"></script>
-	<script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
-<!--===============================================================================================-->
-	<script src="../../vendor/select2/select2.min.js"></script>
-<!--===============================================================================================-->
-	<script src="../../vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+	<script th:src="@{/vendor/jquery/jquery-3.2.1.min.js}"></script>
+	<script th:src="@{/vendor/animsition/js/animsition.min.js}"></script>
+	<script th:src="@{/vendor/bootstrap/js/popper.js}"></script>
+	<script th:src="@{/vendor/bootstrap/js/bootstrap.min.js}"></script>
+	<script th:src="@{/vendor/select2/select2.min.js}"></script>
+	<script th:src="@{/vendor/perfect-scrollbar/perfect-scrollbar.min.js}"></script>
 	<script>
 		$('.js-pscroll').each(function(){
 			$(this).css('position','relative');
@@ -454,8 +614,123 @@
 			})
 		});
 	</script>
-<!--===============================================================================================-->
-	<script src="../../js/main.js"></script>
+	<script th:src="@{/js/main.js}"></script>
+
+	<script th:inline="javascript">
+		(function () {
+			const swalAvailable = typeof Swal !== 'undefined' ? Swal : (window.sweetAlert ? window : null);
+
+			function showAlert(title, text, icon) {
+				if (typeof swal === 'function') {
+					swal(title, text, icon);
+				} else if (swalAvailable && typeof swalAvailable.fire === 'function') {
+					swalAvailable.fire({
+						icon: icon,
+						title: title,
+						text: text,
+						timer: 2000,
+						showConfirmButton: false
+					});
+				} else {
+					alert(`${title}\n${text}`);
+				}
+			}
+
+			function toggleEmptyState() {
+				const grid = document.querySelector('.wishlist-grid');
+				const emptyState = document.querySelector('.wishlist-empty-state');
+				if (!grid) {
+					if (emptyState) emptyState.style.display = 'block';
+					return;
+				}
+				const hasItems = grid.querySelectorAll('.wishlist-card').length > 0;
+				grid.style.display = hasItems ? '' : 'none';
+				if (emptyState) {
+					emptyState.style.display = hasItems ? 'none' : 'block';
+				}
+			}
+
+			async function removeWishlistItem(btn) {
+				const itemId = btn.getAttribute('data-item-id');
+				if (!itemId) {
+					showAlert('Error', 'Missing wishlist item ID', 'error');
+					return;
+				}
+
+				try {
+					const res = await fetch('/wishlist/remove', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/x-www-form-urlencoded',
+							'X-Requested-With': 'XMLHttpRequest'
+						},
+						body: `wishlistItemId=${itemId}`
+					});
+					const data = await res.json();
+					if (data.success) {
+						const card = btn.closest('.wishlist-card');
+						if (card) card.remove();
+						showAlert('Wishlist', 'Item removed from wishlist', 'info');
+						toggleEmptyState();
+						if (typeof window.refreshWishlistCount === 'function') {
+							window.refreshWishlistCount();
+						}
+					} else {
+						showAlert('Error', data.message || 'Unable to remove item', 'error');
+					}
+				} catch (err) {
+					console.error(err);
+					showAlert('Error', 'Something went wrong', 'error');
+				}
+			}
+
+			async function addWishlistItemToCart(btn) {
+				const variantId = btn.getAttribute('data-variant-id');
+				const productName = btn.getAttribute('data-product-name') || 'Product';
+
+				if (!variantId) {
+					showAlert('Variant required', 'Select a product option before adding to cart.', 'warning');
+					return;
+				}
+
+				try {
+					const res = await fetch('/cart/add', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/x-www-form-urlencoded',
+							'X-Requested-With': 'XMLHttpRequest'
+						},
+						body: `variantId=${variantId}&quantity=1`
+					});
+					if (res.ok) {
+						showAlert(productName, 'has been added to cart', 'success');
+					} else {
+						showAlert('Error', 'Unable to add to cart', 'error');
+					}
+				} catch (err) {
+					console.error(err);
+					showAlert('Error', 'Unable to add to cart', 'error');
+				}
+			}
+
+			document.addEventListener('click', function (event) {
+				const removeBtn = event.target.closest('.wishlist-remove-btn');
+				if (removeBtn) {
+					event.preventDefault();
+					removeWishlistItem(removeBtn);
+					return;
+				}
+
+				const addCartBtn = event.target.closest('.wishlist-addcart-btn');
+				if (addCartBtn) {
+					event.preventDefault();
+					addWishlistItemToCart(addCartBtn);
+				}
+			});
+
+			toggleEmptyState();
+		})();
+	</script>
 
 </body>
 </html>

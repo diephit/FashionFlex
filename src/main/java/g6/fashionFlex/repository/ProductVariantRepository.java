@@ -1,11 +1,12 @@
 package g6.fashionFlex.repository;
 
-import g6.fashionFlex.entity.ProductVariant;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
+import g6.fashionFlex.entity.ProductVariant;
 
 @Repository
 public interface ProductVariantRepository extends JpaRepository<ProductVariant, Integer> {

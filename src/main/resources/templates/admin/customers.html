@@ -11,6 +11,486 @@
 	<link rel="stylesheet" type="text/css" th:href="@{/css/util.css}">
 	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}">
 	<link rel="stylesheet" type="text/css" th:href="@{/css/admin-styles.css}">
+	<style>
+		:root {
+			--primary: #667eea;
+			--primary-dark: #5568d3;
+			--success: #48bb78;
+			--warning: #f6ad55;
+			--danger: #f56565;
+			--info: #4299e1;
+			--light: #f7fafc;
+			--gray: #e2e8f0;
+			--dark: #2d3748;
+			--text: #4a5568;
+			--border: #e2e8f0;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			background: #f8f9fa;
+			color: var(--text);
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+		}
+
+		.admin-wrapper {
+			display: flex;
+			height: 100vh;
+		}
+
+		.admin-sidebar {
+			width: 260px;
+			background: #2d3748;
+			color: white;
+			padding: 0;
+			display: flex;
+			flex-direction: column;
+			box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+			position: fixed;
+			left: 0;
+			top: 0;
+			height: 100vh;
+			z-index: 1000;
+		}
+
+		.admin-sidebar-header {
+			padding: 25px 20px;
+			border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+		}
+
+		.admin-sidebar-header h3 {
+			font-size: 18px;
+			font-weight: 600;
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			margin: 0;
+		}
+
+		.admin-sidebar-menu {
+			list-style: none;
+			flex: 1;
+			overflow-y: auto;
+			padding: 20px 0;
+		}
+
+		.admin-sidebar-menu li {
+			margin: 0;
+		}
+
+		.admin-sidebar-menu a,
+		.admin-sidebar-menu button {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			padding: 14px 20px;
+			color: rgba(255, 255, 255, 0.7);
+			text-decoration: none;
+			transition: all 0.3s ease;
+			border: none;
+			background: none;
+			width: 100%;
+			text-align: left;
+			font-size: 14px;
+			cursor: pointer;
+		}
+
+		.admin-sidebar-menu a:hover,
+		.admin-sidebar-menu button:hover {
+			background: rgba(255, 255, 255, 0.1);
+			color: white;
+		}
+
+		.admin-sidebar-menu a.active {
+			background: var(--primary);
+			color: white;
+			border-right: 4px solid #fff;
+		}
+
+		.admin-sidebar-logout {
+			margin-top: auto;
+			border-top: 1px solid rgba(255, 255, 255, 0.1);
+			border-radius: 0;
+		}
+
+		.admin-main {
+			flex: 1;
+			margin-left: 260px;
+			display: flex;
+			flex-direction: column;
+			height: 100vh;
+			overflow: hidden;
+		}
+
+		.admin-topbar {
+			background: white;
+			padding: 20px 30px;
+			border-bottom: 1px solid var(--border);
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+		}
+
+		.admin-topbar h2 {
+			font-size: 24px;
+			font-weight: 600;
+			color: var(--dark);
+		}
+
+		.admin-user-info {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+		}
+
+		.admin-user-info img {
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+			border: 2px solid var(--primary);
+		}
+
+		.admin-content {
+			flex: 1;
+			overflow-y: auto;
+			padding: 30px;
+		}
+
+		.dashboard-cards {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+			gap: 20px;
+			margin-bottom: 30px;
+		}
+
+		.dashboard-card {
+			background: white;
+			border-radius: 12px;
+			padding: 20px;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+			transition: all 0.3s ease;
+			border-left: 4px solid var(--primary);
+			text-align: center;
+		}
+
+		.dashboard-card:hover {
+			transform: translateY(-4px);
+			box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+		}
+
+		.dashboard-card-icon {
+			width: 50px;
+			height: 50px;
+			border-radius: 10px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 24px;
+			margin: 0 auto 12px;
+			color: white;
+		}
+
+		.dashboard-card-icon.primary {
+			background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+		}
+
+		.dashboard-card-icon.success {
+			background: linear-gradient(135deg, var(--success), #38a169);
+		}
+
+		.dashboard-card-icon.warning {
+			background: linear-gradient(135deg, var(--warning), #ed8936);
+		}
+
+		.dashboard-card-icon.info {
+			background: linear-gradient(135deg, var(--info), #3182ce);
+		}
+
+		.dashboard-card h4 {
+			font-size: 12px;
+			font-weight: 500;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			color: #718096;
+			margin-bottom: 8px;
+		}
+
+		.dashboard-card .value {
+			font-size: 28px;
+			font-weight: 700;
+			color: var(--dark);
+		}
+
+		.admin-table-wrapper {
+			background: white;
+			border-radius: 12px;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+			overflow: hidden;
+			margin-bottom: 30px;
+		}
+
+		.admin-table-header {
+			padding: 20px 25px;
+			border-bottom: 1px solid var(--border);
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.admin-table-header h3 {
+			font-size: 16px;
+			font-weight: 600;
+			color: var(--dark);
+			margin: 0;
+		}
+
+		.admin-table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		.admin-table thead {
+			background: #f7fafc;
+			border-bottom: 2px solid var(--border);
+		}
+
+		.admin-table th {
+			padding: 15px 25px;
+			text-align: left;
+			font-weight: 600;
+			font-size: 13px;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			color: #718096;
+		}
+
+		.admin-table td {
+			padding: 16px 25px;
+			border-bottom: 1px solid var(--border);
+			font-size: 14px;
+		}
+
+		.admin-table tbody tr:hover {
+			background: #f7fafc;
+		}
+
+		.admin-table .font-weight-bold {
+			font-weight: 600;
+			color: var(--dark);
+		}
+
+		.status-badge {
+			display: inline-block;
+			padding: 6px 12px;
+			border-radius: 20px;
+			font-size: 12px;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.3px;
+		}
+
+		.status-badge.completed {
+			background: rgba(72, 187, 120, 0.1);
+			color: var(--success);
+		}
+
+		.status-badge.cancelled {
+			background: rgba(245, 101, 101, 0.1);
+			color: var(--danger);
+		}
+
+		.status-badge.processing {
+			background: rgba(246, 173, 85, 0.1);
+			color: var(--warning);
+		}
+
+		.btn-primary, .btn-secondary {
+			padding: 10px 20px;
+			border-radius: 6px;
+			font-size: 14px;
+			font-weight: 500;
+			border: none;
+			cursor: pointer;
+			transition: all 0.3s ease;
+		}
+
+		.btn-primary {
+			background: var(--primary);
+			color: white;
+		}
+
+		.btn-primary:hover {
+			background: var(--primary-dark);
+			color: white;
+		}
+
+		.btn-secondary {
+			background: var(--gray);
+			color: var(--text);
+		}
+
+		.btn-secondary:hover {
+			background: #cbd5e0;
+		}
+
+		.alert {
+			border: none;
+			border-radius: 8px;
+			margin-bottom: 20px;
+			border-left: 4px solid;
+		}
+
+		.alert-success {
+			background: rgba(72, 187, 120, 0.1);
+			color: var(--success);
+			border-left-color: var(--success);
+		}
+
+		.alert-danger {
+			background: rgba(245, 101, 101, 0.1);
+			color: var(--danger);
+			border-left-color: var(--danger);
+		}
+
+		.admin-pagination {
+			display: flex;
+			justify-content: center;
+			padding: 20px;
+			gap: 8px;
+		}
+
+		.admin-pagination-buttons {
+			display: flex;
+			gap: 8px;
+			flex-wrap: wrap;
+			justify-content: center;
+		}
+
+		.admin-pagination-buttons a {
+			padding: 8px 12px;
+			border: 1px solid var(--border);
+			border-radius: 6px;
+			text-decoration: none;
+			color: var(--text);
+			transition: all 0.2s ease;
+			font-size: 13px;
+			font-weight: 500;
+		}
+
+		.admin-pagination-buttons a:hover {
+			border-color: var(--primary);
+			color: var(--primary);
+		}
+
+		.admin-pagination-buttons a.active {
+			background: var(--primary);
+			color: white;
+			border-color: var(--primary);
+		}
+
+		.form-control, .form-group input, .form-group select {
+			border: 1px solid var(--border);
+			border-radius: 6px;
+			padding: 10px 12px;
+			font-size: 14px;
+		}
+
+		.form-control:focus, .form-group input:focus, .form-group select:focus {
+			border-color: var(--primary);
+			box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+			outline: none;
+		}
+
+		.modal-content {
+			border-radius: 12px;
+			border: none;
+			box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+		}
+
+		.modal-header {
+			background: var(--light);
+			border-bottom: 1px solid var(--border);
+			border-radius: 12px 12px 0 0;
+		}
+
+		.modal-title {
+			font-weight: 600;
+			color: var(--dark);
+		}
+
+		.search-form {
+			background: white;
+			padding: 20px;
+			border-radius: 12px;
+			margin-bottom: 25px;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+			display: flex;
+			gap: 15px;
+			flex-wrap: wrap;
+			align-items: flex-end;
+		}
+
+		.search-form input {
+			flex: 1;
+			min-width: 200px;
+		}
+
+		@media (max-width: 768px) {
+			.admin-sidebar {
+				width: 0;
+				transition: width 0.3s ease;
+			}
+
+			.admin-sidebar.active {
+				width: 260px;
+			}
+
+			.admin-main {
+				margin-left: 0;
+			}
+
+			.admin-topbar {
+				flex-direction: column;
+				gap: 15px;
+				align-items: flex-start;
+			}
+
+			.admin-mobile-toggle {
+				display: block;
+			}
+		}
+
+		.admin-mobile-toggle {
+			display: none;
+			position: fixed;
+			bottom: 20px;
+			right: 20px;
+			width: 50px;
+			height: 50px;
+			border: none;
+			border-radius: 50%;
+			background: var(--primary);
+			color: white;
+			font-size: 20px;
+			cursor: pointer;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+			z-index: 999;
+		}
+
+		.text-muted {
+			color: #718096 !important;
+		}
+
+		.w-full {
+			width: 100%;
+		}
+	</style>
 </head>
 <body>
 
@@ -25,10 +505,15 @@
 				<li><a th:href="@{/admin/orders}"><i class="fa fa-shopping-cart"></i> Orders</a></li>
 				<li><a th:href="@{/admin/customers}" class="active"><i class="fa fa-users"></i> Customers</a></li>
 				<li><a th:href="@{/admin/categories}"><i class="fa fa-folder"></i> Categories</a></li>
-				<li><a th:href="@{/admin/coupons}"><i class="fa fa-tag"></i> Coupons</a></li>
-				<li><a th:href="@{/admin/reviews}"><i class="fa fa-star"></i> Reviews</a></li>
-				<li><a th:href="@{/admin/settings}"><i class="fa fa-cog"></i> Settings</a></li>
-				<li><a th:href="@{/}"><i class="fa fa-sign-out"></i> Back to Store</a></li>
+				<li><a th:href="@{/admin/membership}"><i class="fa fa-star"></i> Membership</a></li>
+				<li>
+					<form th:action="@{/logout}" method="post" class="admin-sidebar-logout">
+						<button type="submit">
+							<i class="fa fa-sign-out"></i>
+							Logout
+						</button>
+					</form>
+				</li>
 			</ul>
 		</aside>
 
@@ -36,140 +521,170 @@
 			<div class="admin-topbar">
 				<h2>Customers Management</h2>
 				<div class="admin-user-info">
-					<span>Admin User</span>
-					<img src="https://ui-avatars.com/api/?name=Admin+User&size=40&background=667eea&color=fff" alt="Admin">
+					<span th:text="${adminDisplayName != null ? adminDisplayName : 'Admin User'}">Admin User</span>
+					<img th:src="${'https://ui-avatars.com/api/?name=' + (adminDisplayName != null ? #strings.replace(adminDisplayName,' ','+') : 'Admin+User') + '&size=40&background=667eea&color=fff'}"
+						 alt="Admin">
 				</div>
 			</div>
 
 			<div class="admin-content">
+				<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+				<div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+				<!-- Dashboard Cards -->
 				<div class="dashboard-cards">
 					<div class="dashboard-card">
 						<div class="dashboard-card-icon primary">
 							<i class="fa fa-users"></i>
 						</div>
-						<h4>Total Customers</h4>
-						<p class="value">3,567</p>
-						<p class="change positive"><i class="fa fa-arrow-up"></i> 15.7% this month</p>
+						<h4>Total Users</h4>
+						<p class="value" th:text="${totalUsers != null ? totalUsers : 0}">0</p>
 					</div>
 					<div class="dashboard-card">
 						<div class="dashboard-card-icon success">
 							<i class="fa fa-user-plus"></i>
 						</div>
 						<h4>New This Month</h4>
-						<p class="value">124</p>
+						<p class="value" th:text="${newUsersThisMonth != null ? newUsersThisMonth : 0}">0</p>
 					</div>
 					<div class="dashboard-card">
 						<div class="dashboard-card-icon info">
-							<i class="fa fa-star"></i>
+							<i class="fa fa-check-circle"></i>
 						</div>
-						<h4>VIP Customers</h4>
-						<p class="value">256</p>
+						<h4>Active</h4>
+						<p class="value" th:text="${activeUsers != null ? activeUsers : 0}">0</p>
 					</div>
 					<div class="dashboard-card">
 						<div class="dashboard-card-icon warning">
 							<i class="fa fa-ban"></i>
 						</div>
-						<h4>Blocked</h4>
-						<p class="value">12</p>
+						<h4>Inactive</h4>
+						<p class="value" th:text="${inactiveUsers != null ? inactiveUsers : 0}">0</p>
 					</div>
 				</div>
 
-				<div style="display: flex; justify-content: space-between; margin-bottom: 25px;">
-					<div style="display: flex; gap: 10px;">
-						<input type="text" id="tableSearch" placeholder="Search customers..." style="padding: 10px 15px; border: 1px solid #ddd; border-radius: 4px; width: 300px;">
-						<select style="padding: 10px 15px; border: 1px solid #ddd; border-radius: 4px;">
-							<option>All Customers</option>
-							<option>VIP</option>
-							<option>Regular</option>
-							<option>New</option>
-						</select>
-					</div>
-					<button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
-						<i class="fa fa-download"></i> Export
+				<!-- Search Form -->
+				<form th:action="@{/admin/customers}" method="get" class="search-form">
+					<input type="text" name="keyword" placeholder="Search by name or email..."
+						th:value="${keyword}" class="form-control">
+					<button type="submit" class="btn-primary">
+						<i class="fa fa-search"></i> Search
 					</button>
-				</div>
+					<a th:href="@{/admin/customers}" class="btn-secondary">
+						<i class="fa fa-refresh"></i> Reset
+					</a>
+				</form>
 
+				<!-- Customers Table -->
 				<div class="admin-table-wrapper">
 					<div class="admin-table-header">
-						<h3>All Customers (3,567)</h3>
+						<h3 th:text="${users != null ? 'Customers (' + users.totalElements + ')' : 'Customers'}">Customers</h3>
+						<button type="button" class="btn-primary" data-toggle="modal" data-target="#createAdminModal">
+							<i class="fa fa-plus"></i> Add Admin
+						</button>
 					</div>
 
 					<table class="admin-table">
 						<thead>
 							<tr>
-								<th>Customer</th>
+								<th>#</th>
+								<th>Name</th>
 								<th>Email</th>
-								<th>Phone</th>
-								<th>Orders</th>
+								<th>Role</th>
+								<th>Membership</th>
+								<th>Loyalty Points</th>
 								<th>Total Spent</th>
 								<th>Status</th>
 								<th>Joined</th>
 								<th>Actions</th>
 							</tr>
 						</thead>
-						<tbody>
-							<tr>
+						<tbody th:if="${users != null and !users.content.isEmpty()}">
+							<tr th:each="user : ${users.content}">
+								<td th:text="${user.userID}">1</td>
+								<td th:text="${user.name}">Customer Name</td>
+								<td th:text="${user.email}">email@example.com</td>
+								<td th:text="${user.role != null ? #strings.capitalize(user.role.roleName.name()) : 'None'}">Role</td>
 								<td>
-									<div style="display: flex; align-items: center; gap: 10px;">
-										<img src="https://ui-avatars.com/api/?name=John+Doe&size=40" style="border-radius: 50%;">
-										<strong>John Doe</strong>
-									</div>
+									<span th:if="${user.customer != null and user.customer.level != null}" 
+										  th:class="'status-badge ' + (${user.customer.level.levelName.toLowerCase() == 'bronze'} ? 'cancelled' : (${user.customer.level.levelName.toLowerCase() == 'silver'} ? 'processing' : (${user.customer.level.levelName.toLowerCase() == 'gold'} ? 'completed' : 'info')))"
+										  th:text="${user.customer.level.levelName}">Bronze</span>
+									<span th:if="${user.customer == null or user.customer.level == null}" 
+										  class="status-badge cancelled">N/A</span>
 								</td>
-								<td>john@example.com</td>
-								<td>+1 234 567 8900</td>
-								<td>12 orders</td>
-								<td><strong>$1,245.00</strong></td>
-								<td><span class="status-badge completed">VIP</span></td>
-								<td>Jan 15, 2025</td>
+								<td th:text="${user.customer != null and user.customer.loyaltyPoints != null ? user.customer.loyaltyPoints : 0}">0</td>
+								<td th:text="${user.customer != null and user.customer.totalSpent != null ? '$' + #numbers.formatDecimal(user.customer.totalSpent, 0, 'COMMA', 2, 'POINT') : '$0.00'}">$0.00</td>
 								<td>
-									<button class="action-btn view"><i class="fa fa-eye"></i></button>
-									<button class="action-btn edit"><i class="fa fa-edit"></i></button>
-									<button class="action-btn delete" data-item="John Doe"><i class="fa fa-ban"></i></button>
+									<span class="status-badge"
+										th:classappend="${user.status != null and user.status.name() == 'active'} ? ' completed' : ' cancelled'"
+										th:text="${user.status != null ? #strings.capitalize(user.status.name()) : 'N/A'}">Status</span>
 								</td>
-							</tr>
-							<tr>
+								<td th:text="${user.createdAt != null ? #temporals.format(user.createdAt,'yyyy-MM-dd') : '-'}">-</td>
 								<td>
-									<div style="display: flex; align-items: center; gap: 10px;">
-										<img src="https://ui-avatars.com/api/?name=Jane+Smith&size=40" style="border-radius: 50%;">
-										<strong>Jane Smith</strong>
-									</div>
-								</td>
-								<td>jane@example.com</td>
-								<td>+1 234 567 8901</td>
-								<td>5 orders</td>
-								<td><strong>$456.00</strong></td>
-								<td><span class="status-badge processing">Regular</span></td>
-								<td>Mar 20, 2025</td>
-								<td>
-									<button class="action-btn view"><i class="fa fa-eye"></i></button>
-									<button class="action-btn edit"><i class="fa fa-edit"></i></button>
-									<button class="action-btn delete" data-item="Jane Smith"><i class="fa fa-ban"></i></button>
+									<form th:if="${user.role == null || user.role.roleName.name() != 'admin'}"
+										  th:action="@{/admin/customers/{id}/toggle-status(id=${user.userID})}" method="post" style="display: inline;">
+										<input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+										<button type="submit" class="btn-primary" style="padding: 6px 12px; font-size: 12px;">
+											Toggle
+										</button>
+									</form>
+									<span th:if="${user.role != null && user.role.roleName.name() == 'admin'}"
+										  class="text-muted">Admin</span>
 								</td>
 							</tr>
+						</tbody>
+						<tbody th:if="${users == null or users.content.isEmpty()}">
 							<tr>
-								<td>
-									<div style="display: flex; align-items: center; gap: 10px;">
-										<img src="https://ui-avatars.com/api/?name=Mike+Johnson&size=40" style="border-radius: 50%;">
-										<strong>Mike Johnson</strong>
-									</div>
-								</td>
-								<td>mike@example.com</td>
-								<td>+1 234 567 8902</td>
-								<td>1 order</td>
-								<td><strong>$89.00</strong></td>
-								<td><span class="status-badge pending">New</span></td>
-								<td>Jan 10, 2025</td>
-								<td>
-									<button class="action-btn view"><i class="fa fa-eye"></i></button>
-									<button class="action-btn edit"><i class="fa fa-edit"></i></button>
-									<button class="action-btn delete" data-item="Mike Johnson"><i class="fa fa-ban"></i></button>
+								<td colspan="10" class="text-center text-muted" style="padding:30px;">
+									No customers found.
 								</td>
 							</tr>
 						</tbody>
 					</table>
+
+					<!-- Pagination -->
+					<div class="admin-pagination" th:if="${totalPages != null and totalPages > 1}">
+						<div class="admin-pagination-buttons">
+							<a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+								th:href="@{/admin/customers(page=${i}, size=${users.size}, sortBy=${sortBy}, sortDir=${sortDir}, keyword=${keyword})}"
+								th:text="${i + 1}" th:classappend="${i == currentPage} ? 'active' : ''"></a>
+						</div>
+					</div>
 				</div>
 			</div>
 		</main>
+	</div>
+
+	<!-- Create Admin Modal -->
+	<div class="modal fade" id="createAdminModal" tabindex="-1" role="dialog" aria-labelledby="createAdminModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="createAdminModalLabel">Create Admin Account</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<form th:action="@{/admin/customers/create-admin}" method="post">
+					<input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="adminEmail">Email</label>
+							<input type="email" class="form-control" id="adminEmail" name="email" placeholder="admin@example.com" required>
+						</div>
+						<div class="form-group">
+							<label for="adminPassword">Password</label>
+							<input type="password" class="form-control" id="adminPassword" name="password" minlength="8" required>
+							<small class="form-text text-muted">Minimum 8 characters.</small>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+						<button type="submit" class="btn btn-primary">Create Admin</button>
+					</div>
+				</form>
+			</div>
+		</div>
 	</div>
 
 	<button class="admin-mobile-toggle"><i class="fa fa-bars"></i></button>
@@ -179,6 +694,11 @@
 	<script th:src="@{/vendor/bootstrap/js/bootstrap.min.js}"></script>
 	<script th:src="@{/vendor/sweetalert/sweetalert.min.js}"></script>
 	<script th:src="@{/js/admin.js}"></script>
+	<script>
+		document.querySelector('.admin-mobile-toggle').addEventListener('click', function() {
+			document.querySelector('.admin-sidebar').classList.toggle('active');
+		});
+	</script>
 
 </body>
 </html>

@@ -7,6 +7,7 @@ public class CartItemSummaryDTO {
     private Integer variantId;
     private String productName;
     private String sku;
+    private String variantLabel;
     private Integer quantity;
     private BigDecimal price;
     private BigDecimal lineTotal;
@@ -16,11 +17,13 @@ public class CartItemSummaryDTO {
     }
 
     public CartItemSummaryDTO(Integer cartItemId, Integer variantId, String productName, String sku,
-                              Integer quantity, BigDecimal price, BigDecimal lineTotal, String image) {
+                              String variantLabel, Integer quantity, BigDecimal price,
+                              BigDecimal lineTotal, String image) {
         this.cartItemId = cartItemId;
         this.variantId = variantId;
         this.productName = productName;
         this.sku = sku;
+        this.variantLabel = variantLabel;
         this.quantity = quantity;
         this.price = price;
         this.lineTotal = lineTotal;
@@ -57,6 +60,14 @@ public class CartItemSummaryDTO {
 
     public void setSku(String sku) {
         this.sku = sku;
+    }
+
+    public String getVariantLabel() {
+        return variantLabel;
+    }
+
+    public void setVariantLabel(String variantLabel) {
+        this.variantLabel = variantLabel;
     }
 
     public Integer getQuantity() {

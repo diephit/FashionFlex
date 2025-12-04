@@ -1,6 +1,7 @@
 package g6.fashionFlex.controller;
 
 import g6.fashionFlex.entity.Category;
+import g6.fashionFlex.entity.Category.CategoryStatus;
 import g6.fashionFlex.service.AdminCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/admin/categories")
@@ -18,7 +20,9 @@ public class AdminCategoryController {
     private AdminCategoryService categoryService;
 
     @GetMapping
-    public String listCategories(@RequestParam(required = false) String keyword, Model model) {
+    public String listCategories(@RequestParam(required = false) String keyword,
+                                @RequestParam(required = false) Integer editId,
+                                Model model) {
         List<Category> categories;
         if (keyword != null && !keyword.trim().isEmpty()) {
             categories = categoryService.searchCategories(keyword);
@@ -29,6 +33,16 @@ public class AdminCategoryController {
         model.addAttribute("categories", categories);
         model.addAttribute("rootCategories", categoryService.getRootCategories());
         model.addAttribute("keyword", keyword);
+        model.addAttribute("totalCategories", categoryService.countAllCategories());
+        model.addAttribute("activeCategories", categoryService.countByStatus(CategoryStatus.active));
+        model.addAttribute("inactiveCategories", categoryService.countByStatus(CategoryStatus.inactive));
+        model.addAttribute("totalProducts", categoryService.countTotalProducts());
+        model.addAttribute("categoryStatusValues", CategoryStatus.values());
+        model.addAttribute("newCategory", new Category());
+        if (editId != null) {
+            Optional<Category> editCategory = categoryService.getCategoryById(editId);
+            editCategory.ifPresent(category -> model.addAttribute("editCategory", category));
+        }
         return "admin/categories";
     }
 

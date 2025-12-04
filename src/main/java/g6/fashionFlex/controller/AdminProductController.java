@@ -1,14 +1,12 @@
 package g6.fashionFlex.controller;
 
-import g6.fashionFlex.entity.Admin;
-import g6.fashionFlex.entity.Product;
-import g6.fashionFlex.entity.Product.ProductStatus;
-import g6.fashionFlex.entity.ProductVariant;
-import g6.fashionFlex.entity.User;
-import g6.fashionFlex.repository.AdminRepository;
-import g6.fashionFlex.repository.CategoryRepository;
-import g6.fashionFlex.repository.UserRepository;
-import g6.fashionFlex.service.AdminProductService;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -19,16 +17,31 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
+import g6.fashionFlex.entity.Admin;
+import g6.fashionFlex.entity.Product;
+import g6.fashionFlex.entity.Product.ProductStatus;
+import g6.fashionFlex.entity.ProductVariant;
+import g6.fashionFlex.entity.User;
+import g6.fashionFlex.repository.AdminRepository;
+import g6.fashionFlex.repository.CategoryRepository;
+import g6.fashionFlex.repository.UserRepository;
+import g6.fashionFlex.service.AdminProductService;
+import g6.fashionFlex.service.FileStorageService;
 
 @Controller
 @RequestMapping("/admin/products")
 public class AdminProductController {
+
+    private static final Logger logger = LoggerFactory.getLogger(AdminProductController.class);
 
     @Autowired
     private AdminProductService productService;
@@ -41,6 +54,9 @@ public class AdminProductController {
 
     @Autowired
     private AdminRepository adminRepository;
+
+    @Autowired
+    private FileStorageService fileStorageService;
 
     private Admin getCurrentAdmin() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -55,12 +71,24 @@ public class AdminProductController {
         return adminRepository.findByUserUserID(user.getUserID()).orElse(null);
     }
 
+    private String getAdminDisplayName() {
+        Admin admin = getCurrentAdmin();
+        if (admin != null && admin.getUser() != null && admin.getUser().getName() != null) {
+            return admin.getUser().getName();
+        }
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            return auth.getName();
+        }
+        return "Admin";
+    }
+
     @GetMapping
     public String listProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "productID") String sortBy,
-            @RequestParam(defaultValue = "desc") String sortDir,
+            @RequestParam(defaultValue = "asc") String sortDir,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String status,
             Model model) {
@@ -94,6 +122,7 @@ public class AdminProductController {
         model.addAttribute("status", status);
         model.addAttribute("sortBy", sortBy);
         model.addAttribute("sortDir", sortDir);
+        model.addAttribute("adminDisplayName", getAdminDisplayName());
         
         return "admin/products";
     }
@@ -107,11 +136,13 @@ public class AdminProductController {
         model.addAttribute("product", product.get());
         model.addAttribute("variants", productService.getProductVariants(id));
         model.addAttribute("categories", categoryRepository.findAll());
+        model.addAttribute("adminDisplayName", getAdminDisplayName());
         return "admin/product-detail";
     }
 
     @PostMapping
     public String createProduct(@ModelAttribute Product product,
+                               @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
                                RedirectAttributes redirectAttributes) {
         Admin admin = getCurrentAdmin();
         if (admin == null) {
@@ -120,9 +151,17 @@ public class AdminProductController {
         }
         
         try {
+            if (imageFile != null && !imageFile.isEmpty()) {
+                String imagePath = fileStorageService.storeProductImage(imageFile);
+                product.setMainImage(imagePath);
+            }
             productService.createProduct(product, admin.getAdminID());
             redirectAttributes.addFlashAttribute("success", "Product created successfully");
+        } catch (IOException e) {
+            logger.error("Error uploading image: {}", e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("error", "Error uploading image: " + e.getMessage());
         } catch (Exception e) {
+            logger.error("Error creating product: {}", e.getMessage(), e);
             redirectAttributes.addFlashAttribute("error", "Error creating product: " + e.getMessage());
         }
         
@@ -132,6 +171,7 @@ public class AdminProductController {
     @PostMapping("/{id}")
     public String updateProduct(@PathVariable Integer id,
                                @ModelAttribute Product product,
+                               @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
                                RedirectAttributes redirectAttributes) {
         Admin admin = getCurrentAdmin();
         if (admin == null) {
@@ -140,9 +180,17 @@ public class AdminProductController {
         }
         
         try {
+            if (imageFile != null && !imageFile.isEmpty()) {
+                String imagePath = fileStorageService.storeProductImage(imageFile);
+                product.setMainImage(imagePath);
+            }
             productService.updateProduct(id, product, admin.getAdminID());
             redirectAttributes.addFlashAttribute("success", "Product updated successfully");
+        } catch (IOException e) {
+            logger.error("Error uploading image: {}", e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("error", "Error uploading image: " + e.getMessage());
         } catch (Exception e) {
+            logger.error("Error updating product: {}", e.getMessage(), e);
             redirectAttributes.addFlashAttribute("error", "Error updating product: " + e.getMessage());
         }
         
@@ -152,14 +200,30 @@ public class AdminProductController {
     @PostMapping("/{id}/delete")
     public String deleteProduct(@PathVariable Integer id,
                                RedirectAttributes redirectAttributes) {
-        try {
-            productService.deleteProduct(id);
-            redirectAttributes.addFlashAttribute("success", "Product deleted successfully");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error deleting product: " + e.getMessage());
+        Admin admin = getCurrentAdmin();
+        if (admin == null) {
+            logger.warn("Unauthorized delete attempt - admin not found");
+            redirectAttributes.addFlashAttribute("error", "Admin not found");
+            return "redirect:/admin/products";
         }
         
-        return "redirect:/admin/products";
+        try {
+            logger.info("Admin {} attempting to deactivate product {}", admin.getAdminID(), id);
+            // Soft delete: chỉ toggle status sang inactive thay vì hard delete
+            Product product = productService.toggleProductStatus(id);
+            String status = product.getStatus() == Product.ProductStatus.inactive ? "deactivated" : "activated";
+            logger.info("Product {} {} successfully by admin {}", id, status, admin.getAdminID());
+            redirectAttributes.addFlashAttribute("success", "Product " + status + " successfully");
+            return "redirect:/admin/products";
+        } catch (RuntimeException e) {
+            logger.error("Delete product error: {}", e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("error", "Cannot delete product: " + e.getMessage());
+            return "redirect:/admin/products";
+        } catch (Exception e) {
+            logger.error("Unexpected error deleting product: {}", e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("error", "System error: " + e.getMessage());
+            return "redirect:/admin/products";
+        }
     }
 
     @PostMapping("/{id}/toggle-status")
@@ -169,30 +233,35 @@ public class AdminProductController {
             productService.toggleProductStatus(id);
             redirectAttributes.addFlashAttribute("success", "Product status updated");
         } catch (Exception e) {
+            logger.error("Error updating status: {}", e.getMessage(), e);
             redirectAttributes.addFlashAttribute("error", "Error updating status: " + e.getMessage());
         }
         
         return "redirect:/admin/products";
     }
 
-    // Variant Management
     @PostMapping("/{productId}/variants")
     public String createVariant(@PathVariable Integer productId,
                                 @RequestParam String sku,
                                 @RequestParam BigDecimal price,
-                                @RequestParam(required = false) String size,
-                                @RequestParam(required = false) String color,
+                                @RequestParam(value = "variantImage", required = false) MultipartFile variantImage,
                                 RedirectAttributes redirectAttributes) {
         try {
             ProductVariant variant = new ProductVariant();
             variant.setSku(sku);
             variant.setPrice(price);
-            variant.setSize(size);
-            variant.setColor(color);
+            if (variantImage != null && !variantImage.isEmpty()) {
+                String imagePath = fileStorageService.storeProductImage(variantImage);
+                variant.setVariantImage(imagePath);
+            }
             
             productService.createVariant(productId, variant);
             redirectAttributes.addFlashAttribute("success", "Variant created successfully");
+        } catch (IOException e) {
+            logger.error("Error uploading variant image: {}", e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("error", "Error uploading variant image: " + e.getMessage());
         } catch (Exception e) {
+            logger.error("Error creating variant: {}", e.getMessage(), e);
             redirectAttributes.addFlashAttribute("error", "Error creating variant: " + e.getMessage());
         }
         
@@ -203,20 +272,25 @@ public class AdminProductController {
     public String updateVariant(@PathVariable Integer variantId,
                                @RequestParam String sku,
                                @RequestParam BigDecimal price,
-                               @RequestParam(required = false) String size,
-                               @RequestParam(required = false) String color,
                                @RequestParam Integer productId,
+                               @RequestParam(value = "variantImage", required = false) MultipartFile variantImage,
                                RedirectAttributes redirectAttributes) {
         try {
             ProductVariant variant = new ProductVariant();
             variant.setSku(sku);
             variant.setPrice(price);
-            variant.setSize(size);
-            variant.setColor(color);
+            if (variantImage != null && !variantImage.isEmpty()) {
+                String imagePath = fileStorageService.storeProductImage(variantImage);
+                variant.setVariantImage(imagePath);
+            }
             
             productService.updateVariant(variantId, variant);
             redirectAttributes.addFlashAttribute("success", "Variant updated successfully");
+        } catch (IOException e) {
+            logger.error("Error uploading variant image: {}", e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("error", "Error uploading variant image: " + e.getMessage());
         } catch (Exception e) {
+            logger.error("Error updating variant: {}", e.getMessage(), e);
             redirectAttributes.addFlashAttribute("error", "Error updating variant: " + e.getMessage());
         }
         
@@ -227,14 +301,45 @@ public class AdminProductController {
     public String deleteVariant(@PathVariable Integer variantId,
                                @RequestParam Integer productId,
                                RedirectAttributes redirectAttributes) {
-        try {
-            productService.deleteVariant(variantId);
-            redirectAttributes.addFlashAttribute("success", "Variant deleted successfully");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error deleting variant: " + e.getMessage());
+        Admin admin = getCurrentAdmin();
+        if (admin == null) {
+            logger.warn("Unauthorized delete attempt - admin not found");
+            redirectAttributes.addFlashAttribute("error", "Admin not found");
+            return "redirect:/admin/products/" + productId;
         }
         
-        return "redirect:/admin/products/" + productId;
+        try {
+            logger.info("Admin {} attempting to delete variant {}", admin.getAdminID(), variantId);
+            productService.deleteVariant(variantId);
+            logger.info("Variant {} deleted successfully by admin {}", variantId, admin.getAdminID());
+            redirectAttributes.addFlashAttribute("success", "Variant deleted successfully");
+            return "redirect:/admin/products/" + productId;
+        } catch (RuntimeException e) {
+            logger.error("Delete variant error: {}", e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("error", "Cannot delete variant: " + e.getMessage());
+            return "redirect:/admin/products/" + productId;
+        } catch (Exception e) {
+            logger.error("Unexpected error deleting variant: {}", e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("error", "System error: " + e.getMessage());
+            return "redirect:/admin/products/" + productId;
+        }
+    }
+
+    @PostMapping("/{id}/stock")
+    public String increaseStock(@PathVariable Integer id,
+                                @RequestParam Integer amount,
+                                RedirectAttributes redirectAttributes) {
+        if (amount == null || amount <= 0) {
+            redirectAttributes.addFlashAttribute("error", "Please enter a quantity greater than 0.");
+            return "redirect:/admin/products/" + id + "#add-stock";
+        }
+        try {
+            productService.increaseStock(id, amount);
+            redirectAttributes.addFlashAttribute("success", "Stock increased by " + amount + " units.");
+        } catch (Exception e) {
+            logger.error("Error updating stock: {}", e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("error", "Unable to update stock: " + e.getMessage());
+        }
+        return "redirect:/admin/products/" + id + "#add-stock";
     }
 }
-

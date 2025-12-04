@@ -72,8 +72,8 @@
 				<nav class="limiter-menu-desktop container">
 					
 					<!-- Logo desktop -->		
-					<a href="#" class="logo">
-						<img src="images/icons/logo-01.png" alt="IMG-LOGO">
+					<a href="/index" class="logo" style="font-family: Poppins-Bold; font-size: 2rem; color: #333;">
+						Fashion Flex
 					</a>
 
 					<!-- Menu desktop -->
@@ -112,7 +112,7 @@
 							<i class="zmdi zmdi-shopping-cart"></i>
 						</div>
 
-						<a href="#" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti" data-notify="0">
+						<a th:href="@{/wishlist}" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti wishlist-nav-link" data-notify="0">
 							<i class="zmdi zmdi-favorite-outline"></i>
 						</a>
 					</div>
@@ -137,7 +137,7 @@
 					<i class="zmdi zmdi-shopping-cart"></i>
 				</div>
 
-				<a href="#" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti" data-notify="0">
+				<a th:href="@{/wishlist}" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti wishlist-nav-link" data-notify="0">
 					<i class="zmdi zmdi-favorite-outline"></i>
 				</a>
 			</div>
@@ -546,150 +546,177 @@
 		
 
 	<!-- Footer -->
-	<footer class="bg3 p-t-75 p-b-32">
+	<footer th:fragment="footer" class="bg3 p-t-75 p-b-32">
 		<div class="container">
 			<div class="row">
 				<div class="col-sm-6 col-lg-3 p-b-50">
 					<h4 class="stext-301 cl0 p-b-30">
 						Categories
 					</h4>
-
+	
 					<ul>
 						<li class="p-b-10">
-							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
+							<a th:href="@{/product(category=women)}" class="stext-107 cl7 hov-cl1 trans-04">
 								Women
 							</a>
 						</li>
-
+	
 						<li class="p-b-10">
-							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
+							<a th:href="@{/product(category=men)}" class="stext-107 cl7 hov-cl1 trans-04">
 								Men
 							</a>
 						</li>
-
+	
 						<li class="p-b-10">
-							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
+							<a th:href="@{/product(category=shoes)}" class="stext-107 cl7 hov-cl1 trans-04">
 								Shoes
 							</a>
 						</li>
-
+	
 						<li class="p-b-10">
-							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
+							<a th:href="@{/product(category=watches)}" class="stext-107 cl7 hov-cl1 trans-04">
 								Watches
 							</a>
 						</li>
 					</ul>
 				</div>
-
+	
 				<div class="col-sm-6 col-lg-3 p-b-50">
 					<h4 class="stext-301 cl0 p-b-30">
 						Help
 					</h4>
-
+	
 					<ul>
 						<li class="p-b-10">
-							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
+							<a th:href="@{/user/order-tracking}" class="stext-107 cl7 hov-cl1 trans-04">
 								Track Order
 							</a>
 						</li>
-
+	
 						<li class="p-b-10">
-							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-								Returns 
+							<a th:href="@{/info/return-policy}" class="stext-107 cl7 hov-cl1 trans-04">
+								Returns
 							</a>
 						</li>
-
+	
 						<li class="p-b-10">
-							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
+							<a th:href="@{/info/shipping-policy}" class="stext-107 cl7 hov-cl1 trans-04">
 								Shipping
 							</a>
 						</li>
-
+	
 						<li class="p-b-10">
-							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
+							<a th:href="@{/info/faq}" class="stext-107 cl7 hov-cl1 trans-04">
 								FAQs
 							</a>
 						</li>
 					</ul>
 				</div>
-
+	
 				<div class="col-sm-6 col-lg-3 p-b-50">
 					<h4 class="stext-301 cl0 p-b-30">
-						GET IN TOUCH
+						Information
 					</h4>
-
-					<p class="stext-107 cl7 size-201">
-						Any questions? Let us know in store at 8th floor, 379 Hudson St, New York, NY 10018 or call us on (+1) 96 716 6879
-					</p>
-
-					<div class="p-t-27">
-						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
-							<i class="fa fa-facebook"></i>
-						</a>
-
-						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
-							<i class="fa fa-instagram"></i>
-						</a>
-
-						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
-							<i class="fa fa-pinterest-p"></i>
-						</a>
-					</div>
+	
+					<ul>
+						<li class="p-b-10">
+							<a th:href="@{/about}" class="stext-107 cl7 hov-cl1 trans-04">
+								About Us
+							</a>
+						</li>
+	
+						<li class="p-b-10">
+							<a th:href="@{/contact}" class="stext-107 cl7 hov-cl1 trans-04">
+								Contact Us
+							</a>
+						</li>
+	
+						<li class="p-b-10">
+							<a th:href="@{/info/privacy-policy}" class="stext-107 cl7 hov-cl1 trans-04">
+								Privacy Policy
+							</a>
+						</li>
+	
+						<li class="p-b-10">
+							<a th:href="@{/info/terms-conditions}" class="stext-107 cl7 hov-cl1 trans-04">
+								Terms & Conditions
+							</a>
+						</li>
+					</ul>
 				</div>
-
+	
 				<div class="col-sm-6 col-lg-3 p-b-50">
 					<h4 class="stext-301 cl0 p-b-30">
 						Newsletter
 					</h4>
-
+	
+					<p class="stext-107 cl7 size-201 p-b-20">
+						Subscribe to get special offers, free giveaways, and exclusive deals.
+					</p>
+	
 					<form>
 						<div class="wrap-input1 w-full p-b-4">
 							<input class="input1 bg-none plh1 stext-107 cl7" type="text" name="email" placeholder="email@example.com">
 							<div class="focus-input1 trans-04"></div>
 						</div>
-
+	
 						<div class="p-t-18">
 							<button class="flex-c-m stext-101 cl0 size-103 bg1 bor1 hov-btn2 p-lr-15 trans-04">
 								Subscribe
 							</button>
 						</div>
 					</form>
+	
+					<div class="p-t-27">
+						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+							<i class="fa fa-facebook"></i>
+						</a>
+	
+						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+							<i class="fa fa-instagram"></i>
+						</a>
+	
+						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+							<i class="fa fa-pinterest-p"></i>
+						</a>
+	
+						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+							<i class="fa fa-twitter"></i>
+						</a>
+					</div>
 				</div>
 			</div>
-
+	
 			<div class="p-t-40">
 				<div class="flex-c-m flex-w p-b-18">
 					<a href="#" class="m-all-1">
-						<img src="images/icons/icon-pay-01.png" alt="ICON-PAY">
+						<img th:src="@{/images/icons/icon-pay-01.png}" alt="ICON-PAY">
 					</a>
-
+	
 					<a href="#" class="m-all-1">
-						<img src="images/icons/icon-pay-02.png" alt="ICON-PAY">
+						<img th:src="@{/images/icons/icon-pay-02.png}" alt="ICON-PAY">
 					</a>
-
+	
 					<a href="#" class="m-all-1">
-						<img src="images/icons/icon-pay-03.png" alt="ICON-PAY">
+						<img th:src="@{/images/icons/icon-pay-03.png}" alt="ICON-PAY">
 					</a>
-
+	
 					<a href="#" class="m-all-1">
-						<img src="images/icons/icon-pay-04.png" alt="ICON-PAY">
+						<img th:src="@{/images/icons/icon-pay-04.png}" alt="ICON-PAY">
 					</a>
-
+	
 					<a href="#" class="m-all-1">
-						<img src="images/icons/icon-pay-05.png" alt="ICON-PAY">
+						<img th:src="@{/images/icons/icon-pay-05.png}" alt="ICON-PAY">
 					</a>
 				</div>
-
+	
 				<p class="stext-107 cl6 txt-center">
-					<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved |Made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a> &amp; distributed by <a href="https://themewagon.com" target="_blank">ThemeWagon</a>
-<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-
+					Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | FashionFlex E-commerce
 				</p>
 			</div>
 		</div>
 	</footer>
-
+	
 
 	<!-- Back to top -->
 	<div class="btn-back-to-top" id="myBtn">
@@ -792,6 +819,9 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 
 									<div class="size-204 respon6-next">
 										<div class="flex-w flex-m js-variant-list"></div>
+										<p class="stext-111 cl9 m-t-12 variant-select-hint">
+											Please select a SKU/variant before adding to cart.
+										</p>
 									</div>
 								</div>
 
